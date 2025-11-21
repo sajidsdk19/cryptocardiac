@@ -105,6 +105,10 @@ const Signup = () => {
                 <p className={styles.authLink}>
                     Already have an account? <Link to="/login">Log in</Link>
                 </p>
+
+                <p className={styles.authLink} style={{ marginTop: '10px' }}>
+                    <Link to="/">← Back to Home</Link>
+                </p>
             </div>
         </div>
     );

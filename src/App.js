@@ -3,6 +3,7 @@ import React, { useState, createContext, useEffect } from "react";
 import { Routes, Route, useParams, useNavigate } from "react-router-dom";
 import CurrencyData from "section/CurrencyData";
 import Capitalization from "section/Capitalization";
+import Navbar from "component/Navbar";
 import Login from "component/Login";
 import Signup from "component/Signup";
 import Leaderboard from "pages/Leaderboard";
@@ -31,6 +32,7 @@ function CoinPage() {
 
   return (
     <AppContext.Provider value={{ currency, setCurrency: handleSetCurrency, vsCurrency, setVsCurrency, showCapSide, setShowCapSide }}>
+      <Navbar />
       <div style={{ backgroundColor: "rgb(21,21,32)" }}>
         <Box
           sx={{

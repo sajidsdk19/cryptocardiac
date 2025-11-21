@@ -36,6 +36,18 @@ const Navbar = () => {
             </Link>
 
             <Box sx={{ display: 'flex', gap: 2, alignItems: 'center' }}>
+                <Link to="/" style={{ textDecoration: 'none' }}>
+                    <Button sx={{
+                        color: '#fff',
+                        fontWeight: 600,
+                        '&:hover': {
+                            background: 'rgba(255, 255, 255, 0.1)'
+                        }
+                    }}>
+                        Home
+                    </Button>
+                </Link>
+
                 <Link to="/leaderboard" style={{ textDecoration: 'none' }}>
                     <Button sx={{
                         color: '#fff',
