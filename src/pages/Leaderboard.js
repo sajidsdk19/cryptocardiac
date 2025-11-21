@@ -22,7 +22,7 @@ const Leaderboard = () => {
                 const allCryptos = await getAllCurrencies('usd');
 
                 // 2. Get vote counts from our backend
-                const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
+                const API_URL = process.env.REACT_APP_API_URL || '/api';
                 const response = await fetch(`${API_URL}/votes`);
                 const voteCounts = await response.json();
 
