@@ -191,6 +191,87 @@ app.post('/api/votes', authenticateToken, async (req, res) => {
     }
 });
 
+const axios = require('axios');
+const NodeCache = require('node-cache');
+const myCache = new NodeCache({ stdTTL: 300 }); // Cache for 5 minutes
+let apiHitsToday = 0;
+
+// Reset API hits counter every 24 hours (simple implementation)
+setInterval(() => {
+    apiHitsToday = 0;
+}, 24 * 60 * 60 * 1000);
+
+// --- CoinGecko Proxy Route ---
+app.get('/api/coins', async (req, res) => {
+    const { vs_currency = 'usd', order = 'market_cap_desc', per_page = 100, page = 1, sparkline = false } = req.query;
+    const cacheKey = `coins_${vs_currency}_${order}_${per_page}_${page}_${sparkline}`;
+
+    const cachedData = myCache.get(cacheKey);
+    if (cachedData) {
+        return res.json(cachedData);
+    }
+
+    try {
+        apiHitsToday++;
+        const response = await axios.get('https://api.coingecko.com/api/v3/coins/markets', {
+            params: {
+                vs_currency,
+                order,
+                per_page,
+                page,
+                sparkline
+            }
+        });
+
+        myCache.set(cacheKey, response.data);
+        res.json(response.data);
+    } catch (error) {
+        console.error('CoinGecko API error:', error.message);
+        res.status(500).json({ error: 'Failed to fetch coin data' });
+    }
+});
+
+// --- Admin Stats Route ---
+app.get('/api/admin/stats', async (req, res) => {
+    // In a real app, add admin check here: if (req.user.role !== 'admin') ...
+
+    try {
+        // 1. Total Users
+        const [userRows] = await db.query('SELECT COUNT(*) as count FROM users');
+        const totalUsers = userRows[0].count;
+
+        // 2. Total Votes
+        const [voteRows] = await db.query('SELECT COUNT(*) as count FROM votes');
+        const totalVotes = voteRows[0].count;
+
+        // 3. Top Coin (All Time)
+        const [topCoinRows] = await db.query('SELECT coin_name, COUNT(*) as count FROM votes GROUP BY coin_name ORDER BY count DESC LIMIT 1');
+        const topCoinAllTime = topCoinRows.length > 0 ? topCoinRows[0] : null;
+
+        // 4. Top Coin (Last 24h)
+        const [topCoin24hRows] = await db.query(`
+            SELECT coin_name, COUNT(*) as count 
+            FROM votes 
+            WHERE created_at >= NOW() - INTERVAL 1 DAY 
+            GROUP BY coin_name 
+            ORDER BY count DESC 
+            LIMIT 1
+        `);
+        const topCoin24h = topCoin24hRows.length > 0 ? topCoin24hRows[0] : null;
+
+        res.json({
+            apiHitsToday,
+            totalUsers,
+            totalVotes,
+            topCoinAllTime,
+            topCoin24h
+        });
+    } catch (error) {
+        console.error('Admin stats error:', error);
+        res.status(500).json({ error: 'Server error' });
+    }
+});
+
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
 });

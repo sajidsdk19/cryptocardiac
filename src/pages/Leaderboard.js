@@ -152,21 +152,21 @@ const Leaderboard = () => {
         <>
             <Navbar />
             <div className={styles.leaderboardContainer}>
-                <div className={styles.leaderboardHeader}>
-                    <h1 className={styles.leaderboardTitle}>Crypto Leaderboard</h1>
-                    <p className={styles.leaderboardSubtitle}>
-                        Vote for your favorite cryptocurrency • One vote every 24 hours
+                <div className={styles.heroSection}>
+                    <h1 className={styles.heroTitle}>Crypto Cardiac</h1>
+                    <p className={styles.heroSubtitle}>
+                        Feel the social pulse of your favorite cryptocurrency community!
                     </p>
+                </div>
 
-                    <div className={styles.searchContainer}>
-                        <input
-                            type="text"
-                            placeholder="Search cryptocurrencies..."
-                            value={searchTerm}
-                            onChange={(e) => setSearchTerm(e.target.value)}
-                            className={styles.searchInput}
-                        />
-                    </div>
+                <div className={styles.searchContainer}>
+                    <input
+                        type="text"
+                        placeholder="Search cryptocurrencies..."
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        className={styles.searchInput}
+                    />
                 </div>
 
                 {/* Desktop Table View */}

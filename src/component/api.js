@@ -1,34 +1,44 @@
 import axios from 'axios';
 
-const getAllCurrencies = async (vsCurrency) => {
-  const cacheKey = `cryptos_${vsCurrency}`;
-  const cachedData = localStorage.getItem(cacheKey);
-  const cacheTime = localStorage.getItem(`${cacheKey}_time`);
+const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
 
-  // Use cache if less than 5 minutes old
-  if (cachedData && cacheTime && (Date.now() - parseInt(cacheTime) < 5 * 60 * 1000)) {
-    return JSON.parse(cachedData);
-  }
-
+const getAllCurrencies = async (vs_currency = 'usd') => {
   try {
-    const apiLink = `https://api.coingecko.com/api/v3/coins/markets?vs_currency=${vsCurrency}&order=market_cap_desc&per_page=100&page=1&sparkline=false`;
-    const response = await axios.get(apiLink);
+    // Use our backend proxy instead of direct CoinGecko call
+    const response = await axios.get(`${API_URL}/coins`, {
+      params: {
+        vs_currency,
+        order: 'market_cap_desc',
+        per_page: 100,
+        page: 1,
+        sparkline: false
+      }
+    });
 
-    // Update cache
-    localStorage.setItem(cacheKey, JSON.stringify(response.data));
-    localStorage.setItem(`${cacheKey}_time`, Date.now().toString());
+    // Cache the successful response
+    localStorage.setItem('cachedCryptos', JSON.stringify({
+      data: response.data,
+      timestamp: Date.now()
+    }));
 
     return response.data;
   } catch (error) {
-    console.error('CoinGecko API Error:', error);
-    // Fallback to cache if available, even if old
-    if (cachedData) {
-      console.warn('Using stale cache data due to API error');
-      return JSON.parse(cachedData);
+    console.error('Error fetching currencies:', error);
+
+    // Fallback to cache if available
+    const cached = localStorage.getItem('cachedCryptos');
+    if (cached) {
+      const { data, timestamp } = JSON.parse(cached);
+      // Use cache if less than 1 hour old (extended fallback)
+      if (Date.now() - timestamp < 60 * 60 * 1000) {
+        console.log('Using cached data due to API error');
+        return data;
+      }
     }
+
     throw error;
   }
-}
+};
 
 const getCoinData = async (coin) => {
   const apiLink = `https://api.coingecko.com/api/v3/coins/${coin}`;

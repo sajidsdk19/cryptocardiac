@@ -37,7 +37,7 @@ const VoteButton = ({ crypto, canVote, onVote, timeRemaining, isMobile = false }
             {!currentUser ? (
                 <>
                     <Login sx={{ fontSize: isMobile ? '1rem' : '1.2rem' }} />
-                    {isMobile ? 'Sign in' : 'Sign in to Vote'}
+                    {isMobile ? 'Sign in to Vote' : 'Sign in to Vote'}
                 </>
             ) : voting ? (
                 <>Voting...</>
