@@ -7,59 +7,52 @@ import VoteButton from '../component/VoteButton';
 import Navbar from '../component/Navbar';
 import styles from '../styles/Leaderboard.module.scss';
 
-// Dummy mode for testing without Firebase
-const DUMMY_MODE = true;
-
 const Leaderboard = () => {
     const { currentUser } = useAuth();
-    const { canVote, vote, getTimeRemaining, loading: votingLoading } = useVoting();
+    const { vote, checkGlobalVoteStatus, loading: votingLoading } = useVoting();
     const [cryptos, setCryptos] = useState([]);
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
+    const [userVoteStatus, setUserVoteStatus] = useState({}); // { coinId: { canVote: boolean, remainingMs: number } }
 
     useEffect(() => {
         const loadLeaderboard = async () => {
             try {
-                // Get all cryptocurrencies from CoinGecko
+                // 1. Get all cryptocurrencies from CoinGecko
                 const allCryptos = await getAllCurrencies('usd');
 
-                if (DUMMY_MODE) {
-                    // Use localStorage for dummy vote counts
-                    const storedVotes = localStorage.getItem('dummyVotes');
-                    const voteCounts = storedVotes ? JSON.parse(storedVotes) : {};
+                // 2. Get vote counts from our backend
+                const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
+                const response = await fetch(`${API_URL}/votes`);
+                const voteCounts = await response.json();
 
-                    // Merge crypto data with vote counts
-                    const cryptosWithVotes = allCryptos.slice(0, 50).map(crypto => ({
-                        ...crypto,
-                        votes: voteCounts[crypto.id] || Math.floor(Math.random() * 100) // Random initial votes
-                    }));
+                // 3. Merge data
+                const cryptosWithVotes = allCryptos.slice(0, 50).map(crypto => ({
+                    ...crypto,
+                    votes: voteCounts[crypto.id] || 0
+                }));
 
-                    // Sort by votes (descending)
-                    cryptosWithVotes.sort((a, b) => b.votes - a.votes);
+                // 4. Sort by votes
+                cryptosWithVotes.sort((a, b) => b.votes - a.votes);
+                setCryptos(cryptosWithVotes);
 
-                    setCryptos(cryptosWithVotes);
-                } else {
-                    // Firebase mode (original code)
-                    const { db } = await import('../firebase');
-                    const { collection, getDocs } = await import('firebase/firestore');
+                // 5. Check user's vote status globally
+                if (currentUser) {
+                    const globalStatus = await checkGlobalVoteStatus();
 
-                    const votesRef = collection(db, 'cryptoVotes');
-                    const votesSnapshot = await getDocs(votesRef);
-
-                    const voteCounts = {};
-                    votesSnapshot.forEach((doc) => {
-                        const data = doc.data();
-                        voteCounts[data.coinId] = data.totalVotes || 0;
+                    // Apply this status to ALL coins
+                    const statusMap = {};
+                    cryptosWithVotes.forEach(c => {
+                        // If global status says can't vote, disable all.
+                        // If can vote, enable all.
+                        statusMap[c.id] = {
+                            canVote: globalStatus.canVote,
+                            remainingMs: globalStatus.remainingMs
+                        };
                     });
-
-                    const cryptosWithVotes = allCryptos.slice(0, 50).map(crypto => ({
-                        ...crypto,
-                        votes: voteCounts[crypto.id] || 0
-                    }));
-
-                    cryptosWithVotes.sort((a, b) => b.votes - a.votes);
-                    setCryptos(cryptosWithVotes);
+                    setUserVoteStatus(statusMap);
                 }
+
             } catch (error) {
                 console.error('Error loading leaderboard:', error);
             } finally {
@@ -68,7 +61,7 @@ const Leaderboard = () => {
         };
 
         loadLeaderboard();
-    }, []);
+    }, [currentUser]); // Reload if user changes (login/logout)
 
     const handleVote = async (coinId, coinName) => {
         try {
@@ -81,23 +74,44 @@ const Leaderboard = () => {
                         ? { ...crypto, votes: crypto.votes + 1 }
                         : crypto
                 );
-
-                // Save to localStorage in dummy mode
-                if (DUMMY_MODE) {
-                    const voteCounts = {};
-                    updated.forEach(crypto => {
-                        voteCounts[crypto.id] = crypto.votes;
-                    });
-                    localStorage.setItem('dummyVotes', JSON.stringify(voteCounts));
-                }
-
-                // Re-sort by votes
                 return updated.sort((a, b) => b.votes - a.votes);
             });
+
+            // Update status
+            // Update status for ALL coins to disabled (Global Restriction)
+            const nextVoteTime = 24 * 60 * 60 * 1000;
+            setUserVoteStatus(prev => {
+                const newStatus = {};
+                // Copy existing keys but set all to disabled
+                Object.keys(prev).forEach(key => {
+                    newStatus[key] = { canVote: false, remainingMs: nextVoteTime };
+                });
+                // Ensure the voted coin is also set (in case it wasn't in the map yet)
+                newStatus[coinId] = { canVote: false, remainingMs: nextVoteTime };
+
+                // Also, we might want to set a default "global" disabled state for any coins not yet in the map
+                // But for now, updating the map for all known coins is good.
+                // Better yet, let's iterate over the current 'cryptos' list to be thorough
+                cryptos.forEach(c => {
+                    newStatus[c.id] = { canVote: false, remainingMs: nextVoteTime };
+                });
+
+                return newStatus;
+            });
+
         } catch (error) {
             console.error('Error voting:', error);
             alert(error.message);
         }
+    };
+
+    const getLocalTimeRemaining = (coinId) => {
+        const status = userVoteStatus[coinId];
+        if (!status || !status.remainingMs) return { hours: 0, minutes: 0 };
+
+        const hours = Math.floor(status.remainingMs / (1000 * 60 * 60));
+        const minutes = Math.floor((status.remainingMs % (1000 * 60 * 60)) / (1000 * 60));
+        return { hours, minutes };
     };
 
     const formatNumber = (num) => {
@@ -172,7 +186,10 @@ const Leaderboard = () => {
                         </thead>
                         <tbody>
                             {filteredCryptos.map((crypto, index) => {
-                                const userCanVote = canVote(crypto.id);
+                                const status = userVoteStatus[crypto.id] || { canVote: true };
+                                const userCanVote = status.canVote;
+                                const timeRemaining = !userCanVote ? getLocalTimeRemaining(crypto.id) : null;
+
                                 return (
                                     <tr key={crypto.id} className={styles.tr}>
                                         <td className={`${styles.td} ${styles.rank}`}>{index + 1}</td>
@@ -197,11 +214,11 @@ const Leaderboard = () => {
                                                 crypto={crypto}
                                                 canVote={userCanVote}
                                                 onVote={() => handleVote(crypto.id, crypto.name)}
-                                                timeRemaining={!userCanVote ? getTimeRemaining() : null}
+                                                timeRemaining={timeRemaining}
                                             />
                                             {!userCanVote && currentUser && (
                                                 <div className={styles.timeRemaining}>
-                                                    {getTimeRemaining().hours}h {getTimeRemaining().minutes}m
+                                                    {timeRemaining.hours}h {timeRemaining.minutes}m
                                                 </div>
                                             )}
                                         </td>
@@ -215,7 +232,9 @@ const Leaderboard = () => {
                 {/* Mobile List View */}
                 <div className={styles.mobileList}>
                     {filteredCryptos.map((crypto, index) => {
-                        const userCanVote = canVote(crypto.id);
+                        const status = userVoteStatus[crypto.id] || { canVote: true };
+                        const userCanVote = status.canVote;
+                        const timeRemaining = !userCanVote ? getLocalTimeRemaining(crypto.id) : null;
                         const priceChangeColor = crypto.price_change_percentage_24h >= 0 ? styles.positiveChange : styles.negativeChange;
 
                         return (
@@ -254,12 +273,12 @@ const Leaderboard = () => {
                                     crypto={crypto}
                                     canVote={userCanVote}
                                     onVote={() => handleVote(crypto.id, crypto.name)}
-                                    timeRemaining={!userCanVote ? getTimeRemaining() : null}
+                                    timeRemaining={timeRemaining}
                                     isMobile={true}
                                 />
                                 {!userCanVote && currentUser && (
                                     <div className={styles.timeRemaining}>
-                                        Next vote in: {getTimeRemaining().hours}h {getTimeRemaining().minutes}m
+                                        Next vote in: {timeRemaining.hours}h {timeRemaining.minutes}m
                                     </div>
                                 )}
                             </div>

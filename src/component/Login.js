@@ -22,18 +22,10 @@ const Login = () => {
             setError('');
             setLoading(true);
             await login(email, password);
-            navigate('/leaderboard');
+            navigate('/');
         } catch (error) {
             console.error('Login error:', error);
-            if (error.code === 'auth/user-not-found') {
-                setError('No account found with this email');
-            } else if (error.code === 'auth/wrong-password') {
-                setError('Incorrect password');
-            } else if (error.code === 'auth/invalid-email') {
-                setError('Invalid email address');
-            } else {
-                setError('Failed to log in. Please try again.');
-            }
+            setError(error.message || 'Failed to log in. Please try again.');
         } finally {
             setLoading(false);
         }

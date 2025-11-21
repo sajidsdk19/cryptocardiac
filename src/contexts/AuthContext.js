@@ -1,88 +1,82 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
-import {
-    createUserWithEmailAndPassword,
-    signInWithEmailAndPassword,
-    signOut,
-    onAuthStateChanged
-} from 'firebase/auth';
-import { auth } from '../firebase';
+import React, { useContext, useState, useEffect } from 'react';
 
-const AuthContext = createContext({});
+const AuthContext = React.createContext();
 
-export const useAuth = () => useContext(AuthContext);
+export function useAuth() {
+    return useContext(AuthContext);
+}
 
-// Dummy mode for testing without Firebase
-const DUMMY_MODE = true; // Set to false when Firebase is configured
-
-export const AuthProvider = ({ children }) => {
+export function AuthProvider({ children }) {
     const [currentUser, setCurrentUser] = useState(null);
     const [loading, setLoading] = useState(true);
 
-    // Dummy authentication functions
-    const dummySignup = (email, password) => {
-        return new Promise((resolve) => {
-            const dummyUser = {
-                email: email,
-                uid: 'dummy-user-' + Date.now()
-            };
-            localStorage.setItem('dummyUser', JSON.stringify(dummyUser));
-            setCurrentUser(dummyUser);
-            resolve(dummyUser);
+    const API_URL = `${process.env.REACT_APP_API_URL || 'http://localhost:5000/api'}/auth`;
+
+    async function signup(email, password) {
+        const response = await fetch(`${API_URL}/signup`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, password })
         });
-    };
 
-    const dummyLogin = (email, password) => {
-        return new Promise((resolve, reject) => {
-            // Check for admin credentials
-            if (email === 'admin@cryptocardiac.com' && password === 'admin') {
-                const dummyUser = {
-                    email: 'admin@cryptocardiac.com',
-                    uid: 'dummy-admin-user'
-                };
-                localStorage.setItem('dummyUser', JSON.stringify(dummyUser));
-                setCurrentUser(dummyUser);
-                resolve(dummyUser);
-            } else {
-                reject({ code: 'auth/wrong-password', message: 'Invalid credentials. Use admin/admin' });
-            }
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.error || 'Signup failed');
+
+        localStorage.setItem('token', data.token);
+        setCurrentUser(data.user);
+        return data;
+    }
+
+    async function login(email, password) {
+        const response = await fetch(`${API_URL}/login`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, password })
         });
-    };
 
-    const dummyLogout = () => {
-        return new Promise((resolve) => {
-            localStorage.removeItem('dummyUser');
-            setCurrentUser(null);
-            resolve();
-        });
-    };
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.error || 'Login failed');
 
-    const signup = DUMMY_MODE ? dummySignup : (email, password) => {
-        return createUserWithEmailAndPassword(auth, email, password);
-    };
+        localStorage.setItem('token', data.token);
+        setCurrentUser(data.user);
+        return data;
+    }
 
-    const login = DUMMY_MODE ? dummyLogin : (email, password) => {
-        return signInWithEmailAndPassword(auth, email, password);
-    };
-
-    const logout = DUMMY_MODE ? dummyLogout : () => {
-        return signOut(auth);
-    };
+    function logout() {
+        localStorage.removeItem('token');
+        setCurrentUser(null);
+    }
 
     useEffect(() => {
-        if (DUMMY_MODE) {
-            // Check for stored dummy user
-            const storedUser = localStorage.getItem('dummyUser');
-            if (storedUser) {
-                setCurrentUser(JSON.parse(storedUser));
-            }
-            setLoading(false);
-        } else {
-            const unsubscribe = onAuthStateChanged(auth, (user) => {
-                setCurrentUser(user);
+        const verifyToken = async () => {
+            const token = localStorage.getItem('token');
+            if (!token) {
                 setLoading(false);
-            });
-            return unsubscribe;
-        }
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_URL}/me`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    setCurrentUser(data.user);
+                } else {
+                    localStorage.removeItem('token');
+                    setCurrentUser(null);
+                }
+            } catch (error) {
+                console.error('Auth verification error:', error);
+                localStorage.removeItem('token');
+                setCurrentUser(null);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        verifyToken();
     }, []);
 
     const value = {
@@ -97,4 +91,4 @@ export const AuthProvider = ({ children }) => {
             {!loading && children}
         </AuthContext.Provider>
     );
-};
+}

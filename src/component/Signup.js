@@ -31,18 +31,10 @@ const Signup = () => {
             setError('');
             setLoading(true);
             await signup(email, password);
-            navigate('/leaderboard');
+            navigate('/');
         } catch (error) {
             console.error('Signup error:', error);
-            if (error.code === 'auth/email-already-in-use') {
-                setError('An account with this email already exists');
-            } else if (error.code === 'auth/invalid-email') {
-                setError('Invalid email address');
-            } else if (error.code === 'auth/weak-password') {
-                setError('Password is too weak');
-            } else {
-                setError('Failed to create account. Please try again.');
-            }
+            setError(error.message || 'Failed to create account. Please try again.');
         } finally {
             setLoading(false);
         }
