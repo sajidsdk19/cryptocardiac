@@ -15,6 +15,7 @@ const Leaderboard = () => {
     const { canVote, vote, getTimeRemaining, loading: votingLoading } = useVoting();
     const [cryptos, setCryptos] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [searchTerm, setSearchTerm] = useState('');
 
     useEffect(() => {
         const loadLeaderboard = async () => {
@@ -140,22 +141,37 @@ const Leaderboard = () => {
                     <p className={styles.leaderboardSubtitle}>
                         Vote for your favorite cryptocurrency • One vote every 24 hours
                     </p>
+
+                    <div className={styles.searchContainer}>
+                        <input
+                            type="text"
+                            placeholder="Search cryptocurrencies..."
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                            className={styles.searchInput}
+                        />
+                    </div>
                 </div>
 
                 <div className={styles.votingGrid}>
-                    {cryptos.map((crypto, index) => {
-                        const userCanVote = canVote(crypto.id);
-                        return (
-                            <VotingCard
-                                key={crypto.id}
-                                rank={index + 1}
-                                crypto={crypto}
-                                canVote={userCanVote}
-                                onVote={() => handleVote(crypto.id, crypto.name)}
-                                timeRemaining={!userCanVote ? getTimeRemaining() : null}
-                            />
-                        );
-                    })}
+                    {cryptos
+                        .filter(crypto =>
+                            crypto.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                            crypto.symbol.toLowerCase().includes(searchTerm.toLowerCase())
+                        )
+                        .map((crypto, index) => {
+                            const userCanVote = canVote(crypto.id);
+                            return (
+                                <VotingCard
+                                    key={crypto.id}
+                                    rank={index + 1}
+                                    crypto={crypto}
+                                    canVote={userCanVote}
+                                    onVote={() => handleVote(crypto.id, crypto.name)}
+                                    timeRemaining={!userCanVote ? getTimeRemaining() : null}
+                                />
+                            );
+                        })}
                 </div>
             </div>
         </>

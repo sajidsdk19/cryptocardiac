@@ -25,6 +25,36 @@
     font-size: 1.1rem;
 }
 
+.searchContainer {
+    margin-top: 24px;
+    max-width: 500px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.searchInput {
+    width: 100%;
+    padding: 14px 20px;
+    border-radius: 12px;
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+    color: #fff;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+}
+
+.searchInput::placeholder {
+    color: rgba(255, 255, 255, 0.5);
+}
+
+.searchInput:focus {
+    outline: none;
+    border-color: rgba(139, 92, 246, 0.5);
+    background: rgba(255, 255, 255, 0.1);
+    box-shadow: 0 0 20px rgba(139, 92, 246, 0.2);
+}
+
 .votingGrid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
@@ -209,5 +239,10 @@
 
     .votingGrid {
         grid-template-columns: 1fr;
+    }
+
+    .searchInput {
+        font-size: 0.95rem;
+        padding: 12px 16px;
     }
 }
