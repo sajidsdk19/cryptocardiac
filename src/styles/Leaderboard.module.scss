@@ -55,108 +55,172 @@
     box-shadow: 0 0 20px rgba(139, 92, 246, 0.2);
 }
 
-.votingGrid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: 24px;
+/* Table Styles (Desktop) */
+.tableContainer {
     max-width: 1400px;
     margin: 0 auto;
-}
-
-.votingCard {
-    background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
-    backdrop-filter: blur(10px);
+    overflow-x: auto;
+    background: rgba(255, 255, 255, 0.02);
     border-radius: 16px;
-    padding: 24px;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    transition: all 0.3s ease;
-    position: relative;
-    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.05);
 }
 
-.votingCard:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 10px 30px rgba(139, 92, 246, 0.3);
-    border-color: rgba(139, 92, 246, 0.5);
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 1000px;
 }
 
-.rankBadge {
-    position: absolute;
-    top: 16px;
-    right: 16px;
-    background: linear-gradient(135deg, #8B5CF6 0%, #6366F1 100%);
+.thead {
+    background: rgba(0, 0, 0, 0.2);
+}
+
+.th {
+    padding: 20px;
+    text-align: left;
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.tr {
+    transition: background 0.2s ease;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.tr:last-child {
+    border-bottom: none;
+}
+
+.tr:hover {
+    background: rgba(255, 255, 255, 0.03);
+}
+
+.td {
+    padding: 20px;
     color: #fff;
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: 700;
-    font-size: 1.1rem;
-    box-shadow: 0 4px 10px rgba(139, 92, 246, 0.4);
+    vertical-align: middle;
 }
 
-.coinInfo {
+.rank {
+    color: rgba(255, 255, 255, 0.5);
+    font-weight: 600;
+}
+
+.coinCell {
     display: flex;
     align-items: center;
-    gap: 16px;
-    margin-bottom: 20px;
+    gap: 12px;
 }
 
 .coinImage {
-    width: 60px;
-    height: 60px;
+    width: 32px;
+    height: 32px;
     border-radius: 50%;
-    border: 2px solid rgba(139, 92, 246, 0.3);
-}
-
-.coinDetails {
-    flex: 1;
 }
 
 .coinName {
+    font-weight: 600;
     color: #fff;
-    font-size: 1.3rem;
-    font-weight: 700;
-    margin-bottom: 4px;
 }
 
 .coinSymbol {
-    color: rgba(255, 255, 255, 0.6);
+    color: rgba(255, 255, 255, 0.5);
     font-size: 0.9rem;
     text-transform: uppercase;
 }
 
-.voteStats {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 20px;
-    padding: 12px;
-    background: rgba(139, 92, 246, 0.1);
-    border-radius: 10px;
+.statValue {
+    font-weight: 500;
+    color: #fff;
+}
+
+.statLabel {
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.5);
 }
 
 .voteCount {
-    color: #fff;
-    font-size: 1.1rem;
-    font-weight: 600;
+    font-weight: 700;
+    color: #CE34EA;
 }
 
-.voteLabel {
-    color: rgba(255, 255, 255, 0.6);
+/* Mobile List Styles */
+.mobileList {
+    display: none;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.mobileCard {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    padding: 16px;
+}
+
+.mobileCardHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+.mobileRank {
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.5);
+    margin-right: 12px;
+}
+
+.mobilePrice {
+    text-align: right;
+}
+
+.mobilePriceValue {
+    font-weight: 600;
+    color: #fff;
+    display: block;
+}
+
+.mobilePriceChange {
     font-size: 0.85rem;
 }
 
+.positiveChange {
+    color: #00C853;
+}
+
+.negativeChange {
+    color: #FF3D00;
+}
+
+.mobileStatsGrid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 16px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.mobileStat {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+/* Vote Button Styles */
 .voteButton {
     width: 100%;
-    padding: 14px;
-    border-radius: 10px;
+    padding: 10px 20px;
+    border-radius: 8px;
     border: none;
-    background: linear-gradient(135deg, #8B5CF6 0%, #6366F1 100%);
+    background: linear-gradient(135deg, #5700F9 0%, #CE34EA 100%);
     color: #fff;
-    font-size: 1rem;
+    font-size: 0.9rem;
     font-weight: 600;
     cursor: pointer;
     transition: all 0.3s ease;
@@ -164,28 +228,47 @@
     align-items: center;
     justify-content: center;
     gap: 8px;
+    min-width: 120px;
 }
 
 .voteButton:hover:not(:disabled) {
     transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(139, 92, 246, 0.4);
+    box-shadow: 0 4px 12px rgba(87, 0, 249, 0.3);
 }
 
 .voteButton:disabled {
-    opacity: 0.5;
+    opacity: 0.6;
     cursor: not-allowed;
-    transform: none;
+    background: rgba(255, 255, 255, 0.1);
 }
 
-.voteButton:active:not(:disabled) {
-    transform: scale(0.98);
+.mobileVoteButton {
+    padding: 12px;
+    font-size: 1rem;
 }
 
 .timeRemaining {
-    color: rgba(255, 255, 255, 0.7);
-    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 0.8rem;
     text-align: center;
-    margin-top: 8px;
+    margin-top: 4px;
+}
+
+/* Responsive Visibility */
+@media (max-width: 1024px) {
+    .tableContainer {
+        display: none;
+    }
+
+    .mobileList {
+        display: flex;
+    }
+}
+
+@media (min-width: 1025px) {
+    .mobileList {
+        display: none;
+    }
 }
 
 .loginPrompt {
@@ -230,19 +313,4 @@
     color: #fff;
     padding: 60px 20px;
     font-size: 1.2rem;
-}
-
-@media (max-width: 768px) {
-    .leaderboardTitle {
-        font-size: 2rem;
-    }
-
-    .votingGrid {
-        grid-template-columns: 1fr;
-    }
-
-    .searchInput {
-        font-size: 0.95rem;
-        padding: 12px 16px;
-    }
 }
