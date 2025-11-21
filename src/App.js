@@ -3,6 +3,10 @@ import React, { useState, createContext, useEffect } from "react";
 import { Routes, Route, useParams, useNavigate } from "react-router-dom";
 import CurrencyData from "section/CurrencyData";
 import Capitalization from "section/Capitalization";
+import Login from "component/Login";
+import Signup from "component/Signup";
+import Leaderboard from "pages/Leaderboard";
+import { AuthProvider } from "contexts/AuthContext";
 import styles from "./Styles.module.scss";
 
 export const AppContext = createContext();
@@ -57,12 +61,18 @@ function CoinPage() {
 
 function App() {
   return (
-    <Routes>
-      <Route path="/" element={<CoinPage />} />
-      <Route path="/:coinId" element={<CoinPage />} />
-    </Routes>
+    <AuthProvider>
+      <Routes>
+        <Route path="/" element={<CoinPage />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/signup" element={<Signup />} />
+        <Route path="/leaderboard" element={<Leaderboard />} />
+        <Route path="/:coinId" element={<CoinPage />} />
+      </Routes>
+    </AuthProvider>
   );
 }
 
 export default App;
+
 

@@ -1,0 +1,213 @@
+.leaderboardContainer {
+    min-height: 100vh;
+    background: rgb(21, 21, 32);
+    padding: 40px 20px;
+}
+
+.leaderboardHeader {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.leaderboardTitle {
+    color: #fff;
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 10px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.leaderboardSubtitle {
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 1.1rem;
+}
+
+.votingGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 24px;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.votingCard {
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+    backdrop-filter: blur(10px);
+    border-radius: 16px;
+    padding: 24px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.votingCard:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(139, 92, 246, 0.3);
+    border-color: rgba(139, 92, 246, 0.5);
+}
+
+.rankBadge {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    background: linear-gradient(135deg, #8B5CF6 0%, #6366F1 100%);
+    color: #fff;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 1.1rem;
+    box-shadow: 0 4px 10px rgba(139, 92, 246, 0.4);
+}
+
+.coinInfo {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 20px;
+}
+
+.coinImage {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    border: 2px solid rgba(139, 92, 246, 0.3);
+}
+
+.coinDetails {
+    flex: 1;
+}
+
+.coinName {
+    color: #fff;
+    font-size: 1.3rem;
+    font-weight: 700;
+    margin-bottom: 4px;
+}
+
+.coinSymbol {
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 0.9rem;
+    text-transform: uppercase;
+}
+
+.voteStats {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding: 12px;
+    background: rgba(139, 92, 246, 0.1);
+    border-radius: 10px;
+}
+
+.voteCount {
+    color: #fff;
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+.voteLabel {
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 0.85rem;
+}
+
+.voteButton {
+    width: 100%;
+    padding: 14px;
+    border-radius: 10px;
+    border: none;
+    background: linear-gradient(135deg, #8B5CF6 0%, #6366F1 100%);
+    color: #fff;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.voteButton:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(139, 92, 246, 0.4);
+}
+
+.voteButton:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.voteButton:active:not(:disabled) {
+    transform: scale(0.98);
+}
+
+.timeRemaining {
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 0.85rem;
+    text-align: center;
+    margin-top: 8px;
+}
+
+.loginPrompt {
+    text-align: center;
+    color: rgba(255, 255, 255, 0.8);
+    padding: 60px 20px;
+    max-width: 500px;
+    margin: 0 auto;
+}
+
+.loginPromptTitle {
+    color: #fff;
+    font-size: 1.8rem;
+    font-weight: 700;
+    margin-bottom: 16px;
+}
+
+.loginPromptText {
+    margin-bottom: 24px;
+    font-size: 1.1rem;
+}
+
+.loginPromptButton {
+    padding: 14px 32px;
+    border-radius: 10px;
+    border: none;
+    background: linear-gradient(135deg, #8B5CF6 0%, #6366F1 100%);
+    color: #fff;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.loginPromptButton:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(139, 92, 246, 0.4);
+}
+
+.loading {
+    text-align: center;
+    color: #fff;
+    padding: 60px 20px;
+    font-size: 1.2rem;
+}
+
+@media (max-width: 768px) {
+    .leaderboardTitle {
+        font-size: 2rem;
+    }
+
+    .votingGrid {
+        grid-template-columns: 1fr;
+    }
+}
