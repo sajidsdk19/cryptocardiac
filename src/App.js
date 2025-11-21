@@ -65,11 +65,12 @@ function App() {
   return (
     <AuthProvider>
       <Routes>
-        <Route path="/" element={<CoinPage />} />
+        <Route path="/" element={<Leaderboard />} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
-        <Route path="/leaderboard" element={<Leaderboard />} />
-        <Route path="/:coinId" element={<CoinPage />} />
+        <Route path="/coins" element={<CoinPage />} />
+        <Route path="/coins/:coinId" element={<CoinPage />} />
+        <Route path="/:coinId" element={<CoinPage />} /> {/* Keep for backward compatibility if needed, or remove */}
       </Routes>
     </AuthProvider>
   );

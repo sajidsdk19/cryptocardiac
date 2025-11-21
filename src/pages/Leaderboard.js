@@ -100,26 +100,7 @@ const Leaderboard = () => {
         }
     };
 
-    if (!currentUser) {
-        return (
-            <>
-                <Navbar />
-                <div className={styles.leaderboardContainer}>
-                    <div className={styles.loginPrompt}>
-                        <h2 className={styles.loginPromptTitle}>Join the Community</h2>
-                        <p className={styles.loginPromptText}>
-                            Sign in to vote for your favorite cryptocurrencies and see the community rankings!
-                        </p>
-                        <Link to="/login">
-                            <button className={styles.loginPromptButton}>
-                                Log In to Vote
-                            </button>
-                        </Link>
-                    </div>
-                </div>
-            </>
-        );
-    }
+
 
     if (loading || votingLoading) {
         return (

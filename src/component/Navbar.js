@@ -21,7 +21,7 @@ const Navbar = () => {
 
     const navLinks = [
         { title: 'Home', path: '/' },
-        { title: 'Leaderboard', path: '/leaderboard' },
+        { title: 'Coins', path: '/coins' },
     ];
 
     return (

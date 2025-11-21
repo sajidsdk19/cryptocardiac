@@ -1,13 +1,22 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { Favorite, FavoriteBorder, AccessTime } from '@mui/icons-material';
+import { Link, useNavigate } from 'react-router-dom';
+import { Favorite, FavoriteBorder, AccessTime, Login } from '@mui/icons-material';
+import { useAuth } from '../contexts/AuthContext';
 import styles from '../styles/Leaderboard.module.scss';
 
 const VotingCard = ({ rank, crypto, canVote, onVote, timeRemaining }) => {
     const [voting, setVoting] = useState(false);
+    const { currentUser } = useAuth();
+    const navigate = useNavigate();
 
     const handleVote = async (e) => {
         e.preventDefault(); // Prevent navigation when clicking vote button
+
+        if (!currentUser) {
+            navigate('/login');
+            return;
+        }
+
         setVoting(true);
         try {
             await onVote();
@@ -29,7 +38,7 @@ const VotingCard = ({ rank, crypto, canVote, onVote, timeRemaining }) => {
         <div className={styles.votingCard}>
             <div className={styles.rankBadge}>#{rank}</div>
 
-            <Link to={`/${crypto.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+            <Link to={`/coins/${crypto.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
                 <div className={styles.coinInfo}>
                     <img
                         src={crypto.image}
@@ -56,9 +65,13 @@ const VotingCard = ({ rank, crypto, canVote, onVote, timeRemaining }) => {
             <button
                 className={styles.voteButton}
                 onClick={handleVote}
-                disabled={!canVote || voting}
+                disabled={currentUser && (!canVote || voting)}
             >
-                {voting ? (
+                {!currentUser ? (
+                    <>
+                        <Login /> Sign in to Vote
+                    </>
+                ) : voting ? (
                     <>Voting...</>
                 ) : canVote ? (
                     <>
@@ -71,7 +84,7 @@ const VotingCard = ({ rank, crypto, canVote, onVote, timeRemaining }) => {
                 )}
             </button>
 
-            {!canVote && timeRemaining && (
+            {currentUser && !canVote && timeRemaining && (
                 <div className={styles.timeRemaining}>
                     {formatTimeRemaining()}
                 </div>
