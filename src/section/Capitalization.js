@@ -20,20 +20,20 @@ const SelectBox = styled('select')({
   fontWeight: 700,
   fontSize: ".8rem",
   "&::-webkit-scrollbar": {
-    width: "3.9px" 
+    width: "3.9px"
   },
   "&::-webkit-scrollbar-track": {
     background: "rgb(43 43 64 / 61%)",
   },
   "&::-webkit-scrollbar-thumb": {
-  backgroundColor: "rgb(108 108 120)",
-  borderRadius: "20px",
-  height: "100%"
+    backgroundColor: "rgb(108 108 120)",
+    borderRadius: "20px",
+    height: "100%"
   }
 })
 
 const Capitalization = () => {
-  const {currency, vsCurrency, setVsCurrency, showCapSide, setShowCapSide} = useContext(AppContext);
+  const { currency, vsCurrency, setVsCurrency, showCapSide, setShowCapSide } = useContext(AppContext);
 
   const [currencies, setCurrencies] = useState([]);
   const [searchInput, setSearchInput] = useState("");
@@ -69,14 +69,14 @@ const Capitalization = () => {
   }, [vsCurrency]);
 
   useEffect(() => {
-    
-    if(ignoreMount.current) {
-      if(searchInput.length !== 0) {
-        clearTimeout( timeOut.current );
-        timeOut.current = setTimeout(async() => {
-        const data = await search(searchInput);
-        setSearched(data.coins)
-      }, 3000);
+
+    if (ignoreMount.current) {
+      if (searchInput.length !== 0) {
+        clearTimeout(timeOut.current);
+        timeOut.current = setTimeout(async () => {
+          const data = await search(searchInput);
+          setSearched(data.coins)
+        }, 3000);
       } else {
         setSearched([]);
       }
@@ -90,24 +90,24 @@ const Capitalization = () => {
   }
 
   return (
-    <Box 
+    <Box
       className={`${styles.capitalization} ${showCapSide ? styles.showCap : ""}`}
       sx={{
-      p: 3,
-      height: "100%",
-      position: "relative",
-      display: "flex",
-      flexDirection: "column",
-      "&::before": {
-        position: "absolute",
-        content: `''`,
-        left: 0,
-        top: 0,
+        p: 3,
         height: "100%",
-        width: "1px",
-        bgcolor: "rgb(255 255 255 / 10%);"
-      },
-    }} >
+        position: "relative",
+        display: "flex",
+        flexDirection: "column",
+        "&::before": {
+          position: "absolute",
+          content: `''`,
+          left: 0,
+          top: 0,
+          height: "100%",
+          width: "1px",
+          bgcolor: "rgb(255 255 255 / 10%);"
+        },
+      }} >
       <Box sx={{
         display: "flex",
         alignItems: "center",
@@ -116,8 +116,8 @@ const Capitalization = () => {
         overflow: "clip",
         mb: 3
       }}>
-        <Typography 
-          variant='h6' 
+        <Typography
+          variant='h6'
           component='h2'
           sx={{
             color: "#dfdfdf",
@@ -125,7 +125,7 @@ const Capitalization = () => {
             fontSize: "1.1rem",
             letterSpacing: "0.4px"
           }} >
-          Capitalization
+          Top Coins
         </Typography>
         <Box sx={{
           display: "flex",
@@ -198,7 +198,7 @@ const Capitalization = () => {
           display: "flex",
           alignItems: "center"
         }}>
-          <Box 
+          <Box
             component={"input"}
             value={searchInput}
             onChange={handleChange}
@@ -214,54 +214,54 @@ const Capitalization = () => {
               color: "#dfdfdf"
             }}
           />
-          <HighlightOffOutlined ref={closeSearchDivIcon} onClick={revealInput} sx={{position: "absolute", right: 8, fontSize: "1.1rem", color: "#dfdfdf", cursor: "pointer"}} />
+          <HighlightOffOutlined ref={closeSearchDivIcon} onClick={revealInput} sx={{ position: "absolute", right: 8, fontSize: "1.1rem", color: "#dfdfdf", cursor: "pointer" }} />
         </Box>
       </Box>
       {
         (currencies.length) === 0 ?
-        <Loading  /> :
-        <Box sx={{position: "relative", width: "100%", height: "100%"}}>
-          <Box sx={{
-            overflowY: "auto",
-            position: "absolute",
-            height: "100%",
-            width: "100%",
-            "&::-webkit-scrollbar": {
-              width: "3.9px" 
-            },
-            "&::-webkit-scrollbar-track": {
-              background: "rgb(43 43 64 / 61%)",
-            },
-            "&::-webkit-scrollbar-thumb": {
-            backgroundColor: "rgb(108 108 120)",
-            borderRadius: "20px"
-            }
-          }}>
-            {
-              searched.length !== 0 ?
-              searched.map(coin => 
-                <SearchedCoin
-                  key={coin.id}
-                  name={coin.name}
-                  image={coin.large}
-                  id={coin.id}
-                  pickedCurrency={currency}
-                />
-              )
-            :
-            currencies.map((coin) => 
-              <Currencies
-                key={coin.name}
-                name={coin.name} 
-                image={coin.image} 
-                currentPrice={coin.current_price}
-                marketCap={coin.market_cap}
-                id={coin.id}
-                pickedCurrency={currency}
-                />
-            )}
+          <Loading /> :
+          <Box sx={{ position: "relative", width: "100%", height: "100%" }}>
+            <Box sx={{
+              overflowY: "auto",
+              position: "absolute",
+              height: "100%",
+              width: "100%",
+              "&::-webkit-scrollbar": {
+                width: "3.9px"
+              },
+              "&::-webkit-scrollbar-track": {
+                background: "rgb(43 43 64 / 61%)",
+              },
+              "&::-webkit-scrollbar-thumb": {
+                backgroundColor: "rgb(108 108 120)",
+                borderRadius: "20px"
+              }
+            }}>
+              {
+                searched.length !== 0 ?
+                  searched.map(coin =>
+                    <SearchedCoin
+                      key={coin.id}
+                      name={coin.name}
+                      image={coin.large}
+                      id={coin.id}
+                      pickedCurrency={currency}
+                    />
+                  )
+                  :
+                  currencies.map((coin) =>
+                    <Currencies
+                      key={coin.name}
+                      name={coin.name}
+                      image={coin.image}
+                      currentPrice={coin.current_price}
+                      marketCap={coin.market_cap}
+                      id={coin.id}
+                      pickedCurrency={currency}
+                    />
+                  )}
+            </Box>
           </Box>
-        </Box>
       }
     </Box>
   );
