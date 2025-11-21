@@ -1,12 +1,14 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-import { Box, Typography, Button } from '@mui/material';
+import { Box, Typography, Button, useMediaQuery, useTheme } from '@mui/material';
 import { Favorite, ExitToApp } from '@mui/icons-material';
 
 const Navbar = () => {
     const { currentUser, logout } = useAuth();
     const navigate = useNavigate();
+    const theme = useTheme();
+    const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
     const handleLogout = async () => {
         try {
@@ -17,17 +19,31 @@ const Navbar = () => {
         }
     };
 
+    const navLinks = [
+        { title: 'Home', path: '/' },
+        { title: 'Leaderboard', path: '/leaderboard' },
+    ];
+
     return (
         <Box sx={{
-            background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-            padding: '15px 30px',
+            background: 'linear-gradient(135deg, #5700F9 0%, #CE34EA 100%)',
+            padding: isMobile ? '15px 10px' : '15px 30px',
             display: 'flex',
+            flexDirection: isMobile ? 'column' : 'row',
             justifyContent: 'space-between',
             alignItems: 'center',
-            boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)'
+            boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
+            position: 'relative',
+            zIndex: 1000,
+            gap: isMobile ? 2 : 0
         }}>
-            <Link to="/" style={{ textDecoration: 'none' }}>
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+            <Link to="/" style={{ textDecoration: 'none', width: isMobile ? '100%' : 'auto' }}>
+                <Box sx={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 1,
+                    justifyContent: isMobile ? 'center' : 'flex-start'
+                }}>
                     <Favorite sx={{ color: '#fff', fontSize: '2rem' }} />
                     <Typography variant="h5" sx={{ color: '#fff', fontWeight: 700 }}>
                         CryptoCardiac
@@ -35,43 +51,45 @@ const Navbar = () => {
                 </Box>
             </Link>
 
-            <Box sx={{ display: 'flex', gap: 2, alignItems: 'center' }}>
-                <Link to="/" style={{ textDecoration: 'none' }}>
-                    <Button sx={{
-                        color: '#fff',
-                        fontWeight: 600,
-                        '&:hover': {
-                            background: 'rgba(255, 255, 255, 0.1)'
-                        }
-                    }}>
-                        Home
-                    </Button>
-                </Link>
-
-                <Link to="/leaderboard" style={{ textDecoration: 'none' }}>
-                    <Button sx={{
-                        color: '#fff',
-                        fontWeight: 600,
-                        '&:hover': {
-                            background: 'rgba(255, 255, 255, 0.1)'
-                        }
-                    }}>
-                        Leaderboard
-                    </Button>
-                </Link>
+            <Box sx={{
+                display: 'flex',
+                gap: 1,
+                alignItems: 'center',
+                flexWrap: 'wrap',
+                justifyContent: isMobile ? 'center' : 'flex-end',
+                width: isMobile ? '100%' : 'auto'
+            }}>
+                {navLinks.map((link) => (
+                    <Link key={link.title} to={link.path} style={{ textDecoration: 'none' }}>
+                        <Button sx={{
+                            color: '#fff',
+                            fontWeight: 600,
+                            fontSize: isMobile ? '0.8rem' : '0.875rem',
+                            minWidth: isMobile ? 'auto' : '64px',
+                            padding: isMobile ? '6px 10px' : '6px 16px',
+                            '&:hover': { background: 'rgba(255, 255, 255, 0.1)' }
+                        }}>
+                            {link.title}
+                        </Button>
+                    </Link>
+                ))}
 
                 {currentUser ? (
-                    <Box sx={{ display: 'flex', gap: 2, alignItems: 'center' }}>
-                        <Typography sx={{ color: '#fff', fontSize: '0.9rem' }}>
-                            {currentUser.email}
-                        </Typography>
+                    <Box sx={{ display: 'flex', gap: 1, alignItems: 'center', ml: isMobile ? 0 : 2 }}>
+                        {!isMobile && (
+                            <Typography sx={{ color: '#fff', fontSize: '0.9rem' }}>
+                                {currentUser.email}
+                            </Typography>
+                        )}
                         <Button
                             onClick={handleLogout}
-                            startIcon={<ExitToApp />}
+                            startIcon={!isMobile && <ExitToApp />}
                             sx={{
                                 color: '#fff',
                                 border: '1px solid rgba(255, 255, 255, 0.3)',
                                 fontWeight: 600,
+                                fontSize: isMobile ? '0.8rem' : '0.875rem',
+                                padding: isMobile ? '6px 10px' : '6px 16px',
                                 '&:hover': {
                                     background: 'rgba(255, 255, 255, 0.1)',
                                     borderColor: '#fff'
@@ -82,12 +100,14 @@ const Navbar = () => {
                         </Button>
                     </Box>
                 ) : (
-                    <Box sx={{ display: 'flex', gap: 1 }}>
+                    <Box sx={{ display: 'flex', gap: 1, ml: isMobile ? 0 : 2 }}>
                         <Link to="/login" style={{ textDecoration: 'none' }}>
                             <Button sx={{
                                 color: '#fff',
                                 border: '1px solid rgba(255, 255, 255, 0.3)',
                                 fontWeight: 600,
+                                fontSize: isMobile ? '0.8rem' : '0.875rem',
+                                padding: isMobile ? '6px 10px' : '6px 16px',
                                 '&:hover': {
                                     background: 'rgba(255, 255, 255, 0.1)',
                                     borderColor: '#fff'
@@ -99,8 +119,10 @@ const Navbar = () => {
                         <Link to="/signup" style={{ textDecoration: 'none' }}>
                             <Button sx={{
                                 background: '#fff',
-                                color: '#764ba2',
+                                color: '#5700F9',
                                 fontWeight: 600,
+                                fontSize: isMobile ? '0.8rem' : '0.875rem',
+                                padding: isMobile ? '6px 10px' : '6px 16px',
                                 '&:hover': {
                                     background: 'rgba(255, 255, 255, 0.9)'
                                 }
