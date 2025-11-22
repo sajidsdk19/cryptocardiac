@@ -77,7 +77,7 @@ export function AuthProvider({ children }) {
         };
 
         verifyToken();
-    }, [API_URL]);
+    }, []);
 
     const value = {
         currentUser,
