@@ -93,29 +93,6 @@ app.get('/api/auth/me', authenticateToken, (req, res) => {
     res.json({ user: req.user });
 });
 
-// --- Health Check Route ---
-
-// Health check endpoint to verify database connectivity
-app.get('/api/health', async (req, res) => {
-    try {
-        // Try to execute a simple query to check database connection
-        await db.query('SELECT 1');
-        res.json({
-            status: 'ok',
-            database: 'connected',
-            message: 'MySQL server is running and connected'
-        });
-    } catch (error) {
-        console.error('Database health check failed:', error);
-        res.status(503).json({
-            status: 'error',
-            database: 'disconnected',
-            message: 'MySQL server not running or not connected',
-            error: error.code || 'UNKNOWN_ERROR'
-        });
-    }
-});
-
 // --- Voting Routes ---
 
 // Get all vote counts

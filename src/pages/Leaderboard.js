@@ -1,11 +1,10 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { useVoting } from '../hooks/useVoting';
 import { getAllCurrencies } from '../component/api';
 import VoteButton from '../component/VoteButton';
 import Navbar from '../component/Navbar';
-import DatabaseStatusModal from '../components/DatabaseStatusModal';
 import styles from '../styles/Leaderboard.module.scss';
 
 const Leaderboard = () => {
@@ -15,55 +14,16 @@ const Leaderboard = () => {
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
     const [userVoteStatus, setUserVoteStatus] = useState({}); // { coinId: { canVote: boolean, remainingMs: number } }
-    const [dbConnected, setDbConnected] = useState(true);
-    const [showDbModal, setShowDbModal] = useState(false);
-    const checkIntervalRef = useRef(null);
-
-    // Check database connection
-    const checkDatabaseConnection = async () => {
-        try {
-            const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
-            const response = await fetch(`${API_URL}/health`);
-            const data = await response.json();
-
-            if (data.status === 'ok' && data.database === 'connected') {
-                return true;
-            }
-            return false;
-        } catch (error) {
-            console.error('Database connection check failed:', error);
-            return false;
-        }
-    };
 
     useEffect(() => {
         const loadLeaderboard = async () => {
             try {
-                // 1. Check database connection first
-                const isDbConnected = await checkDatabaseConnection();
-
-                if (!isDbConnected) {
-                    setDbConnected(false);
-                    setShowDbModal(true);
-                    setLoading(false);
-                    return;
-                }
-
-                // Database is connected
-                setDbConnected(true);
-                setShowDbModal(false);
-
-                // 2. Get all cryptocurrencies from CoinGecko
+                // 1. Get all cryptocurrencies from CoinGecko
                 const allCryptos = await getAllCurrencies('usd');
 
-                // 3. Get vote counts from our backend
+                // 2. Get vote counts from our backend
                 const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
                 const response = await fetch(`${API_URL}/votes`);
-
-                if (!response.ok) {
-                    throw new Error('Failed to fetch votes');
-                }
-
                 const voteCounts = await response.json();
 
                 // 3. Merge data
@@ -95,12 +55,6 @@ const Leaderboard = () => {
 
             } catch (error) {
                 console.error('Error loading leaderboard:', error);
-                // Check if it's a database connection error
-                const isDbConnected = await checkDatabaseConnection();
-                if (!isDbConnected) {
-                    setDbConnected(false);
-                    setShowDbModal(true);
-                }
             } finally {
                 setLoading(false);
             }
@@ -108,67 +62,6 @@ const Leaderboard = () => {
 
         loadLeaderboard();
     }, [currentUser]); // Reload if user changes (login/logout)
-
-    // Periodic database connection check when disconnected
-    useEffect(() => {
-        if (!dbConnected) {
-            // Start checking every 3 seconds
-            checkIntervalRef.current = setInterval(async () => {
-                const isConnected = await checkDatabaseConnection();
-                if (isConnected) {
-                    setDbConnected(true);
-                    setShowDbModal(false);
-                    setLoading(true);
-
-                    // Reload leaderboard data
-                    try {
-                        const allCryptos = await getAllCurrencies('usd');
-                        const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
-                        const response = await fetch(`${API_URL}/votes`);
-                        const voteCounts = await response.json();
-
-                        const cryptosWithVotes = allCryptos.slice(0, 50).map(crypto => ({
-                            ...crypto,
-                            votes: voteCounts[crypto.id] || 0
-                        }));
-
-                        cryptosWithVotes.sort((a, b) => b.votes - a.votes);
-                        setCryptos(cryptosWithVotes);
-
-                        if (currentUser) {
-                            const globalStatus = await checkGlobalVoteStatus();
-                            const statusMap = {};
-                            cryptosWithVotes.forEach(c => {
-                                statusMap[c.id] = {
-                                    canVote: globalStatus.canVote,
-                                    remainingMs: globalStatus.remainingMs
-                                };
-                            });
-                            setUserVoteStatus(statusMap);
-                        }
-                    } catch (error) {
-                        console.error('Error reloading after reconnection:', error);
-                    } finally {
-                        setLoading(false);
-                    }
-
-                    // Clear interval once connected
-                    if (checkIntervalRef.current) {
-                        clearInterval(checkIntervalRef.current);
-                        checkIntervalRef.current = null;
-                    }
-                }
-            }, 3000); // Check every 3 seconds
-        }
-
-        // Cleanup interval on unmount or when connected
-        return () => {
-            if (checkIntervalRef.current) {
-                clearInterval(checkIntervalRef.current);
-                checkIntervalRef.current = null;
-            }
-        };
-    }, [dbConnected, currentUser, checkGlobalVoteStatus]);
 
     const handleVote = async (coinId, coinName) => {
         try {
@@ -257,7 +150,6 @@ const Leaderboard = () => {
 
     return (
         <>
-            <DatabaseStatusModal isOpen={showDbModal} />
             <Navbar />
             <div className={styles.leaderboardContainer}>
                 <div className={styles.heroSection}>
