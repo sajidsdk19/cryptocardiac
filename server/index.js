@@ -110,35 +110,54 @@ app.get('/api/votes', async (req, res) => {
     }
 });
 
-// Check user's global voting status
+// Check user's per-coin voting status
 app.get('/api/votes/status', authenticateToken, async (req, res) => {
     const userId = req.user.id;
 
     try {
-        // Check for ANY vote by this user in the last 24h
+        // Get all votes by this user in the last 24 hours
         const [rows] = await db.query(
-            'SELECT created_at, coin_id FROM votes WHERE user_id = ? ORDER BY created_at DESC LIMIT 1',
+            'SELECT coin_id, created_at FROM votes WHERE user_id = ? AND created_at >= NOW() - INTERVAL 1 DAY',
             [userId]
         );
 
-        console.log(`Checking status for user ${userId}. Found ${rows.length} votes.`);
+        console.log(`Checking status for user ${userId}. Found ${rows.length} recent votes.`);
 
-        if (rows.length === 0) {
-            console.log(`User ${userId} can vote (new user/no recent votes).`);
-            return res.json({ canVote: true });
-        }
+        // Return list of coins the user has voted for in the last 24h
+        const votedCoins = rows.map(row => ({
+            coinId: row.coin_id,
+            votedAt: row.created_at
+        }));
 
-        const lastVoteTime = new Date(rows[0].created_at);
-        const now = new Date();
-        const diffMs = now - lastVoteTime;
-        const diffHours = diffMs / (1000 * 60 * 60);
+        res.json({ votedCoins });
+    } catch (error) {
+        console.error('Check vote status error:', error);
+        res.status(500).json({ error: 'Server error' });
+    }
+});
 
-        if (diffHours < 24) {
+// Check if user can vote for a specific coin (24h restriction per coin)
+app.get('/api/votes/check/:coinId', authenticateToken, async (req, res) => {
+    const userId = req.user.id;
+    const { coinId } = req.params;
+
+    try {
+        // Check for vote on THIS specific coin in the last 24h
+        const [rows] = await db.query(
+            'SELECT created_at FROM votes WHERE user_id = ? AND coin_id = ? AND created_at >= NOW() - INTERVAL 1 DAY',
+            [userId, coinId]
+        );
+
+        if (rows.length > 0) {
+            const lastVoteTime = new Date(rows[0].created_at);
+            const now = new Date();
+            const diffMs = now - lastVoteTime;
             const remainingMs = (24 * 60 * 60 * 1000) - diffMs;
+
             return res.json({
                 canVote: false,
                 remainingMs,
-                votedCoinId: rows[0].coin_id
+                lastVoteTime: lastVoteTime
             });
         }
 
@@ -149,34 +168,27 @@ app.get('/api/votes/status', authenticateToken, async (req, res) => {
     }
 });
 
-// Check if user can vote (24h restriction - GLOBAL) - Deprecated but kept for backward compatibility if needed
-app.get('/api/votes/check/:coinId', authenticateToken, async (req, res) => {
-    // Redirect logic to the new handler or just reuse the logic
-    // For now, we'll just call the same logic internally or let the frontend switch to the new one
-    // We can remove this if we update the frontend completely
-    res.redirect('/api/votes/status');
-});
-
 // Cast a vote
 app.post('/api/votes', authenticateToken, async (req, res) => {
     const { coinId, coinName } = req.body;
     const userId = req.user.id;
 
     try {
-        // Check restriction again (GLOBAL)
+        // Check restriction for THIS specific coin (per-coin restriction)
         const [rows] = await db.query(
-            'SELECT created_at FROM votes WHERE user_id = ? ORDER BY created_at DESC LIMIT 1',
-            [userId]
+            'SELECT created_at FROM votes WHERE user_id = ? AND coin_id = ? AND created_at >= NOW() - INTERVAL 1 DAY',
+            [userId, coinId]
         );
 
         if (rows.length > 0) {
             const lastVoteTime = new Date(rows[0].created_at);
             const now = new Date();
-            const diffHours = (now - lastVoteTime) / (1000 * 60 * 60);
+            const diffMs = now - lastVoteTime;
+            const remainingHours = Math.ceil((24 * 60 * 60 * 1000 - diffMs) / (1000 * 60 * 60));
 
-            if (diffHours < 24) {
-                return res.status(400).json({ error: 'You can only vote once every 24 hours.' });
-            }
+            return res.status(400).json({
+                error: `You already voted for ${coinName}. You can vote again in ${remainingHours} hour${remainingHours !== 1 ? 's' : ''}.`
+            });
         }
 
         await db.query(

@@ -36,18 +36,21 @@ const Leaderboard = () => {
                 cryptosWithVotes.sort((a, b) => b.votes - a.votes);
                 setCryptos(cryptosWithVotes);
 
-                // 5. Check user's vote status globally
+                // 5. Check user's vote status per coin
                 if (currentUser) {
                     const globalStatus = await checkGlobalVoteStatus();
 
-                    // Apply this status to ALL coins
+                    // globalStatus now returns { votedCoins: [{ coinId, votedAt }] }
+                    const votedCoinIds = new Set(
+                        (globalStatus.votedCoins || []).map(v => v.coinId)
+                    );
+
+                    // Build status map - only disable coins the user has voted for
                     const statusMap = {};
                     cryptosWithVotes.forEach(c => {
-                        // If global status says can't vote, disable all.
-                        // If can vote, enable all.
                         statusMap[c.id] = {
-                            canVote: globalStatus.canVote,
-                            remainingMs: globalStatus.remainingMs
+                            canVote: !votedCoinIds.has(c.id),
+                            remainingMs: votedCoinIds.has(c.id) ? 24 * 60 * 60 * 1000 : 0
                         };
                     });
                     setUserVoteStatus(statusMap);
@@ -77,27 +80,12 @@ const Leaderboard = () => {
                 return updated.sort((a, b) => b.votes - a.votes);
             });
 
-            // Update status
-            // Update status for ALL coins to disabled (Global Restriction)
+            // Update status - only disable THIS coin
             const nextVoteTime = 24 * 60 * 60 * 1000;
-            setUserVoteStatus(prev => {
-                const newStatus = {};
-                // Copy existing keys but set all to disabled
-                Object.keys(prev).forEach(key => {
-                    newStatus[key] = { canVote: false, remainingMs: nextVoteTime };
-                });
-                // Ensure the voted coin is also set (in case it wasn't in the map yet)
-                newStatus[coinId] = { canVote: false, remainingMs: nextVoteTime };
-
-                // Also, we might want to set a default "global" disabled state for any coins not yet in the map
-                // But for now, updating the map for all known coins is good.
-                // Better yet, let's iterate over the current 'cryptos' list to be thorough
-                cryptos.forEach(c => {
-                    newStatus[c.id] = { canVote: false, remainingMs: nextVoteTime };
-                });
-
-                return newStatus;
-            });
+            setUserVoteStatus(prev => ({
+                ...prev,
+                [coinId]: { canVote: false, remainingMs: nextVoteTime }
+            }));
 
         } catch (error) {
             console.error('Error voting:', error);
