@@ -21,62 +21,94 @@ const Leaderboard = () => {
     const searchTimeout = useRef(null);
     const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
 
-    useEffect(() => {
-        const loadLeaderboard = async () => {
-            try {
-                // 1. Get all cryptocurrencies from CoinGecko
-                const allCryptos = await getAllCurrencies('usd');
+    const loadLeaderboard = async () => {
+        try {
+            // 1. Get time-based vote counts first to know which coins have votes
+            const timeResponse = await fetch(`${API_URL}/votes/time-based`);
+            const timeVotes = await timeResponse.json();
+            setTimeBasedVotes(timeVotes);
 
-                // 2. Get vote counts from our backend
-                const response = await fetch(`${API_URL}/votes`);
-                const voteCounts = await response.json();
+            // 2. Get total vote counts
+            const response = await fetch(`${API_URL}/votes`);
+            const voteCounts = await response.json();
 
-                // 3. Get time-based vote counts
-                const timeResponse = await fetch(`${API_URL}/votes/time-based`);
-                const timeVotes = await timeResponse.json();
-                setTimeBasedVotes(timeVotes);
+            // 3. Get top cryptocurrencies from CoinGecko (top 100 for better coverage)
+            const allCryptos = await getAllCurrencies('usd');
 
-                // 4. Merge data
-                const cryptosWithVotes = allCryptos.slice(0, 50).map(crypto => ({
+            // 4. Get list of coin IDs that have votes
+            const votedCoinIds = Object.keys(timeVotes);
+            const topCryptoIds = new Set(allCryptos.map(c => c.id));
+            const missingCoinIds = votedCoinIds.filter(id => !topCryptoIds.has(id));
+
+            // 5. Fetch details for coins that have votes but aren't in top 100
+            let missingCryptos = [];
+            if (missingCoinIds.length > 0) {
+                try {
+                    const missingCoinsData = await getCoinDetails(missingCoinIds.join(','), 'usd');
+                    missingCryptos = Array.isArray(missingCoinsData) ? missingCoinsData : [missingCoinsData];
+                } catch (error) {
+                    console.error('Error fetching missing coins:', error);
+                }
+            }
+
+            // 6. Combine all coins (top 100 + coins with votes)
+            const allCoinsMap = new Map();
+
+            // Add top coins
+            allCryptos.forEach(crypto => {
+                allCoinsMap.set(crypto.id, {
                     ...crypto,
                     votes: voteCounts[crypto.id] || 0
-                }));
-
-                // 5. Sort by 24-hour votes (most recent activity first)
-                cryptosWithVotes.sort((a, b) => {
-                    const aVotes24h = timeVotes[a.id]?.votes_24h || 0;
-                    const bVotes24h = timeVotes[b.id]?.votes_24h || 0;
-                    return bVotes24h - aVotes24h;
                 });
-                setCryptos(cryptosWithVotes);
+            });
 
-                // 6. Check user's vote status per coin
-                if (currentUser) {
-                    const globalStatus = await checkGlobalVoteStatus();
+            // Add/update coins that have votes but weren't in top 100
+            missingCryptos.forEach(crypto => {
+                allCoinsMap.set(crypto.id, {
+                    ...crypto,
+                    votes: voteCounts[crypto.id] || 0
+                });
+            });
 
-                    // globalStatus now returns { votedCoins: [{ coinId, votedAt }] }
-                    const votedCoinIds = new Set(
-                        (globalStatus.votedCoins || []).map(v => v.coinId)
-                    );
+            // 7. Convert to array and sort by 24-hour votes
+            const cryptosWithVotes = Array.from(allCoinsMap.values());
+            cryptosWithVotes.sort((a, b) => {
+                const aVotes24h = timeVotes[a.id]?.votes_24h || 0;
+                const bVotes24h = timeVotes[b.id]?.votes_24h || 0;
+                return bVotes24h - aVotes24h;
+            });
 
-                    // Build status map - only disable coins the user has voted for
-                    const statusMap = {};
-                    cryptosWithVotes.forEach(c => {
-                        statusMap[c.id] = {
-                            canVote: !votedCoinIds.has(c.id),
-                            remainingMs: votedCoinIds.has(c.id) ? 24 * 60 * 60 * 1000 : 0
-                        };
-                    });
-                    setUserVoteStatus(statusMap);
-                }
+            // 8. Take top 50 after sorting by 24h votes
+            setCryptos(cryptosWithVotes.slice(0, 50));
 
-            } catch (error) {
-                console.error('Error loading leaderboard:', error);
-            } finally {
-                setLoading(false);
+            // 9. Check user's vote status per coin
+            if (currentUser) {
+                const globalStatus = await checkGlobalVoteStatus();
+
+                // globalStatus now returns { votedCoins: [{ coinId, votedAt }] }
+                const votedCoinIds = new Set(
+                    (globalStatus.votedCoins || []).map(v => v.coinId)
+                );
+
+                // Build status map - only disable coins the user has voted for
+                const statusMap = {};
+                cryptosWithVotes.slice(0, 50).forEach(c => {
+                    statusMap[c.id] = {
+                        canVote: !votedCoinIds.has(c.id),
+                        remainingMs: votedCoinIds.has(c.id) ? 24 * 60 * 60 * 1000 : 0
+                    };
+                });
+                setUserVoteStatus(statusMap);
             }
-        };
 
+        } catch (error) {
+            console.error('Error loading leaderboard:', error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    useEffect(() => {
         loadLeaderboard();
     }, [currentUser]); // Reload if user changes (login/logout)
 
@@ -159,45 +191,8 @@ const Leaderboard = () => {
         try {
             await vote(coinId, coinName);
 
-            // Update time-based votes for this coin
-            setTimeBasedVotes(prev => ({
-                ...prev,
-                [coinId]: {
-                    votes_24h: (prev[coinId]?.votes_24h || 0) + 1,
-                    votes_7d: (prev[coinId]?.votes_7d || 0) + 1,
-                    votes_3m: (prev[coinId]?.votes_3m || 0) + 1
-                }
-            }));
-
-            // Update local state for both cryptos and search results
-            setCryptos(prev => {
-                const updated = prev.map(crypto =>
-                    crypto.id === coinId
-                        ? { ...crypto, votes: crypto.votes + 1 }
-                        : crypto
-                );
-                // Sort by 24-hour votes
-                return updated.sort((a, b) => {
-                    const aVotes24h = (a.id === coinId ? (timeBasedVotes[a.id]?.votes_24h || 0) + 1 : timeBasedVotes[a.id]?.votes_24h || 0);
-                    const bVotes24h = (b.id === coinId ? (timeBasedVotes[b.id]?.votes_24h || 0) + 1 : timeBasedVotes[b.id]?.votes_24h || 0);
-                    return bVotes24h - aVotes24h;
-                });
-            });
-
-            setSearchResults(prev => {
-                return prev.map(crypto =>
-                    crypto.id === coinId
-                        ? { ...crypto, votes: crypto.votes + 1 }
-                        : crypto
-                );
-            });
-
-            // Update status - only disable THIS coin
-            const nextVoteTime = 24 * 60 * 60 * 1000;
-            setUserVoteStatus(prev => ({
-                ...prev,
-                [coinId]: { canVote: false, remainingMs: nextVoteTime }
-            }));
+            // Reload the entire leaderboard to get updated vote counts and proper sorting
+            await loadLeaderboard();
 
         } catch (error) {
             console.error('Error voting:', error);
