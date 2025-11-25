@@ -110,6 +110,64 @@ app.get('/api/votes', async (req, res) => {
     }
 });
 
+// Get time-based vote counts (24h, 7d, 3 months)
+app.get('/api/votes/time-based', async (req, res) => {
+    try {
+        // Get votes for last 24 hours
+        const [votes24h] = await db.query(`
+            SELECT coin_id, COUNT(*) as count 
+            FROM votes 
+            WHERE created_at >= NOW() - INTERVAL 1 DAY 
+            GROUP BY coin_id
+        `);
+
+        // Get votes for last 7 days
+        const [votes7d] = await db.query(`
+            SELECT coin_id, COUNT(*) as count 
+            FROM votes 
+            WHERE created_at >= NOW() - INTERVAL 7 DAY 
+            GROUP BY coin_id
+        `);
+
+        // Get votes for last 3 months (90 days)
+        const [votes3m] = await db.query(`
+            SELECT coin_id, COUNT(*) as count 
+            FROM votes 
+            WHERE created_at >= NOW() - INTERVAL 90 DAY 
+            GROUP BY coin_id
+        `);
+
+        // Combine all results into a single object
+        const timeBasedVotes = {};
+
+        votes24h.forEach(row => {
+            if (!timeBasedVotes[row.coin_id]) {
+                timeBasedVotes[row.coin_id] = { votes_24h: 0, votes_7d: 0, votes_3m: 0 };
+            }
+            timeBasedVotes[row.coin_id].votes_24h = row.count;
+        });
+
+        votes7d.forEach(row => {
+            if (!timeBasedVotes[row.coin_id]) {
+                timeBasedVotes[row.coin_id] = { votes_24h: 0, votes_7d: 0, votes_3m: 0 };
+            }
+            timeBasedVotes[row.coin_id].votes_7d = row.count;
+        });
+
+        votes3m.forEach(row => {
+            if (!timeBasedVotes[row.coin_id]) {
+                timeBasedVotes[row.coin_id] = { votes_24h: 0, votes_7d: 0, votes_3m: 0 };
+            }
+            timeBasedVotes[row.coin_id].votes_3m = row.count;
+        });
+
+        res.json(timeBasedVotes);
+    } catch (error) {
+        console.error('Get time-based votes error:', error);
+        res.status(500).json({ error: 'Server error' });
+    }
+});
+
 // Check user's per-coin voting status
 app.get('/api/votes/status', authenticateToken, async (req, res) => {
     const userId = req.user.id;

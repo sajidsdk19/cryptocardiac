@@ -17,6 +17,7 @@ const Leaderboard = () => {
     const [searchResults, setSearchResults] = useState([]);
     const [isSearching, setIsSearching] = useState(false);
     const [searchLoading, setSearchLoading] = useState(false);
+    const [timeBasedVotes, setTimeBasedVotes] = useState({}); // { coinId: { votes_24h, votes_7d, votes_3m } }
     const searchTimeout = useRef(null);
     const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
 
@@ -30,17 +31,22 @@ const Leaderboard = () => {
                 const response = await fetch(`${API_URL}/votes`);
                 const voteCounts = await response.json();
 
-                // 3. Merge data
+                // 3. Get time-based vote counts
+                const timeResponse = await fetch(`${API_URL}/votes/time-based`);
+                const timeVotes = await timeResponse.json();
+                setTimeBasedVotes(timeVotes);
+
+                // 4. Merge data
                 const cryptosWithVotes = allCryptos.slice(0, 50).map(crypto => ({
                     ...crypto,
                     votes: voteCounts[crypto.id] || 0
                 }));
 
-                // 4. Sort by votes
+                // 5. Sort by votes
                 cryptosWithVotes.sort((a, b) => b.votes - a.votes);
                 setCryptos(cryptosWithVotes);
 
-                // 5. Check user's vote status per coin
+                // 6. Check user's vote status per coin
                 if (currentUser) {
                     const globalStatus = await checkGlobalVoteStatus();
 
@@ -260,10 +266,10 @@ const Leaderboard = () => {
                             <tr>
                                 <th className={styles.th}>#</th>
                                 <th className={styles.th}>Coin</th>
-                                <th className={styles.th}>Market Cap</th>
-                                <th className={styles.th}>Volume (24h)</th>
-                                <th className={styles.th}>Max Supply</th>
-                                <th className={styles.th}>Circulating Supply</th>
+                                <th className={styles.th}>Price</th>
+                                <th className={styles.th}>24h Votes</th>
+                                <th className={styles.th}>7d Votes</th>
+                                <th className={styles.th}>3M Votes</th>
                                 <th className={styles.th}>Total Votes</th>
                                 <th className={styles.th}>Action</th>
                             </tr>
@@ -273,6 +279,7 @@ const Leaderboard = () => {
                                 const status = userVoteStatus[crypto.id] || { canVote: true };
                                 const userCanVote = status.canVote;
                                 const timeRemaining = !userCanVote ? getLocalTimeRemaining(crypto.id) : null;
+                                const coinTimeVotes = timeBasedVotes[crypto.id] || { votes_24h: 0, votes_7d: 0, votes_3m: 0 };
 
                                 return (
                                     <tr key={crypto.id} className={styles.tr}>
@@ -289,9 +296,9 @@ const Leaderboard = () => {
                                             </Link>
                                         </td>
                                         <td className={styles.td}>{formatNumber(crypto.market_cap)}</td>
-                                        <td className={styles.td}>{formatNumber(crypto.total_volume)}</td>
-                                        <td className={styles.td}>{formatNumber(crypto.max_supply)}</td>
-                                        <td className={styles.td}>{formatNumber(crypto.circulating_supply)}</td>
+                                        <td className={styles.td}>{coinTimeVotes.votes_24h.toLocaleString()}</td>
+                                        <td className={styles.td}>{coinTimeVotes.votes_7d.toLocaleString()}</td>
+                                        <td className={styles.td}>{coinTimeVotes.votes_3m.toLocaleString()}</td>
                                         <td className={`${styles.td} ${styles.voteCount}`}>{crypto.votes.toLocaleString()}</td>
                                         <td className={styles.td}>
                                             <VoteButton
