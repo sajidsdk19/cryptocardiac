@@ -42,8 +42,12 @@ const Leaderboard = () => {
                     votes: voteCounts[crypto.id] || 0
                 }));
 
-                // 5. Sort by votes
-                cryptosWithVotes.sort((a, b) => b.votes - a.votes);
+                // 5. Sort by 24-hour votes (most recent activity first)
+                cryptosWithVotes.sort((a, b) => {
+                    const aVotes24h = timeVotes[a.id]?.votes_24h || 0;
+                    const bVotes24h = timeVotes[b.id]?.votes_24h || 0;
+                    return bVotes24h - aVotes24h;
+                });
                 setCryptos(cryptosWithVotes);
 
                 // 6. Check user's vote status per coin
@@ -155,6 +159,16 @@ const Leaderboard = () => {
         try {
             await vote(coinId, coinName);
 
+            // Update time-based votes for this coin
+            setTimeBasedVotes(prev => ({
+                ...prev,
+                [coinId]: {
+                    votes_24h: (prev[coinId]?.votes_24h || 0) + 1,
+                    votes_7d: (prev[coinId]?.votes_7d || 0) + 1,
+                    votes_3m: (prev[coinId]?.votes_3m || 0) + 1
+                }
+            }));
+
             // Update local state for both cryptos and search results
             setCryptos(prev => {
                 const updated = prev.map(crypto =>
@@ -162,7 +176,12 @@ const Leaderboard = () => {
                         ? { ...crypto, votes: crypto.votes + 1 }
                         : crypto
                 );
-                return updated.sort((a, b) => b.votes - a.votes);
+                // Sort by 24-hour votes
+                return updated.sort((a, b) => {
+                    const aVotes24h = (a.id === coinId ? (timeBasedVotes[a.id]?.votes_24h || 0) + 1 : timeBasedVotes[a.id]?.votes_24h || 0);
+                    const bVotes24h = (b.id === coinId ? (timeBasedVotes[b.id]?.votes_24h || 0) + 1 : timeBasedVotes[b.id]?.votes_24h || 0);
+                    return bVotes24h - aVotes24h;
+                });
             });
 
             setSearchResults(prev => {
