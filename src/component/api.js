@@ -52,4 +52,31 @@ const search = async (searchValue) => {
   return response.data;
 }
 
-export { getAllCurrencies, getCoinData, search };
+const searchCoins = async (query) => {
+  try {
+    const response = await axios.get(`${API_URL}/coins/search`, {
+      params: { query }
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error searching coins:', error);
+    throw error;
+  }
+};
+
+const getCoinDetails = async (coinIds, vs_currency = 'usd') => {
+  try {
+    const response = await axios.get(`${API_URL}/coins/details`, {
+      params: {
+        ids: coinIds,
+        vs_currency
+      }
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching coin details:', error);
+    throw error;
+  }
+};
+
+export { getAllCurrencies, getCoinData, search, searchCoins, getCoinDetails };

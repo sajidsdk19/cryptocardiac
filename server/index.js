@@ -243,6 +243,69 @@ app.get('/api/coins', async (req, res) => {
     }
 });
 
+// Search for cryptocurrencies
+app.get('/api/coins/search', async (req, res) => {
+    const { query } = req.query;
+
+    if (!query) {
+        return res.status(400).json({ error: 'Query parameter is required' });
+    }
+
+    const cacheKey = `search_${query}`;
+
+    const cachedData = myCache.get(cacheKey);
+    if (cachedData) {
+        return res.json(cachedData);
+    }
+
+    try {
+        apiHitsToday++;
+        const response = await axios.get('https://api.coingecko.com/api/v3/search', {
+            params: { query }
+        });
+
+        myCache.set(cacheKey, response.data);
+        res.json(response.data);
+    } catch (error) {
+        console.error('CoinGecko Search API error:', error.message);
+        res.status(500).json({ error: 'Failed to search coins' });
+    }
+});
+
+// Get detailed data for specific coins by IDs
+app.get('/api/coins/details', async (req, res) => {
+    const { ids, vs_currency = 'usd' } = req.query;
+
+    if (!ids) {
+        return res.status(400).json({ error: 'IDs parameter is required' });
+    }
+
+    const cacheKey = `details_${ids}_${vs_currency}`;
+
+    const cachedData = myCache.get(cacheKey);
+    if (cachedData) {
+        return res.json(cachedData);
+    }
+
+    try {
+        apiHitsToday++;
+        const response = await axios.get('https://api.coingecko.com/api/v3/coins/markets', {
+            params: {
+                vs_currency,
+                ids,
+                order: 'market_cap_desc',
+                sparkline: false
+            }
+        });
+
+        myCache.set(cacheKey, response.data);
+        res.json(response.data);
+    } catch (error) {
+        console.error('CoinGecko Details API error:', error.message);
+        res.status(500).json({ error: 'Failed to fetch coin details' });
+    }
+});
+
 // --- Admin Stats Route ---
 app.get('/api/admin/stats', async (req, res) => {
     // In a real app, add admin check here: if (req.user.role !== 'admin') ...
