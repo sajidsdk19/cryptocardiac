@@ -295,7 +295,7 @@ const Leaderboard = () => {
                                                 </div>
                                             </Link>
                                         </td>
-                                        <td className={styles.td}>{formatNumber(crypto.market_cap)}</td>
+                                        <td className={styles.td}>{formatPrice(crypto.current_price)}</td>
                                         <td className={styles.td}>{coinTimeVotes.votes_24h.toLocaleString()}</td>
                                         <td className={styles.td}>{coinTimeVotes.votes_7d.toLocaleString()}</td>
                                         <td className={styles.td}>{coinTimeVotes.votes_3m.toLocaleString()}</td>
