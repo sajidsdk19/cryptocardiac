@@ -24,6 +24,11 @@ const Navbar = () => {
         { title: 'Coins', path: '/coins' },
     ];
 
+    // Add My Votes link only if user is logged in
+    const userNavLinks = currentUser
+        ? [...navLinks, { title: 'My Votes', path: '/my-votes' }]
+        : navLinks;
+
     return (
         <Box sx={{
             background: 'linear-gradient(135deg, #5700F9 0%, #CE34EA 100%)',
@@ -59,7 +64,7 @@ const Navbar = () => {
                 justifyContent: isMobile ? 'center' : 'flex-end',
                 width: isMobile ? '100%' : 'auto'
             }}>
-                {navLinks.map((link) => (
+                {userNavLinks.map((link) => (
                     <Link key={link.title} to={link.path} style={{ textDecoration: 'none' }}>
                         <Button sx={{
                             color: '#fff',

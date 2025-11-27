@@ -14,6 +14,17 @@ const JWT_SECRET = process.env.JWT_SECRET || 'your_jwt_secret_key_change_this';
 app.use(cors());
 app.use(express.json());
 
+// Initialize axios and cache for CoinGecko API calls
+const axios = require('axios');
+const NodeCache = require('node-cache');
+const myCache = new NodeCache({ stdTTL: 300 }); // Cache for 5 minutes
+let apiHitsToday = 0;
+
+// Reset API hits counter every 24 hours (simple implementation)
+setInterval(() => {
+    apiHitsToday = 0;
+}, 24 * 60 * 60 * 1000);
+
 // Middleware to verify JWT token
 const authenticateToken = (req, res, next) => {
     const authHeader = req.headers['authorization'];
@@ -261,15 +272,74 @@ app.post('/api/votes', authenticateToken, async (req, res) => {
     }
 });
 
-const axios = require('axios');
-const NodeCache = require('node-cache');
-const myCache = new NodeCache({ stdTTL: 300 }); // Cache for 5 minutes
-let apiHitsToday = 0;
+// Get user's complete voting history with coin details
+app.get('/api/votes/history', authenticateToken, async (req, res) => {
+    const userId = req.user.id;
 
-// Reset API hits counter every 24 hours (simple implementation)
-setInterval(() => {
-    apiHitsToday = 0;
-}, 24 * 60 * 60 * 1000);
+    try {
+        // Get all votes by this user (ordered by most recent first)
+        const [votes] = await db.query(
+            'SELECT coin_id, coin_name, created_at FROM votes WHERE user_id = ? ORDER BY created_at DESC',
+            [userId]
+        );
+
+        if (votes.length === 0) {
+            return res.json({ votes: [] });
+        }
+
+        // Get unique coin IDs
+        const uniqueCoinIds = [...new Set(votes.map(v => v.coin_id))];
+
+        // Fetch coin details from CoinGecko (with caching)
+        const coinDetailsMap = {};
+
+        try {
+            const cacheKey = `coin_details_${uniqueCoinIds.join(',')}`;
+            let coinDetails = myCache.get(cacheKey);
+
+            if (!coinDetails) {
+                const response = await axios.get('https://api.coingecko.com/api/v3/coins/markets', {
+                    params: {
+                        vs_currency: 'usd',
+                        ids: uniqueCoinIds.join(','),
+                        order: 'market_cap_desc',
+                        sparkline: false
+                    }
+                });
+                coinDetails = response.data;
+                myCache.set(cacheKey, coinDetails);
+                apiHitsToday++;
+            }
+
+            // Create a map for quick lookup
+            coinDetails.forEach(coin => {
+                coinDetailsMap[coin.id] = {
+                    image: coin.image,
+                    currentPrice: coin.current_price,
+                    symbol: coin.symbol
+                };
+            });
+        } catch (error) {
+            console.error('Error fetching coin details:', error.message);
+            // Continue without coin details if API fails
+        }
+
+        // Merge vote data with coin details
+        const votesWithDetails = votes.map(vote => ({
+            coinId: vote.coin_id,
+            coinName: vote.coin_name,
+            votedAt: vote.created_at,
+            coinImage: coinDetailsMap[vote.coin_id]?.image || null,
+            currentPrice: coinDetailsMap[vote.coin_id]?.currentPrice || null,
+            symbol: coinDetailsMap[vote.coin_id]?.symbol || null
+        }));
+
+        res.json({ votes: votesWithDetails });
+    } catch (error) {
+        console.error('Get voting history error:', error);
+        res.status(500).json({ error: 'Server error' });
+    }
+});
 
 // --- CoinGecko Proxy Route ---
 app.get('/api/coins', async (req, res) => {

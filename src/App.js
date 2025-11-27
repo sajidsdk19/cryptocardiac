@@ -8,6 +8,7 @@ import Login from "component/Login";
 import Signup from "component/Signup";
 import Leaderboard from "pages/Leaderboard";
 import AdminDashboard from "pages/AdminDashboard";
+import MyVotes from "pages/MyVotes";
 import { AuthProvider } from "contexts/AuthContext";
 import styles from "./Styles.module.scss";
 
@@ -70,6 +71,7 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/admin" element={<AdminDashboard />} />
+        <Route path="/my-votes" element={<MyVotes />} />
         <Route path="/coins" element={<CoinPage />} />
         <Route path="/coins/:coinId" element={<CoinPage />} />
         <Route path="/:coinId" element={<CoinPage />} /> {/* Keep for backward compatibility if needed, or remove */}
