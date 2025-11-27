@@ -55,8 +55,39 @@ const MyVotes = () => {
     const getTimeRemaining = (votedAt) => {
         const voteDate = new Date(votedAt);
         const now = currentTime;
-        const diffMs = now - voteDate;
-        const remainingMs = (24 * 60 * 60 * 1000) - diffMs;
+
+        // Get vote date as string in EST timezone (format: M/D/YYYY)
+        const voteDateESTString = voteDate.toLocaleDateString('en-US', {
+            timeZone: 'America/New_York',
+            year: 'numeric',
+            month: 'numeric',
+            day: 'numeric'
+        });
+
+        // Get today's date as string in EST timezone (format: M/D/YYYY)
+        const todayESTString = now.toLocaleDateString('en-US', {
+            timeZone: 'America/New_York',
+            year: 'numeric',
+            month: 'numeric',
+            day: 'numeric'
+        });
+
+        // If vote was from a previous day (EST), user can vote now
+        if (voteDateESTString !== todayESTString) {
+            return { canVote: true, hours: 0, minutes: 0 };
+        }
+
+        // Vote was today (EST), calculate time until midnight EST
+        // Get current time in EST
+        const nowESTString = now.toLocaleString('en-US', { timeZone: 'America/New_York' });
+        const nowEST = new Date(nowESTString);
+
+        // Calculate next midnight EST
+        const nextMidnight = new Date(nowEST);
+        nextMidnight.setHours(24, 0, 0, 0);
+
+        // Calculate remaining time
+        const remainingMs = nextMidnight - nowEST;
 
         if (remainingMs <= 0) {
             return { canVote: true, hours: 0, minutes: 0 };

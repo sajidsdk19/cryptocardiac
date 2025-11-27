@@ -60,7 +60,13 @@ const CurrencyData = () => {
           setCanVote(userCanVote);
 
           if (!userCanVote) {
-            const remainingMs = 24 * 60 * 60 * 1000;
+            // Calculate time until midnight EST
+            const now = new Date();
+            const nowESTString = now.toLocaleString('en-US', { timeZone: 'America/New_York' });
+            const nowEST = new Date(nowESTString);
+            const nextMidnight = new Date(nowEST);
+            nextMidnight.setHours(24, 0, 0, 0);
+            const remainingMs = nextMidnight - nowEST;
             const hours = Math.floor(remainingMs / (1000 * 60 * 60));
             const minutes = Math.floor((remainingMs % (1000 * 60 * 60)) / (1000 * 60));
             setTimeRemaining({ hours, minutes });
@@ -85,7 +91,13 @@ const CurrencyData = () => {
 
       // Update vote status
       setCanVote(false);
-      const remainingMs = 24 * 60 * 60 * 1000;
+      // Calculate time until midnight EST
+      const now = new Date();
+      const nowESTString = now.toLocaleString('en-US', { timeZone: 'America/New_York' });
+      const nowEST = new Date(nowESTString);
+      const nextMidnight = new Date(nowEST);
+      nextMidnight.setHours(24, 0, 0, 0);
+      const remainingMs = nextMidnight - nowEST;
       const hours = Math.floor(remainingMs / (1000 * 60 * 60));
       const minutes = Math.floor((remainingMs % (1000 * 60 * 60)) / (1000 * 60));
       setTimeRemaining({ hours, minutes });

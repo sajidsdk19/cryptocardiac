@@ -92,10 +92,19 @@ const Leaderboard = () => {
 
                 // Build status map - only disable coins the user has voted for
                 const statusMap = {};
+
+                // Calculate time until midnight EST once
+                const now = new Date();
+                const nowESTString = now.toLocaleString('en-US', { timeZone: 'America/New_York' });
+                const nowEST = new Date(nowESTString);
+                const nextMidnight = new Date(nowEST);
+                nextMidnight.setHours(24, 0, 0, 0);
+                const remainingMs = nextMidnight - nowEST;
+
                 cryptosWithVotes.slice(0, 50).forEach(c => {
                     statusMap[c.id] = {
                         canVote: !votedCoinIds.has(c.id),
-                        remainingMs: votedCoinIds.has(c.id) ? 24 * 60 * 60 * 1000 : 0
+                        remainingMs: votedCoinIds.has(c.id) ? remainingMs : 0
                     };
                 });
                 setUserVoteStatus(statusMap);
@@ -160,10 +169,19 @@ const Leaderboard = () => {
 
                         setUserVoteStatus(prev => {
                             const newStatus = { ...prev };
+
+                            // Calculate time until midnight EST
+                            const now = new Date();
+                            const nowESTString = now.toLocaleString('en-US', { timeZone: 'America/New_York' });
+                            const nowEST = new Date(nowESTString);
+                            const nextMidnight = new Date(nowEST);
+                            nextMidnight.setHours(24, 0, 0, 0);
+                            const remainingMs = nextMidnight - nowEST;
+
                             coinsWithVotes.forEach(c => {
                                 newStatus[c.id] = {
                                     canVote: !votedCoinIds.has(c.id),
-                                    remainingMs: votedCoinIds.has(c.id) ? 24 * 60 * 60 * 1000 : 0
+                                    remainingMs: votedCoinIds.has(c.id) ? remainingMs : 0
                                 };
                             });
                             return newStatus;

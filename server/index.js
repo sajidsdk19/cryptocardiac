@@ -20,6 +20,28 @@ const NodeCache = require('node-cache');
 const myCache = new NodeCache({ stdTTL: 300 }); // Cache for 5 minutes
 let apiHitsToday = 0;
 
+// Timezone handling for EST midnight reset
+const moment = require('moment-timezone');
+
+// Helper function to get today's date in EST timezone (YYYY-MM-DD format)
+const getTodayDateEST = () => {
+    return moment().tz('America/New_York').format('YYYY-MM-DD');
+};
+
+// Helper function to get next midnight EST as a Date object
+const getNextMidnightEST = () => {
+    const now = moment().tz('America/New_York');
+    const nextMidnight = now.clone().add(1, 'day').startOf('day');
+    return nextMidnight.toDate();
+};
+
+// Helper function to get milliseconds until next midnight EST
+const getMsUntilMidnightEST = () => {
+    const now = moment().tz('America/New_York');
+    const nextMidnight = now.clone().add(1, 'day').startOf('day');
+    return nextMidnight.diff(now);
+};
+
 // Reset API hits counter every 24 hours (simple implementation)
 setInterval(() => {
     apiHitsToday = 0;
@@ -184,15 +206,19 @@ app.get('/api/votes/status', authenticateToken, async (req, res) => {
     const userId = req.user.id;
 
     try {
-        // Get all votes by this user in the last 24 hours
+        const todayEST = getTodayDateEST();
+
+        // Get all votes by this user today (EST)
         const [rows] = await db.query(
-            'SELECT coin_id, created_at FROM votes WHERE user_id = ? AND created_at >= NOW() - INTERVAL 1 DAY',
-            [userId]
+            `SELECT coin_id, created_at FROM votes 
+             WHERE user_id = ? 
+             AND DATE(CONVERT_TZ(created_at, '+00:00', '-05:00')) = ?`,
+            [userId, todayEST]
         );
 
-        console.log(`Checking status for user ${userId}. Found ${rows.length} recent votes.`);
+        console.log(`Checking status for user ${userId}. Found ${rows.length} votes today (EST).`);
 
-        // Return list of coins the user has voted for in the last 24h
+        // Return list of coins the user has voted for today
         const votedCoins = rows.map(row => ({
             coinId: row.coin_id,
             votedAt: row.created_at
@@ -205,28 +231,29 @@ app.get('/api/votes/status', authenticateToken, async (req, res) => {
     }
 });
 
-// Check if user can vote for a specific coin (24h restriction per coin)
+// Check if user can vote for a specific coin (daily reset at midnight EST)
 app.get('/api/votes/check/:coinId', authenticateToken, async (req, res) => {
     const userId = req.user.id;
     const { coinId } = req.params;
 
     try {
-        // Check for vote on THIS specific coin in the last 24h
+        const todayEST = getTodayDateEST();
+
+        // Check for vote on THIS specific coin today (EST)
         const [rows] = await db.query(
-            'SELECT created_at FROM votes WHERE user_id = ? AND coin_id = ? AND created_at >= NOW() - INTERVAL 1 DAY',
-            [userId, coinId]
+            `SELECT created_at FROM votes 
+             WHERE user_id = ? AND coin_id = ? 
+             AND DATE(CONVERT_TZ(created_at, '+00:00', '-05:00')) = ?`,
+            [userId, coinId, todayEST]
         );
 
         if (rows.length > 0) {
-            const lastVoteTime = new Date(rows[0].created_at);
-            const now = new Date();
-            const diffMs = now - lastVoteTime;
-            const remainingMs = (24 * 60 * 60 * 1000) - diffMs;
+            const remainingMs = getMsUntilMidnightEST();
 
             return res.json({
                 canVote: false,
                 remainingMs,
-                lastVoteTime: lastVoteTime
+                lastVoteTime: rows[0].created_at
             });
         }
 
@@ -243,20 +270,23 @@ app.post('/api/votes', authenticateToken, async (req, res) => {
     const userId = req.user.id;
 
     try {
-        // Check restriction for THIS specific coin (per-coin restriction)
+        const todayEST = getTodayDateEST();
+
+        // Check restriction for THIS specific coin (per-coin, per-day restriction)
         const [rows] = await db.query(
-            'SELECT created_at FROM votes WHERE user_id = ? AND coin_id = ? AND created_at >= NOW() - INTERVAL 1 DAY',
-            [userId, coinId]
+            `SELECT created_at FROM votes 
+             WHERE user_id = ? AND coin_id = ? 
+             AND DATE(CONVERT_TZ(created_at, '+00:00', '-05:00')) = ?`,
+            [userId, coinId, todayEST]
         );
 
         if (rows.length > 0) {
-            const lastVoteTime = new Date(rows[0].created_at);
-            const now = new Date();
-            const diffMs = now - lastVoteTime;
-            const remainingHours = Math.ceil((24 * 60 * 60 * 1000 - diffMs) / (1000 * 60 * 60));
+            const remainingMs = getMsUntilMidnightEST();
+            const remainingHours = Math.floor(remainingMs / (1000 * 60 * 60));
+            const remainingMinutes = Math.floor((remainingMs % (1000 * 60 * 60)) / (1000 * 60));
 
             return res.status(400).json({
-                error: `You already voted for ${coinName}. You can vote again in ${remainingHours} hour${remainingHours !== 1 ? 's' : ''}.`
+                error: `You already voted for ${coinName} today. You can vote again at midnight EST (in ${remainingHours}h ${remainingMinutes}m).`
             });
         }
 
