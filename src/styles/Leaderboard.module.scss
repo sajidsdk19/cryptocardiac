@@ -70,7 +70,23 @@
     box-shadow: 0 0 20px rgba(139, 92, 246, 0.2);
 }
 
-/* Table Styles (Desktop) */
+.searchLoadingIndicator {
+    text-align: center;
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 0.9rem;
+    margin-top: -10px;
+    margin-bottom: 10px;
+}
+
+.searchNoResults {
+    text-align: center;
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 0.9rem;
+    margin-top: -10px;
+    margin-bottom: 10px;
+}
+
+/* Table Styles */
 .tableContainer {
     max-width: 1400px;
     margin: 0 auto;
@@ -163,70 +179,6 @@
     color: #CE34EA;
 }
 
-/* Mobile List Styles */
-.mobileList {
-    display: none;
-    flex-direction: column;
-    gap: 16px;
-}
-
-.mobileCard {
-    background: rgba(255, 255, 255, 0.03);
-    border: 1px solid rgba(255, 255, 255, 0.05);
-    border-radius: 12px;
-    padding: 16px;
-}
-
-.mobileCardHeader {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 16px;
-}
-
-.mobileRank {
-    font-size: 0.9rem;
-    color: rgba(255, 255, 255, 0.5);
-    margin-right: 12px;
-}
-
-.mobilePrice {
-    text-align: right;
-}
-
-.mobilePriceValue {
-    font-weight: 600;
-    color: #fff;
-    display: block;
-}
-
-.mobilePriceChange {
-    font-size: 0.85rem;
-}
-
-.positiveChange {
-    color: #00C853;
-}
-
-.negativeChange {
-    color: #FF3D00;
-}
-
-.mobileStatsGrid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 12px;
-    margin-bottom: 16px;
-    padding-bottom: 16px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-}
-
-.mobileStat {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-}
-
 /* Vote Button Styles */
 .voteButton {
     width: 100%;
@@ -269,20 +221,42 @@
     margin-top: 4px;
 }
 
-/* Responsive Visibility */
-@media (max-width: 1024px) {
-    .tableContainer {
-        display: none;
-    }
-
-    .mobileList {
-        display: flex;
-    }
+.positiveChange {
+    color: #00C853;
 }
 
-@media (min-width: 1025px) {
-    .mobileList {
-        display: none;
+.negativeChange {
+    color: #FF3D00;
+}
+
+/* Responsive - Enable horizontal scroll on mobile */
+@media (max-width: 768px) {
+    .tableContainer {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .table {
+        min-width: 900px;
+        /* Ensure table is wide enough to scroll */
+    }
+
+    .th,
+    .td {
+        padding: 12px;
+        /* Slightly smaller padding on mobile */
+        font-size: 0.85rem;
+    }
+
+    .coinImage {
+        width: 28px;
+        height: 28px;
+    }
+
+    .voteButton {
+        min-width: 100px;
+        padding: 8px 16px;
+        font-size: 0.85rem;
     }
 }
 

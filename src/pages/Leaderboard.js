@@ -352,62 +352,7 @@ const Leaderboard = () => {
                     </table>
                 </div>
 
-                {/* Mobile List View */}
-                <div className={styles.mobileList}>
-                    {filteredCryptos.map((crypto, index) => {
-                        const status = userVoteStatus[crypto.id] || { canVote: true };
-                        const userCanVote = status.canVote;
-                        const timeRemaining = !userCanVote ? getLocalTimeRemaining(crypto.id) : null;
-                        const priceChangeColor = crypto.price_change_percentage_24h >= 0 ? styles.positiveChange : styles.negativeChange;
 
-                        return (
-                            <div key={crypto.id} className={styles.mobileCard}>
-                                <div className={styles.mobileCardHeader}>
-                                    <Link to={`/coins/${crypto.id}`} style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', flex: 1 }}>
-                                        <span className={styles.mobileRank}>{index + 1}.</span>
-                                        <div className={styles.coinCell}>
-                                            <img src={crypto.image} alt={crypto.name} className={styles.coinImage} />
-                                            <div>
-                                                <div className={styles.coinName}>{crypto.name}</div>
-                                                <div className={styles.coinSymbol}>{crypto.symbol}</div>
-                                            </div>
-                                        </div>
-                                    </Link>
-                                    <div className={styles.mobilePrice}>
-                                        <span className={styles.mobilePriceValue}>{formatPrice(crypto.current_price)}</span>
-                                        <span className={`${styles.mobilePriceChange} ${priceChangeColor}`}>
-                                            {crypto.price_change_percentage_24h?.toFixed(2)}%
-                                        </span>
-                                    </div>
-                                </div>
-
-                                <div className={styles.mobileStatsGrid}>
-                                    <div className={styles.mobileStat}>
-                                        <span className={styles.statLabel}>Market Cap</span>
-                                        <span className={styles.statValue}>{formatNumber(crypto.market_cap)}</span>
-                                    </div>
-                                    <div className={styles.mobileStat}>
-                                        <span className={styles.statLabel}>Total Votes</span>
-                                        <span className={`${styles.statValue} ${styles.voteCount}`}>{crypto.votes.toLocaleString()}</span>
-                                    </div>
-                                </div>
-
-                                <VoteButton
-                                    crypto={crypto}
-                                    canVote={userCanVote}
-                                    onVote={() => handleVote(crypto.id, crypto.name)}
-                                    timeRemaining={timeRemaining}
-                                    isMobile={true}
-                                />
-                                {!userCanVote && currentUser && (
-                                    <div className={styles.timeRemaining}>
-                                        Next vote in: {timeRemaining.hours}h {timeRemaining.minutes}m
-                                    </div>
-                                )}
-                            </div>
-                        );
-                    })}
-                </div>
             </div>
         </>
     );
