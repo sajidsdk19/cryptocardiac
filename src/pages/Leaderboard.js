@@ -10,15 +10,16 @@ import styles from '../styles/Leaderboard.module.scss';
 const Leaderboard = () => {
     const { currentUser } = useAuth();
     const { vote, checkGlobalVoteStatus, loading: votingLoading } = useVoting();
-    const [cryptos, setCryptos] = useState([]);
+    const [allCryptos, setAllCryptos] = useState([]); // Store ALL coins
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
     const [userVoteStatus, setUserVoteStatus] = useState({}); // { coinId: { canVote: boolean, remainingMs: number } }
-    const [searchResults, setSearchResults] = useState([]);
-    const [isSearching, setIsSearching] = useState(false);
-    const [searchLoading, setSearchLoading] = useState(false);
     const [timeBasedVotes, setTimeBasedVotes] = useState({}); // { coinId: { votes_24h, votes_7d, votes_3m } }
+    const [currentPage, setCurrentPage] = useState(1);
+    const [apiSearchResults, setApiSearchResults] = useState([]); // Results from API search
+    const [isSearchingAPI, setIsSearchingAPI] = useState(false); // Loading state for API search
     const searchTimeout = useRef(null);
+    const COINS_PER_PAGE = 15;
     const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
 
     const loadLeaderboard = async () => {
@@ -78,8 +79,8 @@ const Leaderboard = () => {
                 return bVotes24h - aVotes24h;
             });
 
-            // 8. Take top 50 after sorting by 24h votes
-            setCryptos(cryptosWithVotes.slice(0, 50));
+            // 8. Store ALL coins (no slicing)
+            setAllCryptos(cryptosWithVotes);
 
             // 9. Check user's vote status per coin
             if (currentUser) {
@@ -101,7 +102,7 @@ const Leaderboard = () => {
                 nextMidnight.setHours(24, 0, 0, 0);
                 const remainingMs = nextMidnight - nowEST;
 
-                cryptosWithVotes.slice(0, 50).forEach(c => {
+                cryptosWithVotes.forEach(c => {
                     statusMap[c.id] = {
                         canVote: !votedCoinIds.has(c.id),
                         remainingMs: votedCoinIds.has(c.id) ? remainingMs : 0
@@ -121,26 +122,40 @@ const Leaderboard = () => {
         loadLeaderboard();
     }, [currentUser]); // Reload if user changes (login/logout)
 
-    // Debounced search effect
+    // Debounced API search when no local results found
     useEffect(() => {
+        // Clear API results when search is empty
         if (searchTerm.trim().length === 0) {
-            setSearchResults([]);
-            setIsSearching(false);
+            setApiSearchResults([]);
+            setIsSearchingAPI(false);
             return;
         }
 
-        setIsSearching(true);
-        setSearchLoading(true);
+        // Check if we have local results
+        const localResults = allCryptos.filter(crypto =>
+            crypto.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            crypto.symbol.toLowerCase().includes(searchTerm.toLowerCase())
+        );
+
+        // If we have local results, don't search API
+        if (localResults.length > 0) {
+            setApiSearchResults([]);
+            setIsSearchingAPI(false);
+            return;
+        }
+
+        // No local results - trigger API search after debounce
+        setIsSearchingAPI(true);
 
         // Clear previous timeout
         if (searchTimeout.current) {
             clearTimeout(searchTimeout.current);
         }
 
-        // Set new timeout for debouncing (3 seconds)
+        // Set new timeout for debouncing (1 second)
         searchTimeout.current = setTimeout(async () => {
             try {
-                // 1. Search for coins
+                // 1. Search for coins via API
                 const searchData = await searchCoins(searchTerm);
                 const coinIds = searchData.coins.slice(0, 20).map(coin => coin.id).join(',');
 
@@ -158,7 +173,7 @@ const Leaderboard = () => {
                         votes: voteCounts[coin.id] || 0
                     }));
 
-                    setSearchResults(coinsWithVotes);
+                    setApiSearchResults(coinsWithVotes);
 
                     // 5. Update vote status for search results
                     if (currentUser) {
@@ -188,22 +203,27 @@ const Leaderboard = () => {
                         });
                     }
                 } else {
-                    setSearchResults([]);
+                    setApiSearchResults([]);
                 }
             } catch (error) {
-                console.error('Error searching:', error);
-                setSearchResults([]);
+                console.error('Error searching API:', error);
+                setApiSearchResults([]);
             } finally {
-                setSearchLoading(false);
+                setIsSearchingAPI(false);
             }
-        }, 3000);
+        }, 1000);
 
         return () => {
             if (searchTimeout.current) {
                 clearTimeout(searchTimeout.current);
             }
         };
-    }, [searchTerm, currentUser]);
+    }, [searchTerm, allCryptos, currentUser]);
+
+    // Reset to page 1 when search term changes
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [searchTerm]);
 
     const handleVote = async (coinId, coinName) => {
         try {
@@ -245,6 +265,11 @@ const Leaderboard = () => {
         }).format(price);
     };
 
+    const handlePageChange = (newPage) => {
+        setCurrentPage(newPage);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+
     if (loading || votingLoading) {
         return (
             <>
@@ -256,13 +281,20 @@ const Leaderboard = () => {
         );
     }
 
-    // Determine which cryptos to display
-    const displayCryptos = isSearching ? searchResults : cryptos;
-
-    const filteredCryptos = displayCryptos.filter(crypto =>
+    // Instant client-side search filtering (local results)
+    const localFilteredCryptos = allCryptos.filter(crypto =>
         crypto.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
         crypto.symbol.toLowerCase().includes(searchTerm.toLowerCase())
     );
+
+    // Merge local results with API results (API results only shown if no local results)
+    const filteredCryptos = localFilteredCryptos.length > 0 ? localFilteredCryptos : apiSearchResults;
+
+    // Pagination logic
+    const totalPages = Math.ceil(filteredCryptos.length / COINS_PER_PAGE);
+    const startIndex = (currentPage - 1) * COINS_PER_PAGE;
+    const endIndex = startIndex + COINS_PER_PAGE;
+    const displayCryptos = filteredCryptos.slice(startIndex, endIndex);
 
     return (
         <>
@@ -283,11 +315,16 @@ const Leaderboard = () => {
                         onChange={(e) => setSearchTerm(e.target.value)}
                         className={styles.searchInput}
                     />
-                    {searchLoading && (
-                        <div className={styles.searchLoadingIndicator}>Searching...</div>
+                    {isSearchingAPI && (
+                        <div className={styles.searchInfo}>
+                            🔍 Searching database...
+                        </div>
                     )}
-                    {isSearching && searchResults.length === 0 && !searchLoading && (
-                        <div className={styles.searchNoResults}>No results found for "{searchTerm}"</div>
+                    {searchTerm && !isSearchingAPI && (
+                        <div className={styles.searchInfo}>
+                            Found {filteredCryptos.length} coin{filteredCryptos.length !== 1 ? 's' : ''}
+                            {localFilteredCryptos.length === 0 && apiSearchResults.length > 0 && ' (from full database)'}
+                        </div>
                     )}
                 </div>
 
@@ -307,15 +344,16 @@ const Leaderboard = () => {
                             </tr>
                         </thead>
                         <tbody>
-                            {filteredCryptos.map((crypto, index) => {
+                            {displayCryptos.map((crypto, index) => {
                                 const status = userVoteStatus[crypto.id] || { canVote: true };
                                 const userCanVote = status.canVote;
                                 const timeRemaining = !userCanVote ? getLocalTimeRemaining(crypto.id) : null;
                                 const coinTimeVotes = timeBasedVotes[crypto.id] || { votes_24h: 0, votes_7d: 0, votes_3m: 0 };
+                                const globalRank = startIndex + index + 1;
 
                                 return (
                                     <tr key={crypto.id} className={styles.tr}>
-                                        <td className={`${styles.td} ${styles.rank}`}>{index + 1}</td>
+                                        <td className={`${styles.td} ${styles.rank}`}>{globalRank}</td>
                                         <td className={styles.td}>
                                             <Link to={`/coins/${crypto.id}`} style={{ textDecoration: 'none' }}>
                                                 <div className={styles.coinCell}>
@@ -352,6 +390,30 @@ const Leaderboard = () => {
                     </table>
                 </div>
 
+                {/* Pagination Controls */}
+                {totalPages > 1 && (
+                    <div className={styles.paginationContainer}>
+                        <button
+                            className={styles.paginationButton}
+                            onClick={() => handlePageChange(currentPage - 1)}
+                            disabled={currentPage === 1}
+                        >
+                            Previous
+                        </button>
+
+                        <div className={styles.pageInfo}>
+                            Page {currentPage} of {totalPages}
+                        </div>
+
+                        <button
+                            className={styles.paginationButton}
+                            onClick={() => handlePageChange(currentPage + 1)}
+                            disabled={currentPage === totalPages}
+                        >
+                            Next
+                        </button>
+                    </div>
+                )}
 
             </div>
         </>
