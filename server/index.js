@@ -144,17 +144,22 @@ app.get('/api/votes', async (req, res) => {
 });
 
 // Get time-based vote counts (24h, 7d, 3 months)
+// 24h = Today's votes (resets at midnight EST)
+// 7d = Last 7 days (rolling window)
+// 3m = Last 90 days (rolling window)
 app.get('/api/votes/time-based', async (req, res) => {
     try {
-        // Get votes for last 24 hours
+        const todayEST = getTodayDateEST(); // Get today's date in EST (YYYY-MM-DD)
+
+        // Get votes for TODAY only (resets at midnight EST)
         const [votes24h] = await db.query(`
             SELECT coin_id, COUNT(*) as count 
             FROM votes 
-            WHERE created_at >= NOW() - INTERVAL 1 DAY 
+            WHERE DATE(CONVERT_TZ(created_at, '+00:00', '-05:00')) = ?
             GROUP BY coin_id
-        `);
+        `, [todayEST]);
 
-        // Get votes for last 7 days
+        // Get votes for last 7 days (rolling window)
         const [votes7d] = await db.query(`
             SELECT coin_id, COUNT(*) as count 
             FROM votes 
@@ -162,7 +167,7 @@ app.get('/api/votes/time-based', async (req, res) => {
             GROUP BY coin_id
         `);
 
-        // Get votes for last 3 months (90 days)
+        // Get votes for last 3 months / 90 days (rolling window)
         const [votes3m] = await db.query(`
             SELECT coin_id, COUNT(*) as count 
             FROM votes 
