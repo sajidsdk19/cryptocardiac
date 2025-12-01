@@ -4,6 +4,8 @@ import { useAuth } from '../contexts/AuthContext';
 import { Box, Typography, Button, useMediaQuery, useTheme } from '@mui/material';
 import { Favorite, ExitToApp } from '@mui/icons-material';
 
+import logo from '../assets/logo_crypto.png';
+
 const Navbar = () => {
     const { currentUser, logout } = useAuth();
     const navigate = useNavigate();
@@ -49,7 +51,7 @@ const Navbar = () => {
                     gap: 1,
                     justifyContent: isMobile ? 'center' : 'flex-start'
                 }}>
-                    <Favorite sx={{ color: '#fff', fontSize: '2rem' }} />
+                    <img src={logo} alt="CryptoCardiac Logo" style={{ height: '2rem', width: '2rem', borderRadius: '50%', objectFit: 'cover' }} />
                     <Typography variant="h5" sx={{ color: '#fff', fontWeight: 700 }}>
                         CryptoCardiac
                     </Typography>
