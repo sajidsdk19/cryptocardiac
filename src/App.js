@@ -1,6 +1,7 @@
 import { Box, Grid } from "@mui/material";
 import React, { useState, createContext, useEffect } from "react";
 import { Routes, Route, useParams, useNavigate } from "react-router-dom";
+import { HelmetProvider } from 'react-helmet-async';
 import CurrencyData from "section/CurrencyData";
 import Capitalization from "section/Capitalization";
 import Navbar from "component/Navbar";
@@ -65,18 +66,20 @@ function CoinPage() {
 
 function App() {
   return (
-    <AuthProvider>
-      <Routes>
-        <Route path="/" element={<Leaderboard />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/signup" element={<Signup />} />
-        <Route path="/admin" element={<AdminDashboard />} />
-        <Route path="/my-votes" element={<MyVotes />} />
-        <Route path="/coins" element={<CoinPage />} />
-        <Route path="/coins/:coinId" element={<CoinPage />} />
-        <Route path="/:coinId" element={<CoinPage />} /> {/* Keep for backward compatibility if needed, or remove */}
-      </Routes>
-    </AuthProvider>
+    <HelmetProvider>
+      <AuthProvider>
+        <Routes>
+          <Route path="/" element={<Leaderboard />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<Signup />} />
+          <Route path="/admin" element={<AdminDashboard />} />
+          <Route path="/my-votes" element={<MyVotes />} />
+          <Route path="/coins" element={<CoinPage />} />
+          <Route path="/coins/:coinId" element={<CoinPage />} />
+          <Route path="/:coinId" element={<CoinPage />} /> {/* Keep for backward compatibility if needed, or remove */}
+        </Routes>
+      </AuthProvider>
+    </HelmetProvider>
   );
 }
 

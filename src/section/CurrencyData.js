@@ -1,5 +1,6 @@
 import { Box, Chip, LinearProgress, Typography } from '@mui/material';
 import React, { useContext, useEffect, useRef, useState } from 'react';
+import { Helmet } from 'react-helmet-async';
 import { AppContext } from 'App';
 import { getCoinData } from 'component/api';
 import Loading from 'component/Loading';
@@ -108,8 +109,33 @@ const CurrencyData = () => {
   };
 
   if (coinData.length === 0) return <Loading />
+
+  const pageUrl = window.location.href;
+  const logoUrl = `${window.location.origin}/logo_crypto.png`;
+  const pageTitle = `${coinData.name} (${coinData.symbol.toUpperCase()}) — CryptoCardiac`;
+  const pageDescription = `Vote for ${coinData.name} and explore real-time rankings, charts, and analytics on CryptoCardiac.`;
+
   return (
     <Box sx={{ p: 3, height: "100%", display: "flex", flexDirection: "column" }}>
+      <Helmet>
+        <title>{pageTitle}</title>
+        <meta name="description" content={pageDescription} />
+
+        {/* Open Graph / Facebook */}
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content={pageUrl} />
+        <meta property="og:title" content={pageTitle} />
+        <meta property="og:description" content={pageDescription} />
+        <meta property="og:image" content={logoUrl} />
+
+        {/* Twitter */}
+        <meta property="twitter:card" content="summary_large_image" />
+        <meta property="twitter:url" content={pageUrl} />
+        <meta property="twitter:title" content={pageTitle} />
+        <meta property="twitter:description" content={pageDescription} />
+        <meta property="twitter:image" content={logoUrl} />
+      </Helmet>
+
       <Typography
         variant='h6'
         component='h2'
