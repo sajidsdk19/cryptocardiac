@@ -122,8 +122,15 @@ app.post('/api/auth/login', async (req, res) => {
 });
 
 // Get Current User (Verify Token)
-app.get('/api/auth/me', authenticateToken, (req, res) => {
-    res.json({ user: req.user });
+app.get('/api/auth/me', authenticateToken, async (req, res) => {
+    try {
+        const [users] = await db.query('SELECT id, email, share_points FROM users WHERE id = ?', [req.user.id]);
+        if (users.length === 0) return res.sendStatus(404);
+        res.json({ user: users[0] });
+    } catch (error) {
+        console.error('Get me error:', error);
+        res.status(500).json({ error: 'Server error' });
+    }
 });
 
 // --- Voting Routes ---
@@ -303,6 +310,56 @@ app.post('/api/votes', authenticateToken, async (req, res) => {
         res.json({ message: 'Vote cast successfully' });
     } catch (error) {
         console.error('Cast vote error:', error);
+        res.status(500).json({ error: 'Server error' });
+    }
+});
+
+// Increment share points (with daily limit per coin)
+app.post('/api/share/x', authenticateToken, async (req, res) => {
+    const userId = req.user.id;
+    const { coinId } = req.body;
+
+    if (!coinId) {
+        return res.status(400).json({ error: 'Coin ID is required' });
+    }
+
+    try {
+        const todayEST = getTodayDateEST();
+
+        // Check if user has already shared this coin today (EST)
+        const [rows] = await db.query(
+            `SELECT created_at FROM share_logs 
+             WHERE user_id = ? AND coin_id = ? 
+             AND DATE(CONVERT_TZ(created_at, '+00:00', '-05:00')) = ?`,
+            [userId, coinId, todayEST]
+        );
+
+        if (rows.length > 0) {
+            return res.status(400).json({ error: 'You have already received points for sharing this coin today.' });
+        }
+
+        // Start transaction
+        await db.query('START TRANSACTION');
+
+        // Insert into share_logs
+        await db.query(
+            'INSERT INTO share_logs (user_id, coin_id) VALUES (?, ?)',
+            [userId, coinId]
+        );
+
+        // Increment user points
+        await db.query('UPDATE users SET share_points = COALESCE(share_points, 0) + 1 WHERE id = ?', [userId]);
+
+        // Commit transaction
+        await db.query('COMMIT');
+
+        const [users] = await db.query('SELECT share_points FROM users WHERE id = ?', [userId]);
+        const newPoints = users[0].share_points;
+
+        res.json({ message: 'Share points updated', share_points: newPoints });
+    } catch (error) {
+        await db.query('ROLLBACK');
+        console.error('Share points error:', error);
         res.status(500).json({ error: 'Server error' });
     }
 });
@@ -510,6 +567,24 @@ app.get('/api/admin/stats', async (req, res) => {
     }
 });
 
-app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
-});
+// Import migration scripts
+const createShareLogsTable = require('./migrations/create_share_logs_table');
+const ensureSharePointsColumn = require('./ensure_share_points');
+
+// Initialize database and start server
+const init = async () => {
+    try {
+        // Run migrations
+        await createShareLogsTable();
+        await ensureSharePointsColumn();
+
+        app.listen(PORT, () => {
+            console.log(`Server running on port ${PORT}`);
+        });
+    } catch (error) {
+        console.error('Failed to initialize server:', error);
+        process.exit(1);
+    }
+};
+
+init();

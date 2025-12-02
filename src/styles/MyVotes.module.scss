@@ -267,3 +267,69 @@
         font-size: 3rem;
     }
 }
+
+/* Share Points Card */
+.shareCard {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 20px;
+    padding: 20px 40px;
+    display: inline-block;
+    margin-top: 20px;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.shareCard:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
+    border-color: rgba(255, 255, 255, 0.2);
+}
+
+.shareCardContent {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.shareIconWrapper {
+    width: 50px;
+    height: 50px;
+    background: #000;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.shareIcon {
+    width: 24px;
+    height: 24px;
+    color: #fff;
+}
+
+.shareInfo {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.shareLabel {
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 0.9rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 4px;
+}
+
+.shareValue {
+    font-size: 2rem;
+    font-weight: 800;
+    background: linear-gradient(135deg, #fff 0%, #a5a5a5 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    line-height: 1;
+}

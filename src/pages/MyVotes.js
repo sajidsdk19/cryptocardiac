@@ -7,6 +7,7 @@ import styles from '../styles/MyVotes.module.scss';
 const MyVotes = () => {
     const { currentUser } = useAuth();
     const [votes, setVotes] = useState([]);
+    const [sharePoints, setSharePoints] = useState(0);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [currentTime, setCurrentTime] = useState(new Date());
@@ -19,8 +20,38 @@ const MyVotes = () => {
             return;
         }
 
+        const fetchVotingHistory = async () => {
+            try {
+                const token = localStorage.getItem('token');
+                const response = await fetch(`${API_URL}/votes/history`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to fetch voting history');
+                }
+
+                const data = await response.json();
+                setVotes(data.votes || []);
+
+                // Also fetch latest user data to get share points
+                const userResponse = await fetch(`${API_URL}/auth/me`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                if (userResponse.ok) {
+                    const userData = await userResponse.json();
+                    setSharePoints(userData.user.share_points || 0);
+                }
+            } catch (err) {
+                console.error('Error fetching voting history:', err);
+                setError(err.message);
+            } finally {
+                setLoading(false);
+            }
+        };
+
         fetchVotingHistory();
-    }, [currentUser]);
+    }, [currentUser, API_URL]);
 
     // Update current time every minute to refresh countdown timers
     useEffect(() => {
@@ -30,27 +61,6 @@ const MyVotes = () => {
 
         return () => clearInterval(timer);
     }, []);
-
-    const fetchVotingHistory = async () => {
-        try {
-            const token = localStorage.getItem('token');
-            const response = await fetch(`${API_URL}/votes/history`, {
-                headers: { 'Authorization': `Bearer ${token}` }
-            });
-
-            if (!response.ok) {
-                throw new Error('Failed to fetch voting history');
-            }
-
-            const data = await response.json();
-            setVotes(data.votes || []);
-        } catch (err) {
-            console.error('Error fetching voting history:', err);
-            setError(err.message);
-        } finally {
-            setLoading(false);
-        }
-    };
 
     const getTimeRemaining = (votedAt) => {
         const voteDate = new Date(votedAt);
@@ -171,6 +181,20 @@ const MyVotes = () => {
                     <p className={styles.subtitle}>
                         Track all your votes and see when you can vote again
                     </p>
+
+                    <div className={styles.shareCard}>
+                        <div className={styles.shareCardContent}>
+                            <div className={styles.shareIconWrapper}>
+                                <svg viewBox="0 0 24 24" fill="currentColor" className={styles.shareIcon}>
+                                    <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+                                </svg>
+                            </div>
+                            <div className={styles.shareInfo}>
+                                <span className={styles.shareLabel}>Total Share Points</span>
+                                <span className={styles.shareValue}>{sharePoints}</span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
                 {votes.length === 0 ? (

@@ -80,7 +80,7 @@ const CurrencyData = () => {
     if (currency) {
       fetchVoteData();
     }
-  }, [currency, currentUser]);
+  }, [currency, currentUser, API_URL, checkGlobalVoteStatus]);
 
   const handleVote = async () => {
     try {
@@ -148,10 +148,37 @@ const CurrencyData = () => {
               />
               <button
                 className={styles.shareButton}
-                onClick={() => {
+                onClick={async () => {
                   const text = `Check out ${coinData.name} (${coinData.symbol.toUpperCase()}) on CryptoCardiac! 🚀`;
                   const url = window.location.href;
                   window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`, '_blank');
+
+                  if (currentUser) {
+                    try {
+                      const token = localStorage.getItem('token');
+                      const response = await fetch(`${API_URL}/share/x`, {
+                        method: 'POST',
+                        headers: {
+                          'Authorization': `Bearer ${token}`,
+                          'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ coinId: currency })
+                      });
+
+                      const data = await response.json();
+
+                      if (response.ok) {
+                        alert(`You earned +1 Share Point! Total: ${data.share_points}`);
+                      } else {
+                        // If error is because of daily limit, show it
+                        if (data.error) {
+                          alert(data.error);
+                        }
+                      }
+                    } catch (error) {
+                      console.error('Error updating share points:', error);
+                    }
+                  }
                 }}
               >
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
