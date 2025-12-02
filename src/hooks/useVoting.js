@@ -53,7 +53,7 @@ export const useVoting = () => {
         }
     };
 
-    const checkGlobalVoteStatus = async () => {
+    const checkGlobalVoteStatus = useCallback(async () => {
         if (!currentUser) return { canVote: false };
 
         try {
@@ -70,7 +70,7 @@ export const useVoting = () => {
             console.error('Error checking vote status:', error);
             return { canVote: false };
         }
-    };
+    }, [currentUser, API_URL]);
 
     return {
         vote,
