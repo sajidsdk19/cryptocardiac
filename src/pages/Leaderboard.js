@@ -76,7 +76,14 @@ const Leaderboard = () => {
             cryptosWithVotes.sort((a, b) => {
                 const aVotes24h = timeVotes[a.id]?.votes_24h || 0;
                 const bVotes24h = timeVotes[b.id]?.votes_24h || 0;
-                return bVotes24h - aVotes24h;
+
+                // Primary sort: 24h Votes
+                if (bVotes24h !== aVotes24h) {
+                    return bVotes24h - aVotes24h;
+                }
+
+                // Secondary sort: Total Votes
+                return (b.votes || 0) - (a.votes || 0);
             });
 
             // 8. Store ALL coins (no slicing)
