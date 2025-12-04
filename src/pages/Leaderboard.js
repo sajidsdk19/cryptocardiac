@@ -5,6 +5,7 @@ import { useVoting } from '../hooks/useVoting';
 import { getAllCurrencies, searchCoins, getCoinDetails } from '../component/api';
 import VoteButton from '../component/VoteButton';
 import Navbar from '../component/Navbar';
+import LogoLoader from '../component/LogoLoader';
 import styles from '../styles/Leaderboard.module.scss';
 
 const Leaderboard = () => {
@@ -278,14 +279,7 @@ const Leaderboard = () => {
     };
 
     if (loading || votingLoading) {
-        return (
-            <>
-                <Navbar />
-                <div className={styles.leaderboardContainer}>
-                    <div className={styles.loading}>Loading leaderboard...</div>
-                </div>
-            </>
-        );
+        return <LogoLoader />;
     }
 
     // Instant client-side search filtering (local results)
