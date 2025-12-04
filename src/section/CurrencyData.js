@@ -1,6 +1,7 @@
 import { Box, Chip, LinearProgress, Typography } from '@mui/material';
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
+import { useNavigate } from 'react-router-dom';
 import { AppContext } from 'App';
 import { getCoinData } from 'component/api';
 import Loading from 'component/Loading';
@@ -16,6 +17,7 @@ const CurrencyData = () => {
   const { currency, vsCurrency } = useContext(AppContext);
   const { currentUser } = useAuth();
   const { vote, checkGlobalVoteStatus } = useVoting();
+  const navigate = useNavigate();
   const [coinData, setCoinData] = useState([]);
   const [voteCount, setVoteCount] = useState(0);
   const [canVote, setCanVote] = useState(true);
@@ -174,15 +176,11 @@ const CurrencyData = () => {
               />
               <button
                 className={styles.shareButton}
-                disabled={!currentUser}
-                style={{
-                  opacity: !currentUser ? 0.5 : 1,
-                  cursor: !currentUser ? 'not-allowed' : 'pointer'
-                }}
+                style={{ whiteSpace: 'nowrap' }}
                 onClick={async () => {
                   // Check if user is logged in
                   if (!currentUser) {
-                    alert('Please sign in to share and earn points!');
+                    navigate('/login');
                     return;
                   }
 
@@ -241,7 +239,7 @@ const CurrencyData = () => {
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" fill="currentColor" />
                 </svg>
-                Share
+                {currentUser ? 'Share' : 'Sign in to Share'}
               </button>
               {!canVote && currentUser && timeRemaining && (
                 <Typography component="span" sx={{ color: "rgb(142 144 149)", fontSize: "0.8rem" }}>
