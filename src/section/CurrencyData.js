@@ -174,36 +174,67 @@ const CurrencyData = () => {
               />
               <button
                 className={styles.shareButton}
+                disabled={!currentUser}
+                style={{
+                  opacity: !currentUser ? 0.5 : 1,
+                  cursor: !currentUser ? 'not-allowed' : 'pointer'
+                }}
                 onClick={async () => {
+                  // Check if user is logged in
+                  if (!currentUser) {
+                    alert('Please sign in to share and earn points!');
+                    return;
+                  }
+
+                  // 1. Cast vote first (if can vote)
+                  if (canVote) {
+                    try {
+                      await vote(currency, coinData.name);
+                      setVoteCount(prev => prev + 1);
+                      setCanVote(false);
+                      const now = new Date();
+                      const nowESTString = now.toLocaleString('en-US', { timeZone: 'America/New_York' });
+                      const nowEST = new Date(nowESTString);
+                      const nextMidnight = new Date(nowEST);
+                      nextMidnight.setHours(24, 0, 0, 0);
+                      const remainingMs = nextMidnight - nowEST;
+                      const hours = Math.floor(remainingMs / (1000 * 60 * 60));
+                      const minutes = Math.floor((remainingMs % (1000 * 60 * 60)) / (1000 * 60));
+                      setTimeRemaining({ hours, minutes });
+                    } catch (error) {
+                      console.error('Error voting:', error);
+                    }
+                  }
+
+                  // 2. Open Twitter share dialog
                   const text = `Check out ${coinData.name} (${coinData.symbol.toUpperCase()}) on CryptoCardiac! 🚀`;
                   const url = window.location.href;
                   window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`, '_blank');
 
-                  if (currentUser) {
-                    try {
-                      const token = localStorage.getItem('token');
-                      const response = await fetch(`${API_URL}/share/x`, {
-                        method: 'POST',
-                        headers: {
-                          'Authorization': `Bearer ${token}`,
-                          'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({ coinId: currency })
-                      });
+                  // 3. Award share points
+                  try {
+                    const token = localStorage.getItem('token');
+                    const response = await fetch(`${API_URL}/share/x`, {
+                      method: 'POST',
+                      headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                      },
+                      body: JSON.stringify({ coinId: currency })
+                    });
 
-                      const data = await response.json();
+                    const data = await response.json();
 
-                      if (response.ok) {
-                        alert(`You earned +1 Share Point! Total: ${data.share_points}`);
-                      } else {
-                        // If error is because of daily limit, show it
-                        if (data.error) {
-                          alert(data.error);
-                        }
+                    if (response.ok) {
+                      alert(`You earned +1 Share Point! Total: ${data.share_points}`);
+                    } else {
+                      // Silently log if already shared today
+                      if (data.error) {
+                        console.log(data.error);
                       }
-                    } catch (error) {
-                      console.error('Error updating share points:', error);
                     }
+                  } catch (error) {
+                    console.error('Error updating share points:', error);
                   }
                 }}
               >
