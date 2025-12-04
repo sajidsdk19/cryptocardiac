@@ -184,7 +184,12 @@ const CurrencyData = () => {
                     return;
                   }
 
-                  // 1. Cast vote first (if can vote)
+                  // 1. Open Twitter share dialog FIRST (before any async operations to avoid popup blocker)
+                  const text = `Check out ${coinData.name} (${coinData.symbol.toUpperCase()}) on CryptoCardiac! 🚀`;
+                  const url = window.location.href;
+                  window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`, '_blank');
+
+                  // 2. Cast vote (if can vote)
                   if (canVote) {
                     try {
                       await vote(currency, coinData.name);
@@ -203,11 +208,6 @@ const CurrencyData = () => {
                       console.error('Error voting:', error);
                     }
                   }
-
-                  // 2. Open Twitter share dialog
-                  const text = `Check out ${coinData.name} (${coinData.symbol.toUpperCase()}) on CryptoCardiac! 🚀`;
-                  const url = window.location.href;
-                  window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`, '_blank');
 
                   // 3. Award share points
                   try {
