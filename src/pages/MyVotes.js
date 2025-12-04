@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import Navbar from '../component/Navbar';
+import LogoLoader from '../component/LogoLoader';
 import styles from '../styles/MyVotes.module.scss';
 
 const MyVotes = () => {
@@ -148,14 +149,7 @@ const MyVotes = () => {
     }
 
     if (loading) {
-        return (
-            <>
-                <Navbar />
-                <div className={styles.container}>
-                    <div className={styles.loading}>Loading your voting history...</div>
-                </div>
-            </>
-        );
+        return <LogoLoader />;
     }
 
     if (error) {

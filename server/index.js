@@ -369,10 +369,19 @@ app.get('/api/votes/history', authenticateToken, async (req, res) => {
     const userId = req.user.id;
 
     try {
-        // Get all votes by this user (ordered by most recent first)
+        // Get only the MOST RECENT vote per coin (no duplicates)
         const [votes] = await db.query(
-            'SELECT coin_id, coin_name, created_at FROM votes WHERE user_id = ? ORDER BY created_at DESC',
-            [userId]
+            `SELECT v.coin_id, v.coin_name, v.created_at 
+             FROM votes v
+             INNER JOIN (
+                 SELECT coin_id, MAX(created_at) as max_created_at
+                 FROM votes
+                 WHERE user_id = ?
+                 GROUP BY coin_id
+             ) latest ON v.coin_id = latest.coin_id AND v.created_at = latest.max_created_at
+             WHERE v.user_id = ?
+             ORDER BY v.created_at DESC`,
+            [userId, userId]
         );
 
         if (votes.length === 0) {
