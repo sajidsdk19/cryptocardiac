@@ -162,7 +162,7 @@ const CurrencyData = () => {
                 ({(coinData.symbol).toUpperCase()})
               </Typography>
             </Typography>
-            <Box sx={{ display: "flex", alignItems: "center", gap: 2, mt: 1 }}>
+            <Box sx={{ display: "flex", alignItems: "center", gap: 2, mt: 1, flexWrap: { xs: "wrap", sm: "nowrap" } }}>
               <Typography component="span" sx={{ color: "rgb(142 144 149)", fontSize: "0.9rem" }}>
                 {voteCount.toLocaleString()} votes
               </Typography>
