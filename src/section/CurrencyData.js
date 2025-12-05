@@ -184,12 +184,37 @@ const CurrencyData = () => {
                     return;
                   }
 
-                  // 1. Open Twitter share dialog FIRST (before any async operations to avoid popup blocker)
-                  const text = `Check out ${coinData.name} (${coinData.symbol.toUpperCase()}) on CryptoCardiac! 🚀`;
-                  const url = window.location.href;
-                  window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`, '_blank');
+                  const shareText = `Check out ${coinData.name} (${coinData.symbol.toUpperCase()}) on CryptoCardiac! 🚀`;
+                  const shareUrl = window.location.href;
 
-                  // 2. Cast vote (if can vote)
+                  // Check if Web Share API is supported (mobile devices)
+                  if (navigator.share) {
+                    try {
+                      // Use native share sheet on mobile
+                      await navigator.share({
+                        title: `${coinData.name} on CryptoCardiac`,
+                        text: shareText,
+                        url: shareUrl
+                      });
+
+                      // User completed share - award points and cast vote
+                      // (Note: We can't detect if they actually shared, but they opened the share dialog)
+                    } catch (error) {
+                      // User cancelled share dialog
+                      if (error.name === 'AbortError') {
+                        console.log('Share cancelled');
+                        return;
+                      }
+                      console.error('Error sharing:', error);
+                      return;
+                    }
+                  } else {
+                    // Desktop: Open Twitter in new tab
+                    const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(shareUrl)}`;
+                    window.open(twitterUrl, '_blank', 'noopener,noreferrer');
+                  }
+
+                  // Cast vote (if can vote)
                   if (canVote) {
                     try {
                       await vote(currency, coinData.name);
@@ -209,7 +234,7 @@ const CurrencyData = () => {
                     }
                   }
 
-                  // 3. Award share points
+                  // Award share points
                   try {
                     const token = localStorage.getItem('token');
                     const response = await fetch(`${API_URL}/share/x`, {
@@ -224,7 +249,7 @@ const CurrencyData = () => {
                     const data = await response.json();
 
                     if (response.ok) {
-                      alert(`You earned +1 Share Point! Total: ${data.share_points}`);
+                      alert(`✅ You earned +1 Share Point! Total: ${data.share_points}`);
                     } else {
                       // Silently log if already shared today
                       if (data.error) {
