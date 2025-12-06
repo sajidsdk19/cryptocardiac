@@ -210,7 +210,7 @@ const CurrencyData = () => {
                     }
                   } else {
                     // Desktop: Open Twitter in new tab
-                    const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(shareUrl)}`;
+                    const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText + ' ' + shareUrl)}`;
                     window.open(twitterUrl, '_blank', 'noopener,noreferrer');
                   }
 
