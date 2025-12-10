@@ -11,6 +11,7 @@ import { AdvancedRealTimeChart } from "react-ts-tradingview-widgets";
 import { useAuth } from '../contexts/AuthContext';
 import { useVoting } from '../hooks/useVoting';
 import VoteButton from '../component/VoteButton';
+import ShareModal from '../component/ShareModal';
 import styles from "../Styles.module.scss"
 
 const CurrencyData = () => {
@@ -22,6 +23,7 @@ const CurrencyData = () => {
   const [voteCount, setVoteCount] = useState(0);
   const [canVote, setCanVote] = useState(true);
   const [timeRemaining, setTimeRemaining] = useState(null);
+  const [shareModalOpen, setShareModalOpen] = useState(false);
   let supplyPercent = useRef(0);
   let marketCapToBTC = useRef(0);
   let volume24ToBtc = useRef(0);
@@ -110,6 +112,60 @@ const CurrencyData = () => {
     }
   };
 
+  const handleShareComplete = async (platform) => {
+    // Close modal
+    setShareModalOpen(false);
+
+    // If user cancelled (platform is null), do nothing
+    if (!platform) return;
+
+    // Cast vote (if can vote)
+    if (canVote) {
+      try {
+        await vote(currency, coinData.name);
+        setVoteCount(prev => prev + 1);
+        setCanVote(false);
+        const now = new Date();
+        const nowESTString = now.toLocaleString('en-US', { timeZone: 'America/New_York' });
+        const nowEST = new Date(nowESTString);
+        const nextMidnight = new Date(nowEST);
+        nextMidnight.setHours(24, 0, 0, 0);
+        const remainingMs = nextMidnight - nowEST;
+        const hours = Math.floor(remainingMs / (1000 * 60 * 60));
+        const minutes = Math.floor((remainingMs % (1000 * 60 * 60)) / (1000 * 60));
+        setTimeRemaining({ hours, minutes });
+      } catch (error) {
+        console.error('Error voting:', error);
+      }
+    }
+
+    // Award share points
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch(`${API_URL}/share/x`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ coinId: currency })
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        alert(`✅ You earned +1 Share Point! Total: ${data.share_points}`);
+      } else {
+        // Silently log if already shared today
+        if (data.error) {
+          console.log(data.error);
+        }
+      }
+    } catch (error) {
+      console.error('Error updating share points:', error);
+    }
+  };
+
   if (coinData.length === 0) return <Loading />
 
   const pageUrl = window.location.href;
@@ -177,88 +233,14 @@ const CurrencyData = () => {
               <button
                 className={styles.shareButton}
                 style={{ whiteSpace: 'nowrap' }}
-                onClick={async () => {
+                onClick={() => {
                   // Check if user is logged in
                   if (!currentUser) {
                     navigate('/login');
                     return;
                   }
-
-                  const shareText = `Check out ${coinData.name} (${coinData.symbol.toUpperCase()}) on CryptoCardiac! 🚀`;
-                  const shareUrl = window.location.href;
-
-                  // Check if Web Share API is supported (mobile devices)
-                  if (navigator.share) {
-                    try {
-                      // Use native share sheet on mobile
-                      await navigator.share({
-                        title: `${coinData.name} on CryptoCardiac`,
-                        text: shareText,
-                        url: shareUrl
-                      });
-
-                      // User completed share - award points and cast vote
-                      // (Note: We can't detect if they actually shared, but they opened the share dialog)
-                    } catch (error) {
-                      // User cancelled share dialog
-                      if (error.name === 'AbortError') {
-                        console.log('Share cancelled');
-                        return;
-                      }
-                      console.error('Error sharing:', error);
-                      return;
-                    }
-                  } else {
-                    // Desktop: Open Twitter in new tab
-                    const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText + ' ' + shareUrl)}`;
-                    window.open(twitterUrl, '_blank', 'noopener,noreferrer');
-                  }
-
-                  // Cast vote (if can vote)
-                  if (canVote) {
-                    try {
-                      await vote(currency, coinData.name);
-                      setVoteCount(prev => prev + 1);
-                      setCanVote(false);
-                      const now = new Date();
-                      const nowESTString = now.toLocaleString('en-US', { timeZone: 'America/New_York' });
-                      const nowEST = new Date(nowESTString);
-                      const nextMidnight = new Date(nowEST);
-                      nextMidnight.setHours(24, 0, 0, 0);
-                      const remainingMs = nextMidnight - nowEST;
-                      const hours = Math.floor(remainingMs / (1000 * 60 * 60));
-                      const minutes = Math.floor((remainingMs % (1000 * 60 * 60)) / (1000 * 60));
-                      setTimeRemaining({ hours, minutes });
-                    } catch (error) {
-                      console.error('Error voting:', error);
-                    }
-                  }
-
-                  // Award share points
-                  try {
-                    const token = localStorage.getItem('token');
-                    const response = await fetch(`${API_URL}/share/x`, {
-                      method: 'POST',
-                      headers: {
-                        'Authorization': `Bearer ${token}`,
-                        'Content-Type': 'application/json'
-                      },
-                      body: JSON.stringify({ coinId: currency })
-                    });
-
-                    const data = await response.json();
-
-                    if (response.ok) {
-                      alert(`✅ You earned +1 Share Point! Total: ${data.share_points}`);
-                    } else {
-                      // Silently log if already shared today
-                      if (data.error) {
-                        console.log(data.error);
-                      }
-                    }
-                  } catch (error) {
-                    console.error('Error updating share points:', error);
-                  }
+                  // Open custom share modal
+                  setShareModalOpen(true);
                 }}
               >
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -346,6 +328,13 @@ const CurrencyData = () => {
       <Box sx={{ flexGrow: 1 }} className={styles.tradingView} >
         <AdvancedRealTimeChart symbol={`${coinData.symbol}usdt`} theme="dark" height={"100%"} width={"100%"} timezone={Intl.DateTimeFormat().resolvedOptions().timeZone} copyrightStyles={{ parent: { display: "none" } }}></AdvancedRealTimeChart>
       </Box>
+
+      {/* Custom Share Modal */}
+      <ShareModal
+        open={shareModalOpen}
+        onClose={handleShareComplete}
+        coinData={coinData}
+      />
     </Box>
   );
 }
