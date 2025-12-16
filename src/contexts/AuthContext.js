@@ -12,11 +12,11 @@ export function AuthProvider({ children }) {
 
     const API_URL = `${process.env.REACT_APP_API_URL || 'http://localhost:5000/api'}/auth`;
 
-    async function signup(email, password) {
+    async function signup(email, password, captchaToken) {
         const response = await fetch(`${API_URL}/signup`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ email, password })
+            body: JSON.stringify({ email, password, captchaToken })
         });
 
         const data = await response.json();

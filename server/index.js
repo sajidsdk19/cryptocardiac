@@ -64,14 +64,30 @@ const authenticateToken = (req, res, next) => {
 // --- Auth Routes ---
 
 // Signup
+// Signup
 app.post('/api/auth/signup', async (req, res) => {
-    const { email, password } = req.body;
+    const { email, password, captchaToken } = req.body;
+    const TURNSTILE_SECRET_KEY = process.env.TURNSTILE_SECRET_KEY || '0x4AAAAAAACG8DLI7wml-oaPXRHFMkqvI9e0'; // Secret Key
 
     if (!email || !password) {
         return res.status(400).json({ error: 'Email and password are required' });
     }
 
+    if (!captchaToken) {
+        return res.status(400).json({ error: 'CAPTCHA verification failed' });
+    }
+
     try {
+        // Verify Turnstile Token
+        const verifyResponse = await axios.post('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
+            secret: TURNSTILE_SECRET_KEY,
+            response: captchaToken
+        });
+
+        if (!verifyResponse.data.success) {
+            return res.status(400).json({ error: 'CAPTCHA verification failed. Please try again.' });
+        }
+
         // Check if user exists
         const [existingUsers] = await db.query('SELECT * FROM users WHERE email = ?', [email]);
         if (existingUsers.length > 0) {

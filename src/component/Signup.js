@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import styles from '../styles/Auth.module.scss';
@@ -9,8 +10,30 @@ const Signup = () => {
     const [confirmPassword, setConfirmPassword] = useState('');
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
+    const [captchaToken, setCaptchaToken] = useState(null);
     const { signup } = useAuth();
     const navigate = useNavigate();
+
+    const SITE_KEY = "0x4AAAAAAACG8DIC2mN-jyS6r";
+
+    React.useEffect(() => {
+        // Define callback function globally
+        window.onTurnstileSuccess = (token) => {
+            setCaptchaToken(token);
+        };
+
+        // Inject script
+        const script = document.createElement('script');
+        script.src = "https://challenges.cloudflare.com/turnstile/v0/api.js";
+        script.async = true;
+        script.defer = true;
+        document.body.appendChild(script);
+
+        return () => {
+            document.body.removeChild(script);
+            delete window.onTurnstileSuccess;
+        };
+    }, []);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -27,10 +50,14 @@ const Signup = () => {
             return setError('Password must be at least 6 characters');
         }
 
+        if (!captchaToken) {
+            return setError('Please complete the CAPTCHA check');
+        }
+
         try {
             setError('');
             setLoading(true);
-            await signup(email, password);
+            await signup(email, password, captchaToken);
             navigate('/');
         } catch (error) {
             console.error('Signup error:', error);
@@ -83,6 +110,11 @@ const Signup = () => {
                             onChange={(e) => setConfirmPassword(e.target.value)}
                             disabled={loading}
                         />
+                    </div>
+
+                    {/* Turnstile Widget Container */}
+                    <div className={styles.formGroup} style={{ display: 'flex', justifyContent: 'center', marginBottom: '20px', minHeight: '65px' }}>
+                        <div className="cf-turnstile" data-sitekey={SITE_KEY} data-callback="onTurnstileSuccess" data-theme="dark"></div>
                     </div>
 
                     <button
