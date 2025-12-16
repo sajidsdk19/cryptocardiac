@@ -14,7 +14,7 @@ const Signup = () => {
     const { signup } = useAuth();
     const navigate = useNavigate();
 
-    const SITE_KEY = "0x4AAAAAAACG8DIC2mN-jyS6r";
+    const SITE_KEY = "0x4AAAAAAACG9NmeSm2CWC3Hr";
 
     React.useEffect(() => {
         const scriptId = 'turnstile-script';

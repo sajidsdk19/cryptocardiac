@@ -67,7 +67,7 @@ const authenticateToken = (req, res, next) => {
 // Signup
 app.post('/api/auth/signup', async (req, res) => {
     const { email, password, captchaToken } = req.body;
-    const TURNSTILE_SECRET_KEY = process.env.TURNSTILE_SECRET_KEY || '0x4AAAAAAACG8DGOA1mXLaRhNYiG_U1RfcLI'; // Secret Key
+    const TURNSTILE_SECRET_KEY = process.env.TURNSTILE_SECRET_KEY || '0x4AAAAAAACG9NmFDme5pcFOOIjwqpKb-URs'; // Secret Key
 
     if (!email || !password) {
         return res.status(400).json({ error: 'Email and password are required' });
