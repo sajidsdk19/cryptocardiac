@@ -17,21 +17,42 @@ const Signup = () => {
     const SITE_KEY = "0x4AAAAAAACG8DIC2mN-jyS6r";
 
     React.useEffect(() => {
-        // Define callback function globally
-        window.onTurnstileSuccess = (token) => {
-            setCaptchaToken(token);
+        const scriptId = 'turnstile-script';
+        let widgetId = null;
+
+        // Function to render the widget
+        const renderWidget = () => {
+            if (window.turnstile) {
+                widgetId = window.turnstile.render('#cf-turnstile', {
+                    sitekey: SITE_KEY,
+                    callback: (token) => {
+                        setCaptchaToken(token);
+                    },
+                    theme: 'dark',
+                });
+            }
         };
 
-        // Inject script
-        const script = document.createElement('script');
-        script.src = "https://challenges.cloudflare.com/turnstile/v0/api.js";
-        script.async = true;
-        script.defer = true;
-        document.body.appendChild(script);
+        if (!document.getElementById(scriptId)) {
+            const script = document.createElement('script');
+            script.id = scriptId;
+            script.src = "https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit"; // Use explicit render mode
+            script.async = true;
+            script.defer = true;
+            script.onload = renderWidget;
+            document.body.appendChild(script);
+        } else {
+            // Script already loaded, just render
+            if (window.turnstile) {
+                renderWidget();
+            }
+        }
 
         return () => {
-            document.body.removeChild(script);
-            delete window.onTurnstileSuccess;
+            // Clean up if needed (Turnstile doesn't have a specific destroy method for the global script, but we can remove the widget)
+            if (window.turnstile && widgetId) {
+                window.turnstile.remove(widgetId);
+            }
         };
     }, []);
 
@@ -114,7 +135,7 @@ const Signup = () => {
 
                     {/* Turnstile Widget Container */}
                     <div className={styles.formGroup} style={{ display: 'flex', justifyContent: 'center', marginBottom: '20px', minHeight: '65px' }}>
-                        <div className="cf-turnstile" data-sitekey={SITE_KEY} data-callback="onTurnstileSuccess" data-theme="dark"></div>
+                        <div id="cf-turnstile"></div>
                     </div>
 
                     <button
