@@ -44,7 +44,6 @@ const Navbar = () => {
                     width: '100%',
                     lineHeight: 0,
                     background: 'linear-gradient(135deg, #5700F9 0%, #CE34EA 100%)', // Match website theme
-                    borderBottom: '2px solid #000'
                 }}
             >
                 <Box
@@ -60,6 +59,9 @@ const Navbar = () => {
                     }}
                 />
             </Box>
+
+            {/* Visual Separator */}
+            <Box sx={{ width: '100%', height: '8px', backgroundColor: '#000' }} />
 
             <Box sx={{
                 background: 'linear-gradient(135deg, #5700F9 0%, #CE34EA 100%)',
