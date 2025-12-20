@@ -43,7 +43,8 @@ const Navbar = () => {
                     display: 'block',
                     width: '100%',
                     lineHeight: 0,
-                    background: 'linear-gradient(135deg, #5700F9 0%, #CE34EA 100%)' // Match website theme
+                    background: 'linear-gradient(135deg, #5700F9 0%, #CE34EA 100%)', // Match website theme
+                    borderBottom: '2px solid #000'
                 }}
             >
                 <Box
