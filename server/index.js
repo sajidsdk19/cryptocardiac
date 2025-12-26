@@ -171,7 +171,7 @@ app.get('/api/auth/me', authenticateToken, async (req, res) => {
         const [users] = await db.query('SELECT id, email, share_points FROM users WHERE id = ?', [req.user.id]);
         if (users.length === 0) return res.sendStatus(404);
 
-        const user = users[0];
+        const user = { ...users[0] };
 
         // Calculate Rank: Count users with strictly MORE share_points
         const [rankRows] = await db.query(

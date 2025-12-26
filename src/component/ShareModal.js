@@ -1,13 +1,15 @@
 import React from 'react';
 import { Box, Modal, Typography, IconButton } from '@mui/material';
 import { Close } from '@mui/icons-material';
+import { useAuth } from '../contexts/AuthContext';
 import styles from './ShareModal.module.scss';
 
 const ShareModal = ({ open, onClose, coinData }) => {
+    const { refreshUser } = useAuth();
     const shareText = `Check out ${coinData.name} (${coinData.symbol.toUpperCase()}) on CryptoCardiac! 🚀`;
     const shareUrl = window.location.href;
 
-    const handleShare = (platform) => {
+    const handleShare = async (platform) => {
         let url = '';
 
         switch (platform) {
@@ -29,6 +31,30 @@ const ShareModal = ({ open, onClose, coinData }) => {
 
         window.open(url, '_blank', 'noopener,noreferrer');
         onClose(platform);
+
+        // Award points for Twitter share
+        if (platform === 'twitter') {
+            try {
+                const token = localStorage.getItem('token');
+                if (!token) return;
+
+                const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
+                const response = await fetch(`${API_URL}/share/x`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ coinId: coinData.id })
+                });
+
+                if (response.ok) {
+                    await refreshUser();
+                }
+            } catch (error) {
+                console.error('Error awarding share points:', error);
+            }
+        }
     };
 
     return (

@@ -47,35 +47,35 @@ export function AuthProvider({ children }) {
         setCurrentUser(null);
     }
 
-    useEffect(() => {
-        const verifyToken = async () => {
-            const token = localStorage.getItem('token');
-            if (!token) {
-                setLoading(false);
-                return;
-            }
+    const verifyToken = async () => {
+        const token = localStorage.getItem('token');
+        if (!token) {
+            setLoading(false);
+            return;
+        }
 
-            try {
-                const response = await fetch(`${API_URL}/me`, {
-                    headers: { 'Authorization': `Bearer ${token}` }
-                });
+        try {
+            const response = await fetch(`${API_URL}/me`, {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
 
-                if (response.ok) {
-                    const data = await response.json();
-                    setCurrentUser(data.user);
-                } else {
-                    localStorage.removeItem('token');
-                    setCurrentUser(null);
-                }
-            } catch (error) {
-                console.error('Auth verification error:', error);
+            if (response.ok) {
+                const data = await response.json();
+                setCurrentUser(data.user);
+            } else {
                 localStorage.removeItem('token');
                 setCurrentUser(null);
-            } finally {
-                setLoading(false);
             }
-        };
+        } catch (error) {
+            console.error('Auth verification error:', error);
+            localStorage.removeItem('token');
+            setCurrentUser(null);
+        } finally {
+            setLoading(false);
+        }
+    };
 
+    useEffect(() => {
         verifyToken();
     }, []);
 
@@ -83,7 +83,8 @@ export function AuthProvider({ children }) {
         currentUser,
         signup,
         login,
-        logout
+        logout,
+        refreshUser: verifyToken
     };
 
     return (
