@@ -8,6 +8,8 @@ import Navbar from '../component/Navbar';
 import LogoLoader from '../component/LogoLoader';
 import styles from '../styles/Leaderboard.module.scss';
 
+import ConsistentCommunities from '../component/ConsistentCommunities';
+
 const Leaderboard = () => {
     const { currentUser } = useAuth();
     const { vote, checkGlobalVoteStatus, loading: votingLoading } = useVoting();
@@ -353,6 +355,8 @@ const Leaderboard = () => {
                         Feel the social pulse of your favorite cryptocurrency community!
                     </p>
                 </div>
+
+                <ConsistentCommunities />
 
                 <div className={styles.searchContainer}>
                     <input

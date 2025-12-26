@@ -229,6 +229,133 @@ app.get('/api/votes/time-based', async (req, res) => {
     }
 });
 
+// Get most consistent communities (streak calculation)
+app.get('/api/votes/consistent', async (req, res) => {
+    try {
+        const todayEST = getTodayDateEST();
+
+        // 1. Get all dates where votes occurred, grouped by coin
+        // We order by date DESC to easily check streaks
+        const [rows] = await db.query(`
+            SELECT coin_id, coin_name, DATE(CONVERT_TZ(created_at, '+00:00', '-05:00')) as vote_date 
+            FROM votes 
+            GROUP BY coin_id, vote_date 
+            ORDER BY coin_id, vote_date DESC
+        `);
+
+        if (rows.length === 0) {
+            return res.json([]);
+        }
+
+        // 2. Process streaks in memory
+        const streaks = {}; // { coinId: { streak: number, name: string, lastDate: string } }
+
+        rows.forEach(row => {
+            const coinId = row.coin_id;
+            const voteDate = moment(row.vote_date).format('YYYY-MM-DD');
+
+            if (!streaks[coinId]) {
+                streaks[coinId] = {
+                    coinId: coinId,
+                    coinName: row.coin_name,
+                    streak: 0,
+                    dates: []
+                };
+            }
+            streaks[coinId].dates.push(voteDate);
+        });
+
+        const consistentCoins = [];
+        const today = moment(todayEST);
+        const yesterday = moment(todayEST).subtract(1, 'days');
+
+        Object.values(streaks).forEach(coin => {
+            let currentStreak = 0;
+            const dates = new Set(coin.dates); // Unique dates already ensured by SQL GROUP BY but safe to be sure
+
+            // Check if they have a vote today OR yesterday to keep streak alive
+            const hasVoteToday = dates.has(today.format('YYYY-MM-DD'));
+            const hasVoteYesterday = dates.has(yesterday.format('YYYY-MM-DD'));
+
+            if (!hasVoteToday && !hasVoteYesterday) {
+                // Streak broken if no vote today AND no vote yesterday
+                currentStreak = 0;
+            } else {
+                // Calculate streak walking backwards
+                // If they voted today, start checking from today
+                // If they didn't vote today but did yesterday, start checking from yesterday
+                let checkDate = hasVoteToday ? today.clone() : yesterday.clone();
+
+                while (dates.has(checkDate.format('YYYY-MM-DD'))) {
+                    currentStreak++;
+                    checkDate.subtract(1, 'days');
+                }
+            }
+
+            if (currentStreak > 0) {
+                consistentCoins.push({
+                    coinId: coin.coinId,
+                    coinName: coin.coinName,
+                    streak: currentStreak
+                });
+            }
+        });
+
+        // 3. Sort by streak DESC
+        consistentCoins.sort((a, b) => b.streak - a.streak);
+
+        // 4. Top 10 only
+        const topConsistent = consistentCoins.slice(0, 10);
+
+        // 5. Fetch images/symbols for these coins
+        const coinIds = topConsistent.map(c => c.coinId).join(',');
+
+        if (coinIds) {
+            const cacheKey = `details_${coinIds}_usd`; // Reuse existing cache pattern if possible or make new
+            // We can just use the existing helper logic or call the API directly if helper not exposed well
+            // Let's call API via axios if not in cache (simplified)
+            // Or better, reuse the existing CoinGecko logic pattern
+            try {
+                let coinDetails = myCache.get(cacheKey);
+                if (!coinDetails) {
+                    apiHitsToday++;
+                    const response = await axios.get('https://api.coingecko.com/api/v3/coins/markets', {
+                        params: {
+                            vs_currency: 'usd',
+                            ids: coinIds,
+                            order: 'market_cap_desc',
+                            sparkline: false
+                        }
+                    });
+                    coinDetails = response.data;
+                    myCache.set(cacheKey, coinDetails);
+                }
+
+                // Merge details
+                const detailsMap = {};
+                coinDetails.forEach(c => detailsMap[c.id] = c);
+
+                topConsistent.forEach(c => {
+                    const details = detailsMap[c.coinId];
+                    if (details) {
+                        c.image = details.image;
+                        c.symbol = details.symbol;
+                    }
+                });
+
+            } catch (err) {
+                console.error('Error fetching details for consistent coins:', err.message);
+            }
+        }
+
+        res.json(topConsistent);
+
+    } catch (error) {
+        console.error('Get consistent communities error:', error);
+        res.status(500).json({ error: 'Server error' });
+    }
+});
+
 // Check user's per-coin voting status
 app.get('/api/votes/status', authenticateToken, async (req, res) => {
     const userId = req.user.id;
