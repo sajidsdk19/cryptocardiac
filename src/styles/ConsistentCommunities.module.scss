@@ -2,6 +2,9 @@
     width: 100%;
     margin-bottom: 2rem;
     padding: 0 1rem;
+    max-width: 1400px;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .header {
@@ -13,7 +16,7 @@
 .title {
     font-weight: 700 !important;
     font-family: 'Inter', sans-serif;
-    color: #e4e6eb;
+    color: #fff;
     display: flex;
     align-items: center;
     flex-wrap: wrap;
@@ -22,8 +25,8 @@
 
 .subtitle {
     font-size: 0.9rem;
-    color: #b0b3b8;
-    font-weight: 400;
+    color: rgba(255, 255, 255, 0.6);
+    font-weight: 500;
 }
 
 .scrollContainer {
@@ -32,28 +35,29 @@
     overflow-x: auto;
     padding-bottom: 1rem;
     scrollbar-width: thin;
-    scrollbar-color: #3e404b #18191a;
+    scrollbar-color: rgba(255, 255, 255, 0.2) rgba(255, 255, 255, 0.05);
 
     &::-webkit-scrollbar {
         height: 8px;
     }
 
     &::-webkit-scrollbar-track {
-        background: #18191a;
+        background: rgba(255, 255, 255, 0.05);
         border-radius: 4px;
     }
 
     &::-webkit-scrollbar-thumb {
-        background-color: #3e404b;
+        background-color: rgba(255, 255, 255, 0.2);
         border-radius: 4px;
     }
 }
 
 .card {
-    background-color: #242526;
-    border: 1px solid #3e404b;
-    border-radius: 12px;
-    padding: 1rem;
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    padding: 1.2rem;
     min-width: 180px;
     max-width: 200px;
     flex: 0 0 auto;
@@ -62,38 +66,48 @@
     align-items: center;
     justify-content: center;
     position: relative;
-    transition: transform 0.2s ease;
+    transition: all 0.3s ease;
+    height: 100%;
 
     &:hover {
-        transform: translateY(-2px);
-        background-color: #2a2b2c;
+        transform: translateY(-4px);
+        background: rgba(255, 255, 255, 0.08);
+        border-color: rgba(255, 255, 255, 0.2);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
     }
 }
 
 .goldCard {
-    border: 2px solid #ffd700;
-    background: linear-gradient(145deg, #242526 0%, #2a2200 100%);
-    box-shadow: 0 0 15px rgba(255, 215, 0, 0.1);
-    min-width: 220px;
+    border: 1px solid rgba(255, 215, 0, 0.5);
+    background: linear-gradient(145deg, rgba(255, 215, 0, 0.05) 0%, rgba(255, 215, 0, 0.1) 100%);
+    box-shadow: 0 0 20px rgba(255, 215, 0, 0.1);
+    min-width: 200px;
+    /* Kept similar size but highlighted */
+
+    &:hover {
+        box-shadow: 0 0 25px rgba(255, 215, 0, 0.2);
+        border-color: rgba(255, 215, 0, 0.8);
+    }
 }
 
 .rankBadge {
     position: absolute;
-    top: 8px;
-    left: 8px;
+    top: 10px;
+    left: 10px;
     font-size: 0.75rem;
     font-weight: 700;
-    color: #b0b3b8;
-    background: rgba(255, 255, 255, 0.1);
-    padding: 2px 6px;
-    border-radius: 4px;
+    color: rgba(255, 255, 255, 0.6);
+    background: rgba(0, 0, 0, 0.3);
+    padding: 2px 8px;
+    border-radius: 6px;
 }
 
 .fireIcon {
     position: absolute;
-    top: 8px;
-    right: 8px;
+    top: 10px;
+    right: 10px;
     color: #ff9800;
+    filter: drop-shadow(0 0 2px rgba(255, 152, 0, 0.5));
 }
 
 .coinInfo {
@@ -105,29 +119,31 @@
 }
 
 .coinImage {
-    width: 48px;
-    height: 48px;
+    width: 54px;
+    height: 54px;
     border-radius: 50%;
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.8rem;
+    border: 2px solid rgba(255, 255, 255, 0.1);
 }
 
 .coinPlaceholder {
-    width: 48px;
-    height: 48px;
+    width: 54px;
+    height: 54px;
     border-radius: 50%;
-    margin-bottom: 0.5rem;
-    background: #3a3b3c;
+    margin-bottom: 0.8rem;
+    background: rgba(255, 255, 255, 0.1);
+    border: 2px solid rgba(255, 255, 255, 0.1);
     display: flex;
     align-items: center;
     justify-content: center;
     font-weight: 700;
-    color: #e4e6eb;
+    color: rgba(255, 255, 255, 0.8);
 }
 
 .coinName {
     font-weight: 700 !important;
-    color: #e4e6eb;
-    font-size: 0.95rem !important;
+    color: #fff;
+    font-size: 1rem !important;
     text-align: center;
     white-space: nowrap;
     overflow: hidden;
@@ -137,8 +153,8 @@
 }
 
 .streakText {
-    font-size: 0.8rem !important;
-    color: #b0b3b8;
+    font-size: 0.85rem !important;
+    color: rgba(255, 255, 255, 0.6);
     text-align: center;
     line-height: 1.4 !important;
 }
@@ -146,4 +162,5 @@
 .streakNumber {
     color: #ffd700;
     font-weight: 700;
+    font-size: 1rem;
 }
