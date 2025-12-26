@@ -101,10 +101,22 @@ app.post('/api/auth/signup', async (req, res) => {
         // Insert user
         const [result] = await db.query('INSERT INTO users (email, password_hash) VALUES (?, ?)', [email, hashedPassword]);
 
+        // Calculate Initial Rank (0 points)
+        const [rankRows] = await db.query('SELECT COUNT(*) as higher_rank_count FROM users WHERE share_points > 0');
+        const rank = rankRows[0].higher_rank_count + 1;
+
         // Create token
         const token = jwt.sign({ id: result.insertId, email }, JWT_SECRET, { expiresIn: '24h' });
 
-        res.status(201).json({ token, user: { id: result.insertId, email } });
+        res.status(201).json({
+            token,
+            user: {
+                id: result.insertId,
+                email,
+                share_points: 0,
+                rank: rank
+            }
+        });
     } catch (error) {
         console.error('Signup error:', error);
         res.status(500).json({ error: 'Server error' });
@@ -128,9 +140,24 @@ app.post('/api/auth/login', async (req, res) => {
             return res.status(400).json({ error: 'Invalid credentials' });
         }
 
+        // Calculate Rank
+        const [rankRows] = await db.query(
+            'SELECT COUNT(*) as higher_rank_count FROM users WHERE share_points > ?',
+            [user.share_points || 0]
+        );
+        const rank = rankRows[0].higher_rank_count + 1;
+
         const token = jwt.sign({ id: user.id, email: user.email }, JWT_SECRET, { expiresIn: '24h' });
 
-        res.json({ token, user: { id: user.id, email: user.email } });
+        res.json({
+            token,
+            user: {
+                id: user.id,
+                email: user.email,
+                share_points: user.share_points,
+                rank: rank
+            }
+        });
     } catch (error) {
         console.error('Login error:', error);
         res.status(500).json({ error: 'Server error' });
@@ -138,11 +165,24 @@ app.post('/api/auth/login', async (req, res) => {
 });
 
 // Get Current User (Verify Token)
+// Get Current User (Verify Token)
 app.get('/api/auth/me', authenticateToken, async (req, res) => {
     try {
         const [users] = await db.query('SELECT id, email, share_points FROM users WHERE id = ?', [req.user.id]);
         if (users.length === 0) return res.sendStatus(404);
-        res.json({ user: users[0] });
+
+        const user = users[0];
+
+        // Calculate Rank: Count users with strictly MORE share_points
+        const [rankRows] = await db.query(
+            'SELECT COUNT(*) as higher_rank_count FROM users WHERE share_points > ?',
+            [user.share_points || 0]
+        );
+
+        const rank = rankRows[0].higher_rank_count + 1;
+        user.rank = rank;
+
+        res.json({ user });
     } catch (error) {
         console.error('Get me error:', error);
         res.status(500).json({ error: 'Server error' });
@@ -723,6 +763,7 @@ app.get('/api/admin/stats', async (req, res) => {
 // Import migration scripts
 const createShareLogsTable = require('./migrations/create_share_logs_table');
 const ensureSharePointsColumn = require('./ensure_share_points');
+const recalculateSharePoints = require('./recalculate_points');
 
 // Initialize database and start server
 const init = async () => {
@@ -730,6 +771,7 @@ const init = async () => {
         // Run migrations
         await createShareLogsTable();
         await ensureSharePointsColumn();
+        await recalculateSharePoints();
 
         app.listen(PORT, () => {
             console.log(`Server running on port ${PORT}`);

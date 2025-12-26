@@ -9,6 +9,7 @@ import LogoLoader from '../component/LogoLoader';
 import styles from '../styles/Leaderboard.module.scss';
 
 import ConsistentCommunities from '../component/ConsistentCommunities';
+import ProfileRanking from '../component/ProfileRanking';
 
 const Leaderboard = () => {
     const { currentUser } = useAuth();
@@ -355,6 +356,8 @@ const Leaderboard = () => {
                         Feel the social pulse of your favorite cryptocurrency community!
                     </p>
                 </div>
+
+                {currentUser && <ProfileRanking />}
 
                 <ConsistentCommunities />
 
