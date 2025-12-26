@@ -236,8 +236,9 @@ app.get('/api/votes/consistent', async (req, res) => {
 
         // 1. Get all dates where votes occurred, grouped by coin
         // We order by date DESC to easily check streaks
+        // Use MAX(coin_name) to comply with ONLY_FULL_GROUP_BY
         const [rows] = await db.query(`
-            SELECT coin_id, coin_name, DATE(CONVERT_TZ(created_at, '+00:00', '-05:00')) as vote_date 
+            SELECT coin_id, MAX(coin_name) as coin_name, DATE(CONVERT_TZ(created_at, '+00:00', '-05:00')) as vote_date 
             FROM votes 
             GROUP BY coin_id, vote_date 
             ORDER BY coin_id, vote_date DESC

@@ -13,9 +13,16 @@ const ConsistentCommunities = () => {
             try {
                 const response = await fetch(`${API_URL}/votes/consistent`);
                 const data = await response.json();
-                setCommunities(data);
+
+                if (Array.isArray(data)) {
+                    setCommunities(data);
+                } else {
+                    console.error("Consistent communities API returned invalid data:", data);
+                    setCommunities([]);
+                }
             } catch (error) {
                 console.error("Error fetching consistent communities", error);
+                setCommunities([]);
             } finally {
                 setLoading(false);
             }
