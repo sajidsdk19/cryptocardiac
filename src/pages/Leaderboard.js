@@ -19,6 +19,7 @@ const Leaderboard = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [apiSearchResults, setApiSearchResults] = useState([]); // Results from API search
     const [isSearchingAPI, setIsSearchingAPI] = useState(false); // Loading state for API search
+    const [sortConfig, setSortConfig] = useState({ key: 'votes_24h', direction: 'desc' });
     const searchTimeout = useRef(null);
     const COINS_PER_PAGE = 15;
     const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
@@ -72,22 +73,10 @@ const Leaderboard = () => {
                 });
             });
 
-            // 7. Convert to array and sort by 24-hour votes
+            // 7. Initialize with some default sort or raw data
             const cryptosWithVotes = Array.from(allCoinsMap.values());
-            cryptosWithVotes.sort((a, b) => {
-                const aVotes24h = timeVotes[a.id]?.votes_24h || 0;
-                const bVotes24h = timeVotes[b.id]?.votes_24h || 0;
 
-                // Primary sort: 24h Votes
-                if (bVotes24h !== aVotes24h) {
-                    return bVotes24h - aVotes24h;
-                }
-
-                // Secondary sort: Total Votes
-                return (b.votes || 0) - (a.votes || 0);
-            });
-
-            // 8. Store ALL coins (no slicing)
+            // 8. Store ALL coins
             setAllCryptos(cryptosWithVotes);
 
             // 9. Check user's vote status per coin
@@ -246,6 +235,14 @@ const Leaderboard = () => {
         }
     };
 
+    const requestSort = (key) => {
+        let direction = 'desc'; // Default to descending for numbers (highest first)
+        if (sortConfig.key === key && sortConfig.direction === 'desc') {
+            direction = 'asc';
+        }
+        setSortConfig({ key, direction });
+    };
+
     const getLocalTimeRemaining = (coinId) => {
         const status = userVoteStatus[coinId];
         if (!status || !status.remainingMs) return { hours: 0, minutes: 0 };
@@ -289,13 +286,62 @@ const Leaderboard = () => {
     );
 
     // Merge local results with API results (API results only shown if no local results)
-    const filteredCryptos = localFilteredCryptos.length > 0 ? localFilteredCryptos : apiSearchResults;
+    let filteredCryptos = localFilteredCryptos.length > 0 ? localFilteredCryptos : apiSearchResults;
+
+    // Sort logic
+    if (sortConfig !== null) {
+        filteredCryptos = [...filteredCryptos].sort((a, b) => {
+            let aValue = 0;
+            let bValue = 0;
+
+            const aTimeVotes = timeBasedVotes[a.id] || { votes_24h: 0, votes_7d: 0, votes_3m: 0 };
+            const bTimeVotes = timeBasedVotes[b.id] || { votes_24h: 0, votes_7d: 0, votes_3m: 0 };
+
+            switch (sortConfig.key) {
+                case 'votes_24h':
+                    aValue = aTimeVotes.votes_24h || 0;
+                    bValue = bTimeVotes.votes_24h || 0;
+                    break;
+                case 'votes_7d':
+                    aValue = aTimeVotes.votes_7d || 0;
+                    bValue = bTimeVotes.votes_7d || 0;
+                    break;
+                case 'votes_3m':
+                    aValue = aTimeVotes.votes_3m || 0;
+                    bValue = bTimeVotes.votes_3m || 0;
+                    break;
+                case 'votes_total':
+                    aValue = a.votes || 0;
+                    bValue = b.votes || 0;
+                    break;
+                default:
+                    return 0;
+            }
+
+            if (aValue < bValue) {
+                return sortConfig.direction === 'asc' ? -1 : 1;
+            }
+            if (aValue > bValue) {
+                return sortConfig.direction === 'asc' ? 1 : -1;
+            }
+            // Tie breaker: Total votes (or maybe market cap if votes equal?)
+            // Fallback to total votes desc if primary sort is equal
+            return (b.votes || 0) - (a.votes || 0);
+        });
+    }
 
     // Pagination logic
     const totalPages = Math.ceil(filteredCryptos.length / COINS_PER_PAGE);
     const startIndex = (currentPage - 1) * COINS_PER_PAGE;
     const endIndex = startIndex + COINS_PER_PAGE;
     const displayCryptos = filteredCryptos.slice(startIndex, endIndex);
+
+    const getSortIndicator = (key) => {
+        if (sortConfig.key === key) {
+            return sortConfig.direction === 'asc' ? ' ↑' : ' ↓';
+        }
+        return <span style={{ opacity: 0.3 }}> ⇅</span>;
+    };
 
     return (
         <>
@@ -337,10 +383,34 @@ const Leaderboard = () => {
                                 <th className={styles.th}>#</th>
                                 <th className={styles.th}>Coin</th>
                                 <th className={styles.th}>Price</th>
-                                <th className={styles.th}>24h Votes</th>
-                                <th className={styles.th}>7d Votes</th>
-                                <th className={styles.th}>3M Votes</th>
-                                <th className={styles.th}>Total Votes</th>
+                                <th
+                                    className={styles.th}
+                                    style={{ cursor: 'pointer', userSelect: 'none' }}
+                                    onClick={() => requestSort('votes_24h')}
+                                >
+                                    24h Votes{getSortIndicator('votes_24h')}
+                                </th>
+                                <th
+                                    className={styles.th}
+                                    style={{ cursor: 'pointer', userSelect: 'none' }}
+                                    onClick={() => requestSort('votes_7d')}
+                                >
+                                    7d Votes{getSortIndicator('votes_7d')}
+                                </th>
+                                <th
+                                    className={styles.th}
+                                    style={{ cursor: 'pointer', userSelect: 'none' }}
+                                    onClick={() => requestSort('votes_3m')}
+                                >
+                                    3M Votes{getSortIndicator('votes_3m')}
+                                </th>
+                                <th
+                                    className={styles.th}
+                                    style={{ cursor: 'pointer', userSelect: 'none' }}
+                                    onClick={() => requestSort('votes_total')}
+                                >
+                                    Total Votes{getSortIndicator('votes_total')}
+                                </th>
                                 <th className={styles.th}>Action</th>
                             </tr>
                         </thead>
