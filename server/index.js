@@ -111,8 +111,7 @@ app.post('/api/auth/signup', async (req, res) => {
             user: {
                 id: result.insertId,
                 email,
-                share_points: 0,
-
+                share_points: 0
             }
         });
     } catch (error) {
@@ -147,8 +146,7 @@ app.post('/api/auth/login', async (req, res) => {
             user: {
                 id: user.id,
                 email: user.email,
-                share_points: user.share_points,
-
+                share_points: user.share_points
             }
         });
     } catch (error) {
@@ -165,8 +163,6 @@ app.get('/api/auth/me', authenticateToken, async (req, res) => {
         if (users.length === 0) return res.sendStatus(404);
 
         const user = { ...users[0] };
-
-
 
         res.json({ user });
     } catch (error) {
