@@ -195,19 +195,19 @@
     }
 
     .card {
-        /* Show 3 items per screen width (approx 33% minus gap) */
-        min-width: calc((100% - 16px) / 3);
-        width: calc((100% - 16px) / 3);
+        /* Show 2 items per screen width (approx 50% minus gap) */
+        min-width: calc((100% - 8px) / 2);
+        width: calc((100% - 8px) / 2);
         max-width: unset;
-        padding: 0.8rem 0.2rem;
+        padding: 0.8rem 0.5rem;
         /* Reduce side padding to fit content */
         border-radius: 12px;
         flex: 0 0 auto;
     }
 
     .goldCard {
-        min-width: calc((100% - 16px) / 3);
-        width: calc((100% - 16px) / 3);
+        min-width: calc((100% - 8px) / 2);
+        width: calc((100% - 8px) / 2);
     }
 
     .coinImage,
