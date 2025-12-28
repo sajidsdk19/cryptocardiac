@@ -185,53 +185,57 @@
     }
 
     .scrollContainer {
-        gap: 10px;
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 8px;
+        overflow-x: visible;
         padding-bottom: 0.5rem;
     }
 
     .card {
-        min-width: 140px;
-        width: 150px;
-        max-width: 160px;
-        padding: 1rem 0.5rem;
+        min-width: unset;
+        width: 100%;
+        max-width: unset;
+        padding: 0.8rem 0.4rem;
         border-radius: 12px;
     }
 
     .goldCard {
-        min-width: 150px;
-        width: 160px;
+        min-width: unset;
+        width: 100%;
     }
 
     .coinImage,
     .coinPlaceholder {
-        width: 40px;
-        height: 40px;
-        margin-bottom: 0.5rem;
+        width: 36px;
+        height: 36px;
+        margin-bottom: 0.4rem;
     }
 
     .coinName {
-        font-size: 0.85rem !important;
-        max-width: 120px;
+        font-size: 0.75rem !important;
+        max-width: 100%;
+        line-height: 1.2 !important;
     }
 
     .streakText {
-        font-size: 0.75rem !important;
+        font-size: 0.7rem !important;
     }
 
     .streakNumber {
-        font-size: 0.9rem;
+        font-size: 0.85rem;
     }
 
     .rankBadge {
-        top: 6px;
-        left: 6px;
-        font-size: 0.7rem;
-        padding: 1px 5px;
+        top: 4px;
+        left: 4px;
+        font-size: 0.65rem;
+        padding: 1px 4px;
     }
 
     .fireIcon {
-        top: 6px;
-        right: 6px;
-        font-size: 1.2rem !important;
+        top: 4px;
+        right: 4px;
+        font-size: 1rem !important;
     }
 }
