@@ -85,7 +85,6 @@
     background: linear-gradient(145deg, rgba(255, 215, 0, 0.05) 0%, rgba(255, 215, 0, 0.1) 100%);
     box-shadow: 0 0 20px rgba(255, 215, 0, 0.1);
     min-width: 200px;
-    /* Kept similar size but highlighted */
 
     &:hover {
         box-shadow: 0 0 25px rgba(255, 215, 0, 0.2);
@@ -185,60 +184,23 @@
     }
 
     .scrollContainer {
-<<<<<<< HEAD
-<<<<<<< HEAD
-        display: flex;
-        gap: 8px;
-        overflow-x: auto;
-=======
         gap: 10px;
->>>>>>> parent of ddc0c9a (changes in mobile view)
-=======
-        gap: 10px;
->>>>>>> parent of ddc0c9a (changes in mobile view)
         padding-bottom: 0.5rem;
-        /* Re-enable scroll snapping if desired, or just smooth scroll */
-        scroll-behavior: smooth;
-        -webkit-overflow-scrolling: touch;
     }
 
     .card {
-<<<<<<< HEAD
-<<<<<<< HEAD
-        /* Show 2 items per screen width (approx 50% minus gap) */
-        min-width: calc((100% - 8px) / 2);
-        width: calc((100% - 8px) / 2);
-        max-width: unset;
-        padding: 0.8rem 0.5rem;
-        /* Reduce side padding to fit content */
-=======
-=======
->>>>>>> parent of ddc0c9a (changes in mobile view)
-        min-width: 140px;
-        width: 150px;
-        max-width: 160px;
+        min-width: 40vw !important;
+        width: 40vw !important;
+        max-width: 40vw !important;
         padding: 1rem 0.5rem;
-<<<<<<< HEAD
->>>>>>> parent of ddc0c9a (changes in mobile view)
-=======
->>>>>>> parent of ddc0c9a (changes in mobile view)
         border-radius: 12px;
-        flex: 0 0 auto;
+        flex-shrink: 0;
     }
 
     .goldCard {
-<<<<<<< HEAD
-<<<<<<< HEAD
-        min-width: calc((100% - 8px) / 2);
-        width: calc((100% - 8px) / 2);
-=======
-        min-width: 150px;
-        width: 160px;
->>>>>>> parent of ddc0c9a (changes in mobile view)
-=======
-        min-width: 150px;
-        width: 160px;
->>>>>>> parent of ddc0c9a (changes in mobile view)
+        min-width: 40vw !important;
+        width: 40vw !important;
+        flex-shrink: 0;
     }
 
     .coinImage,

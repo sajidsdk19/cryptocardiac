@@ -54,10 +54,22 @@ const ConsistentCommunities = () => {
 
                             <Box className={styles.coinInfo}>
                                 {coin.image ? (
-                                    <img src={coin.image} alt={coin.coinName} className={styles.coinImage} />
-                                ) : (
-                                    <div className={styles.coinPlaceholder}>{coin.symbol?.[0] || '?'}</div>
-                                )}
+                                    <img
+                                        src={coin.image}
+                                        alt={coin.coinName}
+                                        className={styles.coinImage}
+                                        onError={(e) => {
+                                            e.target.style.display = 'none';
+                                            e.target.nextSibling.style.display = 'flex';
+                                        }}
+                                    />
+                                ) : null}
+                                <div
+                                    className={styles.coinPlaceholder}
+                                    style={{ display: coin.image ? 'none' : 'flex' }}
+                                >
+                                    {coin.symbol?.[0]?.toUpperCase() || '?'}
+                                </div>
                                 <Typography className={styles.coinName}>
                                     {index === 0 && <span style={{ marginRight: '4px' }}>🏅</span>}
                                     {coin.coinName} ({coin.symbol?.toUpperCase()})
