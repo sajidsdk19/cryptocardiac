@@ -101,9 +101,7 @@ app.post('/api/auth/signup', async (req, res) => {
         // Insert user
         const [result] = await db.query('INSERT INTO users (email, password_hash) VALUES (?, ?)', [email, hashedPassword]);
 
-        // Calculate Initial Rank (0 points)
-        const [rankRows] = await db.query('SELECT COUNT(*) as higher_rank_count FROM users WHERE share_points > 0');
-        const rank = rankRows[0].higher_rank_count + 1;
+
 
         // Create token
         const token = jwt.sign({ id: result.insertId, email }, JWT_SECRET, { expiresIn: '24h' });
@@ -114,7 +112,7 @@ app.post('/api/auth/signup', async (req, res) => {
                 id: result.insertId,
                 email,
                 share_points: 0,
-                rank: rank
+
             }
         });
     } catch (error) {
@@ -140,12 +138,7 @@ app.post('/api/auth/login', async (req, res) => {
             return res.status(400).json({ error: 'Invalid credentials' });
         }
 
-        // Calculate Rank
-        const [rankRows] = await db.query(
-            'SELECT COUNT(*) as higher_rank_count FROM users WHERE share_points > ?',
-            [user.share_points || 0]
-        );
-        const rank = rankRows[0].higher_rank_count + 1;
+
 
         const token = jwt.sign({ id: user.id, email: user.email }, JWT_SECRET, { expiresIn: '24h' });
 
@@ -155,7 +148,7 @@ app.post('/api/auth/login', async (req, res) => {
                 id: user.id,
                 email: user.email,
                 share_points: user.share_points,
-                rank: rank
+
             }
         });
     } catch (error) {
@@ -173,14 +166,7 @@ app.get('/api/auth/me', authenticateToken, async (req, res) => {
 
         const user = { ...users[0] };
 
-        // Calculate Rank: Count users with strictly MORE share_points
-        const [rankRows] = await db.query(
-            'SELECT COUNT(*) as higher_rank_count FROM users WHERE share_points > ?',
-            [user.share_points || 0]
-        );
 
-        const rank = rankRows[0].higher_rank_count + 1;
-        user.rank = rank;
 
         res.json({ user });
     } catch (error) {

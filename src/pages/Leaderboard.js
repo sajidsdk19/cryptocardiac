@@ -9,7 +9,7 @@ import LogoLoader from '../component/LogoLoader';
 import styles from '../styles/Leaderboard.module.scss';
 
 import ConsistentCommunities from '../component/ConsistentCommunities';
-import ProfileRanking from '../component/ProfileRanking';
+
 
 const Leaderboard = () => {
     const { currentUser, refreshUser } = useAuth();
@@ -359,7 +359,7 @@ const Leaderboard = () => {
                     </p>
                 </div>
 
-                {currentUser && <ProfileRanking />}
+
 
                 <ConsistentCommunities />
 
