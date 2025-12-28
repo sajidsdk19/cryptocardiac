@@ -486,12 +486,31 @@ app.post('/api/votes', authenticateToken, async (req, res) => {
             });
         }
 
-        await db.query(
-            'INSERT INTO votes (user_id, coin_id, coin_name) VALUES (?, ?, ?)',
-            [userId, coinId, coinName]
-        );
+        // Start transaction
+        await db.query('START TRANSACTION');
 
-        res.json({ message: 'Vote cast successfully' });
+        try {
+            await db.query(
+                'INSERT INTO votes (user_id, coin_id, coin_name) VALUES (?, ?, ?)',
+                [userId, coinId, coinName]
+            );
+
+            // Increment user points for voting
+            await db.query('UPDATE users SET share_points = COALESCE(share_points, 0) + 1 WHERE id = ?', [userId]);
+
+            // Commit transaction
+            await db.query('COMMIT');
+
+            // Get updated points
+            const [users] = await db.query('SELECT share_points FROM users WHERE id = ?', [userId]);
+            const newPoints = users[0].share_points;
+
+            res.json({ message: 'Vote cast successfully', share_points: newPoints });
+
+        } catch (err) {
+            await db.query('ROLLBACK');
+            throw err;
+        }
     } catch (error) {
         console.error('Cast vote error:', error);
         res.status(500).json({ error: 'Server error' });

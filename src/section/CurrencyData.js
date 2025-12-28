@@ -16,7 +16,7 @@ import styles from "../Styles.module.scss"
 
 const CurrencyData = () => {
   const { currency, vsCurrency } = useContext(AppContext);
-  const { currentUser } = useAuth();
+  const { currentUser, refreshUser } = useAuth();
   const { vote, checkGlobalVoteStatus } = useVoting();
   const navigate = useNavigate();
   const [coinData, setCoinData] = useState([]);
@@ -89,7 +89,10 @@ const CurrencyData = () => {
 
   const handleVote = async () => {
     try {
-      await vote(currency, coinData.name);
+      const data = await vote(currency, coinData.name);
+
+      await refreshUser();
+      alert(`✅ Vote Cast! You earned +1 Share Point! Total: ${data.share_points}`);
 
       // Update local vote count
       setVoteCount(prev => prev + 1);
@@ -119,25 +122,7 @@ const CurrencyData = () => {
     // If user cancelled (platform is null), do nothing
     if (!platform) return;
 
-    // Cast vote (if can vote)
-    if (canVote) {
-      try {
-        await vote(currency, coinData.name);
-        setVoteCount(prev => prev + 1);
-        setCanVote(false);
-        const now = new Date();
-        const nowESTString = now.toLocaleString('en-US', { timeZone: 'America/New_York' });
-        const nowEST = new Date(nowESTString);
-        const nextMidnight = new Date(nowEST);
-        nextMidnight.setHours(24, 0, 0, 0);
-        const remainingMs = nextMidnight - nowEST;
-        const hours = Math.floor(remainingMs / (1000 * 60 * 60));
-        const minutes = Math.floor((remainingMs % (1000 * 60 * 60)) / (1000 * 60));
-        setTimeRemaining({ hours, minutes });
-      } catch (error) {
-        console.error('Error voting:', error);
-      }
-    }
+
 
     // Award share points
     try {

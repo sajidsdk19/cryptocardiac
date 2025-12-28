@@ -44,7 +44,7 @@ export const useVoting = () => {
                 throw new Error(data.error || 'Failed to vote');
             }
 
-            return true;
+            return data;
         } catch (err) {
             setError(err.message);
             throw err;

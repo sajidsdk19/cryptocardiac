@@ -12,7 +12,7 @@ import ConsistentCommunities from '../component/ConsistentCommunities';
 import ProfileRanking from '../component/ProfileRanking';
 
 const Leaderboard = () => {
-    const { currentUser } = useAuth();
+    const { currentUser, refreshUser } = useAuth();
     const { vote, checkGlobalVoteStatus, loading: votingLoading } = useVoting();
     const [allCryptos, setAllCryptos] = useState([]); // Store ALL coins
     const [loading, setLoading] = useState(true);
@@ -227,7 +227,9 @@ const Leaderboard = () => {
 
     const handleVote = async (coinId, coinName) => {
         try {
-            await vote(coinId, coinName);
+            const data = await vote(coinId, coinName);
+            await refreshUser();
+            alert(`✅ Vote Cast! You earned +1 Share Point! Total: ${data.share_points}`);
 
             // Reload the entire leaderboard to get updated vote counts and proper sorting
             await loadLeaderboard();
