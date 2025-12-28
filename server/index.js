@@ -64,7 +64,6 @@ const authenticateToken = (req, res, next) => {
 // --- Auth Routes ---
 
 // Signup
-// Signup
 app.post('/api/auth/signup', async (req, res) => {
     const { email, password, captchaToken } = req.body;
     const TURNSTILE_SECRET_KEY = process.env.TURNSTILE_SECRET_KEY || '1x0000000000000000000000000000000AA'; // Secret Key
@@ -101,8 +100,6 @@ app.post('/api/auth/signup', async (req, res) => {
         // Insert user
         const [result] = await db.query('INSERT INTO users (email, password_hash) VALUES (?, ?)', [email, hashedPassword]);
 
-
-
         // Create token
         const token = jwt.sign({ id: result.insertId, email }, JWT_SECRET, { expiresIn: '24h' });
 
@@ -137,8 +134,6 @@ app.post('/api/auth/login', async (req, res) => {
             return res.status(400).json({ error: 'Invalid credentials' });
         }
 
-
-
         const token = jwt.sign({ id: user.id, email: user.email }, JWT_SECRET, { expiresIn: '24h' });
 
         res.json({
@@ -156,15 +151,12 @@ app.post('/api/auth/login', async (req, res) => {
 });
 
 // Get Current User (Verify Token)
-// Get Current User (Verify Token)
 app.get('/api/auth/me', authenticateToken, async (req, res) => {
     try {
         const [users] = await db.query('SELECT id, email, share_points FROM users WHERE id = ?', [req.user.id]);
         if (users.length === 0) return res.sendStatus(404);
 
-        const user = { ...users[0] };
-
-        res.json({ user });
+        res.json({ user: users[0] });
     } catch (error) {
         console.error('Get me error:', error);
         res.status(500).json({ error: 'Server error' });
@@ -764,7 +756,6 @@ app.get('/api/admin/stats', async (req, res) => {
 // Import migration scripts
 const createShareLogsTable = require('./migrations/create_share_logs_table');
 const ensureSharePointsColumn = require('./ensure_share_points');
-const recalculateSharePoints = require('./recalculate_points');
 
 // Initialize database and start server
 const init = async () => {
@@ -772,8 +763,6 @@ const init = async () => {
         // Run migrations
         await createShareLogsTable();
         await ensureSharePointsColumn();
-
-        // await recalculateSharePoints(); // Disabled to prevent startup delays
 
         app.listen(PORT, () => {
             console.log(`Server running on port ${PORT}`);
