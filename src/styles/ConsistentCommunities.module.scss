@@ -185,24 +185,29 @@
     }
 
     .scrollContainer {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
+        display: flex;
         gap: 8px;
-        overflow-x: visible;
+        overflow-x: auto;
         padding-bottom: 0.5rem;
+        /* Re-enable scroll snapping if desired, or just smooth scroll */
+        scroll-behavior: smooth;
+        -webkit-overflow-scrolling: touch;
     }
 
     .card {
-        min-width: unset;
-        width: 100%;
+        /* Show 3 items per screen width (approx 33% minus gap) */
+        min-width: calc((100% - 16px) / 3);
+        width: calc((100% - 16px) / 3);
         max-width: unset;
-        padding: 0.8rem 0.4rem;
+        padding: 0.8rem 0.2rem;
+        /* Reduce side padding to fit content */
         border-radius: 12px;
+        flex: 0 0 auto;
     }
 
     .goldCard {
-        min-width: unset;
-        width: 100%;
+        min-width: calc((100% - 16px) / 3);
+        width: calc((100% - 16px) / 3);
     }
 
     .coinImage,
