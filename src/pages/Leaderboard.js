@@ -360,9 +360,6 @@ const Leaderboard = () => {
                 </div>
 
 
-
-                <ConsistentCommunities />
-
                 <div className={styles.searchContainer}>
                     <input
                         type="text"
@@ -494,6 +491,8 @@ const Leaderboard = () => {
                         </button>
                     </div>
                 )}
+
+                <ConsistentCommunities />
 
             </div>
         </>
