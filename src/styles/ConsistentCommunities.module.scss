@@ -186,9 +186,13 @@
 
     .scrollContainer {
 <<<<<<< HEAD
+<<<<<<< HEAD
         display: flex;
         gap: 8px;
         overflow-x: auto;
+=======
+        gap: 10px;
+>>>>>>> parent of ddc0c9a (changes in mobile view)
 =======
         gap: 10px;
 >>>>>>> parent of ddc0c9a (changes in mobile view)
@@ -200,6 +204,7 @@
 
     .card {
 <<<<<<< HEAD
+<<<<<<< HEAD
         /* Show 2 items per screen width (approx 50% minus gap) */
         min-width: calc((100% - 8px) / 2);
         width: calc((100% - 8px) / 2);
@@ -207,10 +212,15 @@
         padding: 0.8rem 0.5rem;
         /* Reduce side padding to fit content */
 =======
+=======
+>>>>>>> parent of ddc0c9a (changes in mobile view)
         min-width: 140px;
         width: 150px;
         max-width: 160px;
         padding: 1rem 0.5rem;
+<<<<<<< HEAD
+>>>>>>> parent of ddc0c9a (changes in mobile view)
+=======
 >>>>>>> parent of ddc0c9a (changes in mobile view)
         border-radius: 12px;
         flex: 0 0 auto;
@@ -218,8 +228,13 @@
 
     .goldCard {
 <<<<<<< HEAD
+<<<<<<< HEAD
         min-width: calc((100% - 8px) / 2);
         width: calc((100% - 8px) / 2);
+=======
+        min-width: 150px;
+        width: 160px;
+>>>>>>> parent of ddc0c9a (changes in mobile view)
 =======
         min-width: 150px;
         width: 160px;
