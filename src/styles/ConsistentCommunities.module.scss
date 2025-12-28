@@ -185,9 +185,13 @@
     }
 
     .scrollContainer {
+<<<<<<< HEAD
         display: flex;
         gap: 8px;
         overflow-x: auto;
+=======
+        gap: 10px;
+>>>>>>> parent of ddc0c9a (changes in mobile view)
         padding-bottom: 0.5rem;
         /* Re-enable scroll snapping if desired, or just smooth scroll */
         scroll-behavior: smooth;
@@ -195,52 +199,63 @@
     }
 
     .card {
+<<<<<<< HEAD
         /* Show 2 items per screen width (approx 50% minus gap) */
         min-width: calc((100% - 8px) / 2);
         width: calc((100% - 8px) / 2);
         max-width: unset;
         padding: 0.8rem 0.5rem;
         /* Reduce side padding to fit content */
+=======
+        min-width: 140px;
+        width: 150px;
+        max-width: 160px;
+        padding: 1rem 0.5rem;
+>>>>>>> parent of ddc0c9a (changes in mobile view)
         border-radius: 12px;
         flex: 0 0 auto;
     }
 
     .goldCard {
+<<<<<<< HEAD
         min-width: calc((100% - 8px) / 2);
         width: calc((100% - 8px) / 2);
+=======
+        min-width: 150px;
+        width: 160px;
+>>>>>>> parent of ddc0c9a (changes in mobile view)
     }
 
     .coinImage,
     .coinPlaceholder {
-        width: 36px;
-        height: 36px;
-        margin-bottom: 0.4rem;
+        width: 40px;
+        height: 40px;
+        margin-bottom: 0.5rem;
     }
 
     .coinName {
-        font-size: 0.75rem !important;
-        max-width: 100%;
-        line-height: 1.2 !important;
+        font-size: 0.85rem !important;
+        max-width: 120px;
     }
 
     .streakText {
-        font-size: 0.7rem !important;
+        font-size: 0.75rem !important;
     }
 
     .streakNumber {
-        font-size: 0.85rem;
+        font-size: 0.9rem;
     }
 
     .rankBadge {
-        top: 4px;
-        left: 4px;
-        font-size: 0.65rem;
-        padding: 1px 4px;
+        top: 6px;
+        left: 6px;
+        font-size: 0.7rem;
+        padding: 1px 5px;
     }
 
     .fireIcon {
-        top: 4px;
-        right: 4px;
-        font-size: 1rem !important;
+        top: 6px;
+        right: 6px;
+        font-size: 1.2rem !important;
     }
 }
