@@ -45,7 +45,10 @@ const ShareModal = ({ open, onClose, coinData }) => {
                         'Content-Type': 'application/json',
                         'Authorization': `Bearer ${token}`
                     },
-                    body: JSON.stringify({ coinId: coinData.id })
+                    body: JSON.stringify({
+                        coinId: coinData.id,
+                        coinName: coinData.name
+                    })
                 });
 
                 if (response.ok) {

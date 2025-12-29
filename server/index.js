@@ -494,7 +494,7 @@ app.post('/api/votes', authenticateToken, async (req, res) => {
 // Increment share points (with daily limit per coin)
 app.post('/api/share/x', authenticateToken, async (req, res) => {
     const userId = req.user.id;
-    const { coinId } = req.body;
+    const { coinId, coinName } = req.body;
 
     if (!coinId) {
         return res.status(400).json({ error: 'Coin ID is required' });
@@ -518,24 +518,34 @@ app.post('/api/share/x', authenticateToken, async (req, res) => {
         // Start transaction
         await db.query('START TRANSACTION');
 
-        // Insert into share_logs
-        await db.query(
-            'INSERT INTO share_logs (user_id, coin_id) VALUES (?, ?)',
-            [userId, coinId]
-        );
+        try {
+            // Insert into share_logs
+            await db.query(
+                'INSERT INTO share_logs (user_id, coin_id) VALUES (?, ?)',
+                [userId, coinId]
+            );
 
-        // Increment user points
-        await db.query('UPDATE users SET share_points = COALESCE(share_points, 0) + 1 WHERE id = ?', [userId]);
+            // Insert into votes table to increment coin's vote count
+            await db.query(
+                'INSERT INTO votes (user_id, coin_id, coin_name) VALUES (?, ?, ?)',
+                [userId, coinId, coinName || coinId]
+            );
 
-        // Commit transaction
-        await db.query('COMMIT');
+            // Increment user points
+            await db.query('UPDATE users SET share_points = COALESCE(share_points, 0) + 1 WHERE id = ?', [userId]);
 
-        const [users] = await db.query('SELECT share_points FROM users WHERE id = ?', [userId]);
-        const newPoints = users[0].share_points;
+            // Commit transaction
+            await db.query('COMMIT');
 
-        res.json({ message: 'Share points updated', share_points: newPoints });
+            const [users] = await db.query('SELECT share_points FROM users WHERE id = ?', [userId]);
+            const newPoints = users[0].share_points;
+
+            res.json({ message: 'Share points updated', share_points: newPoints });
+        } catch (err) {
+            await db.query('ROLLBACK');
+            throw err;
+        }
     } catch (error) {
-        await db.query('ROLLBACK');
         console.error('Share points error:', error);
         res.status(500).json({ error: 'Server error' });
     }
