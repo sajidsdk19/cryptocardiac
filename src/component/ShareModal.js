@@ -49,7 +49,9 @@ const ShareModal = ({ open, onClose, coinData }) => {
                 });
 
                 if (response.ok) {
+                    const data = await response.json();
                     await refreshUser();
+                    alert(`✅ You earned +1 Share Point! Total: ${data.share_points}`);
                 }
             } catch (error) {
                 console.error('Error awarding share points:', error);

@@ -122,33 +122,8 @@ const CurrencyData = () => {
     // If user cancelled (platform is null), do nothing
     if (!platform) return;
 
-
-
-    // Award share points
-    try {
-      const token = localStorage.getItem('token');
-      const response = await fetch(`${API_URL}/share/x`, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ coinId: currency })
-      });
-
-      const data = await response.json();
-
-      if (response.ok) {
-        alert(`✅ You earned +1 Share Point! Total: ${data.share_points}`);
-      } else {
-        // Silently log if already shared today
-        if (data.error) {
-          console.log(data.error);
-        }
-      }
-    } catch (error) {
-      console.error('Error updating share points:', error);
-    }
+    // ShareModal.js already handles awarding points for Twitter shares
+    // No need to call the API again here
   };
 
   if (coinData.length === 0) return <Loading />
