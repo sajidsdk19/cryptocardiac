@@ -92,7 +92,7 @@ const CurrencyData = () => {
       const data = await vote(currency, coinData.name);
 
       await refreshUser();
-      alert(`✅ Vote Cast! You earned +1 Share Point! Total: ${data.share_points}`);
+      alert(`✅ You earned +1 Share Point! Points Earned: ${data.share_points}`);
 
       // Update local vote count
       setVoteCount(prev => prev + 1);

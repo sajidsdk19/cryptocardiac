@@ -184,7 +184,7 @@ const MyVotes = () => {
                                 </svg>
                             </div>
                             <div className={styles.shareInfo}>
-                                <span className={styles.shareLabel}>Total Share Points</span>
+                                <span className={styles.shareLabel}> Points Earned</span>
                                 <span className={styles.shareValue}>{sharePoints}</span>
                             </div>
                         </div>

@@ -229,7 +229,7 @@ const Leaderboard = () => {
         try {
             const data = await vote(coinId, coinName);
             await refreshUser();
-            alert(`✅ Vote Cast! You earned +1 Share Point! Total: ${data.share_points}`);
+            alert(`✅ Vote Cast! You earned +1 Share Point! Points Earned: ${data.share_points}`);
 
             // Reload the entire leaderboard to get updated vote counts and proper sorting
             await loadLeaderboard();
