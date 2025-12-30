@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import Navbar from '../component/Navbar';
-import { useAuth } from '../contexts/AuthContext';
 
 const AdminDashboard = () => {
     const [stats, setStats] = useState(null);
