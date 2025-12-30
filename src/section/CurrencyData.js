@@ -130,7 +130,7 @@ const CurrencyData = () => {
   if (coinData.length === 0) return <Loading />
 
   const pageUrl = window.location.href;
-  const logoUrl = `${window.location.origin}/og-image.png`;
+  const logoUrl = coinData.image?.large || `${window.location.origin}/og-image.png`;
   const pageTitle = `${coinData.name} (${coinData.symbol.toUpperCase()}) — CryptoCardiac`;
   const pageDescription = `Vote for ${coinData.name} and explore real-time rankings, charts, and analytics on CryptoCardiac.`;
 
@@ -148,11 +148,11 @@ const CurrencyData = () => {
         <meta property="og:image" content={logoUrl} />
 
         {/* Twitter */}
-        <meta property="twitter:card" content="summary_large_image" />
-        <meta property="twitter:url" content={pageUrl} />
-        <meta property="twitter:title" content={pageTitle} />
-        <meta property="twitter:description" content={pageDescription} />
-        <meta property="twitter:image" content={logoUrl} />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:url" content={pageUrl} />
+        <meta name="twitter:title" content={pageTitle} />
+        <meta name="twitter:description" content={pageDescription} />
+        <meta name="twitter:image" content={logoUrl} />
       </Helmet>
 
       <Typography
