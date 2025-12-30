@@ -551,6 +551,126 @@ app.post('/api/share/x', authenticateToken, async (req, res) => {
     }
 });
 
+// Increment share points for Discord (with daily limit per coin)
+app.post('/api/share/discord', authenticateToken, async (req, res) => {
+    const userId = req.user.id;
+    const { coinId, coinName } = req.body;
+
+    if (!coinId) {
+        return res.status(400).json({ error: 'Coin ID is required' });
+    }
+
+    try {
+        const todayEST = getTodayDateEST();
+
+        // Check if user has already shared this coin today (EST)
+        const [rows] = await db.query(
+            `SELECT created_at FROM share_logs 
+             WHERE user_id = ? AND coin_id = ? 
+             AND DATE(CONVERT_TZ(created_at, '+00:00', '-05:00')) = ?`,
+            [userId, coinId, todayEST]
+        );
+
+        if (rows.length > 0) {
+            return res.status(400).json({ error: 'You have already received points for sharing this coin today.' });
+        }
+
+        // Start transaction
+        await db.query('START TRANSACTION');
+
+        try {
+            // Insert into share_logs
+            await db.query(
+                'INSERT INTO share_logs (user_id, coin_id) VALUES (?, ?)',
+                [userId, coinId]
+            );
+
+            // Insert into votes table to increment coin's vote count
+            await db.query(
+                'INSERT INTO votes (user_id, coin_id, coin_name) VALUES (?, ?, ?)',
+                [userId, coinId, coinName || coinId]
+            );
+
+            // Increment user points
+            await db.query('UPDATE users SET share_points = COALESCE(share_points, 0) + 1 WHERE id = ?', [userId]);
+
+            // Commit transaction
+            await db.query('COMMIT');
+
+            const [users] = await db.query('SELECT share_points FROM users WHERE id = ?', [userId]);
+            const newPoints = users[0].share_points;
+
+            res.json({ message: 'Share points updated', share_points: newPoints });
+        } catch (err) {
+            await db.query('ROLLBACK');
+            throw err;
+        }
+    } catch (error) {
+        console.error('Share points error:', error);
+        res.status(500).json({ error: 'Server error' });
+    }
+});
+
+// Increment share points for Reddit (with daily limit per coin)
+app.post('/api/share/reddit', authenticateToken, async (req, res) => {
+    const userId = req.user.id;
+    const { coinId, coinName } = req.body;
+
+    if (!coinId) {
+        return res.status(400).json({ error: 'Coin ID is required' });
+    }
+
+    try {
+        const todayEST = getTodayDateEST();
+
+        // Check if user has already shared this coin today (EST)
+        const [rows] = await db.query(
+            `SELECT created_at FROM share_logs 
+             WHERE user_id = ? AND coin_id = ? 
+             AND DATE(CONVERT_TZ(created_at, '+00:00', '-05:00')) = ?`,
+            [userId, coinId, todayEST]
+        );
+
+        if (rows.length > 0) {
+            return res.status(400).json({ error: 'You have already received points for sharing this coin today.' });
+        }
+
+        // Start transaction
+        await db.query('START TRANSACTION');
+
+        try {
+            // Insert into share_logs
+            await db.query(
+                'INSERT INTO share_logs (user_id, coin_id) VALUES (?, ?)',
+                [userId, coinId]
+            );
+
+            // Insert into votes table to increment coin's vote count
+            await db.query(
+                'INSERT INTO votes (user_id, coin_id, coin_name) VALUES (?, ?, ?)',
+                [userId, coinId, coinName || coinId]
+            );
+
+            // Increment user points
+            await db.query('UPDATE users SET share_points = COALESCE(share_points, 0) + 1 WHERE id = ?', [userId]);
+
+            // Commit transaction
+            await db.query('COMMIT');
+
+            const [users] = await db.query('SELECT share_points FROM users WHERE id = ?', [userId]);
+            const newPoints = users[0].share_points;
+
+            res.json({ message: 'Share points updated', share_points: newPoints });
+        } catch (err) {
+            await db.query('ROLLBACK');
+            throw err;
+        }
+    } catch (error) {
+        console.error('Share points error:', error);
+        res.status(500).json({ error: 'Server error' });
+    }
+});
+
 // Get user's complete voting history with coin details
 app.get('/api/votes/history', authenticateToken, async (req, res) => {
     const userId = req.user.id;

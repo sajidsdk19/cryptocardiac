@@ -11,17 +11,69 @@ const ShareModal = ({ open, onClose, coinData }) => {
 
     const handleShare = async (platform) => {
         let url = '';
+        const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
 
+        // Special handling for Discord - copy first, confirm, then redirect
+        if (platform === 'discord') {
+            try {
+                // Copy to clipboard
+                await navigator.clipboard.writeText(`${shareText}\n${shareUrl}`);
+
+                // Show confirmation message
+                const userConfirmed = window.confirm(
+                    '✅ Link copied to clipboard!\n\n' +
+                    'Click OK to open Discord where you can paste and share the link.\n\n' +
+                    'After confirming, you\'ll earn +1 Share Point!'
+                );
+
+                if (!userConfirmed) {
+                    onClose(null);
+                    return;
+                }
+
+                // Open Discord
+                url = 'https://discord.com/app';
+                window.open(url, '_blank', 'noopener,noreferrer');
+                onClose(platform);
+
+                // Award points
+                const token = localStorage.getItem('token');
+                if (token) {
+                    const response = await fetch(`${API_URL}/share/discord`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${token}`
+                        },
+                        body: JSON.stringify({
+                            coinId: coinData.id,
+                            coinName: coinData.name
+                        })
+                    });
+
+                    if (response.ok) {
+                        const data = await response.json();
+                        await refreshUser();
+                        alert(`✅ You earned +1 Share Point! Points Earned: ${data.share_points}`);
+                    } else {
+                        const errorData = await response.json();
+                        if (errorData.error) {
+                            alert(errorData.error);
+                        }
+                    }
+                }
+            } catch (error) {
+                console.error('Error with Discord share:', error);
+                alert('Failed to copy link to clipboard. Please try again.');
+            }
+            return;
+        }
+
+        // Handle Twitter and Reddit normally
         switch (platform) {
             case 'twitter':
                 url = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText + ' ' + shareUrl)}`;
                 break;
-            case 'discord':
-                // Discord doesn't have a direct share URL, so we'll copy to clipboard
-                navigator.clipboard.writeText(`${shareText}\n${shareUrl}`);
-                alert('Link copied to clipboard! Paste it in Discord.');
-                onClose('discord');
-                return;
             case 'reddit':
                 url = `https://reddit.com/submit?url=${encodeURIComponent(shareUrl)}&title=${encodeURIComponent(shareText)}`;
                 break;
@@ -29,36 +81,41 @@ const ShareModal = ({ open, onClose, coinData }) => {
                 return;
         }
 
+        // Open the platform URL
         window.open(url, '_blank', 'noopener,noreferrer');
         onClose(platform);
 
-        // Award points for Twitter share
-        if (platform === 'twitter') {
-            try {
-                const token = localStorage.getItem('token');
-                if (!token) return;
+        // Award points for Twitter and Reddit
+        try {
+            const token = localStorage.getItem('token');
+            if (!token) return;
 
-                const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
-                const response = await fetch(`${API_URL}/share/x`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${token}`
-                    },
-                    body: JSON.stringify({
-                        coinId: coinData.id,
-                        coinName: coinData.name
-                    })
-                });
+            const endpoint = platform === 'twitter' ? '/share/x' : '/share/reddit';
 
-                if (response.ok) {
-                    const data = await response.json();
-                    await refreshUser();
-                    alert(`✅ You earned +1 Share Point! Points Earned: ${data.share_points}`);
+            const response = await fetch(`${API_URL}${endpoint}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({
+                    coinId: coinData.id,
+                    coinName: coinData.name
+                })
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                await refreshUser();
+                alert(`✅ You earned +1 Share Point! Points Earned: ${data.share_points}`);
+            } else {
+                const errorData = await response.json();
+                if (errorData.error) {
+                    alert(errorData.error);
                 }
-            } catch (error) {
-                console.error('Error awarding share points:', error);
             }
+        } catch (error) {
+            console.error('Error awarding share points:', error);
         }
     };
 
