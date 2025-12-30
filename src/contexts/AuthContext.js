@@ -77,6 +77,7 @@ export function AuthProvider({ children }) {
 
     useEffect(() => {
         verifyToken();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     const value = {

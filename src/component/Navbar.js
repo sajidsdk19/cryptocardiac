@@ -2,7 +2,7 @@ import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { Box, Typography, Button, useMediaQuery, useTheme } from '@mui/material';
-import { Favorite, ExitToApp } from '@mui/icons-material';
+import { ExitToApp } from '@mui/icons-material';
 
 import logo from '../assets/logo_crypto.png';
 

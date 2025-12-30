@@ -33,7 +33,7 @@ const SelectBox = styled('select')({
 })
 
 const Capitalization = () => {
-  const { currency, vsCurrency, setVsCurrency, showCapSide, setShowCapSide } = useContext(AppContext);
+  const { currency, vsCurrency, setVsCurrency, showCapSide } = useContext(AppContext);
 
   const [currencies, setCurrencies] = useState([]);
   const [searchInput, setSearchInput] = useState("");

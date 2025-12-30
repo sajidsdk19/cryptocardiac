@@ -120,6 +120,7 @@ const Leaderboard = () => {
 
     useEffect(() => {
         loadLeaderboard();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [currentUser]); // Reload if user changes (login/logout)
 
     // Debounced API search when no local results found
@@ -218,6 +219,7 @@ const Leaderboard = () => {
                 clearTimeout(searchTimeout.current);
             }
         };
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [searchTerm, allCryptos, currentUser]);
 
     // Reset to page 1 when search term changes
@@ -257,13 +259,7 @@ const Leaderboard = () => {
         return { hours, minutes };
     };
 
-    const formatNumber = (num) => {
-        if (!num) return 'N/A';
-        if (num >= 1e12) return (num / 1e12).toFixed(2) + 'T';
-        if (num >= 1e9) return (num / 1e9).toFixed(2) + 'B';
-        if (num >= 1e6) return (num / 1e6).toFixed(2) + 'M';
-        return num.toLocaleString();
-    };
+
 
     const formatPrice = (price) => {
         if (!price) return 'N/A';

@@ -3,7 +3,6 @@ import Navbar from '../component/Navbar';
 import { useAuth } from '../contexts/AuthContext';
 
 const AdminDashboard = () => {
-    const { currentUser } = useAuth();
     const [stats, setStats] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);

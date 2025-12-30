@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Favorite, FavoriteBorder, AccessTime, Login } from '@mui/icons-material';
+import { FavoriteBorder, AccessTime, Login } from '@mui/icons-material';
 import { useAuth } from '../contexts/AuthContext';
 import styles from '../styles/Leaderboard.module.scss';
 
