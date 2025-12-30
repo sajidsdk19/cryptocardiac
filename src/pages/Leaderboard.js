@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { Snackbar, Alert } from '@mui/material';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { useVoting } from '../hooks/useVoting';
@@ -23,6 +24,7 @@ const Leaderboard = () => {
     const [apiSearchResults, setApiSearchResults] = useState([]); // Results from API search
     const [isSearchingAPI, setIsSearchingAPI] = useState(false); // Loading state for API search
     const [sortConfig, setSortConfig] = useState({ key: 'votes_24h', direction: 'desc' });
+    const [notification, setNotification] = useState({ open: false, message: '', severity: 'success' });
     const searchTimeout = useRef(null);
     const COINS_PER_PAGE = 15;
     const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
@@ -231,14 +233,14 @@ const Leaderboard = () => {
         try {
             const data = await vote(coinId, coinName);
             await refreshUser();
-            alert(`✅ Vote Cast! You earned +1 Share Point! Points Earned: ${data.share_points}`);
+            setNotification({ open: true, message: `✅ Vote Cast! You earned +1 Share Point! Points Earned: ${data.share_points}`, severity: 'success' });
 
             // Reload the entire leaderboard to get updated vote counts and proper sorting
             await loadLeaderboard();
 
         } catch (error) {
             console.error('Error voting:', error);
-            alert(error.message);
+            setNotification({ open: true, message: error.message, severity: 'error' });
         }
     };
 
@@ -491,6 +493,16 @@ const Leaderboard = () => {
                 <ConsistentCommunities />
 
             </div>
+            <Snackbar
+                open={notification.open}
+                autoHideDuration={1000}
+                onClose={() => setNotification({ ...notification, open: false })}
+                anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+            >
+                <Alert severity={notification.severity} sx={{ width: '100%' }}>
+                    {notification.message}
+                </Alert>
+            </Snackbar>
         </>
     );
 };

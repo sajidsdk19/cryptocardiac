@@ -1,4 +1,4 @@
-import { Box, Chip, LinearProgress, Typography } from '@mui/material';
+import { Box, Chip, LinearProgress, Typography, Snackbar, Alert } from '@mui/material';
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { useNavigate } from 'react-router-dom';
@@ -24,6 +24,7 @@ const CurrencyData = () => {
   const [canVote, setCanVote] = useState(true);
   const [timeRemaining, setTimeRemaining] = useState(null);
   const [shareModalOpen, setShareModalOpen] = useState(false);
+  const [notification, setNotification] = useState({ open: false, message: '', severity: 'success' });
   let supplyPercent = useRef(0);
   let marketCapToBTC = useRef(0);
   let volume24ToBtc = useRef(0);
@@ -92,7 +93,7 @@ const CurrencyData = () => {
       const data = await vote(currency, coinData.name);
 
       await refreshUser();
-      alert(`✅ You earned +1 Share Point! Points Earned: ${data.share_points}`);
+      setNotification({ open: true, message: `✅ You earned +1 Share Point! Points Earned: ${data.share_points}`, severity: 'success' });
 
       // Update local vote count
       setVoteCount(prev => prev + 1);
@@ -111,7 +112,7 @@ const CurrencyData = () => {
       setTimeRemaining({ hours, minutes });
     } catch (error) {
       console.error('Error voting:', error);
-      alert(error.message);
+      setNotification({ open: true, message: error.message, severity: 'error' });
     }
   };
 
@@ -289,12 +290,26 @@ const CurrencyData = () => {
         <AdvancedRealTimeChart symbol={`${coinData.symbol}usdt`} theme="dark" height={"100%"} width={"100%"} timezone={Intl.DateTimeFormat().resolvedOptions().timeZone} copyrightStyles={{ parent: { display: "none" } }}></AdvancedRealTimeChart>
       </Box>
 
-      {/* Custom Share Modal */}
       <ShareModal
         open={shareModalOpen}
         onClose={handleShareComplete}
         coinData={coinData}
+        onShareSuccess={(points) => {
+          setVoteCount(prev => prev + 1);
+          setNotification({ open: true, message: `✅ Shared! +1 Point. Total Points: ${points}`, severity: 'success' });
+        }}
       />
+
+      <Snackbar
+        open={notification.open}
+        autoHideDuration={1000}
+        onClose={() => setNotification({ ...notification, open: false })}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+      >
+        <Alert severity={notification.severity} sx={{ width: '100%' }}>
+          {notification.message}
+        </Alert>
+      </Snackbar>
     </Box>
   );
 }

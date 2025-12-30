@@ -166,13 +166,27 @@ app.get('/api/auth/me', authenticateToken, async (req, res) => {
 // --- Voting Routes ---
 
 // Get all vote counts
+// Get all vote counts (Votes + Shares)
 app.get('/api/votes', async (req, res) => {
     try {
-        const [rows] = await db.query('SELECT coin_id, COUNT(*) as count FROM votes GROUP BY coin_id');
+        // Get regular votes
+        const [voteRows] = await db.query('SELECT coin_id, COUNT(*) as count FROM votes GROUP BY coin_id');
+
+        // Get share logs (these now count as votes for the coin)
+        const [shareRows] = await db.query('SELECT coin_id, COUNT(*) as count FROM share_logs GROUP BY coin_id');
+
         const votes = {};
-        rows.forEach(row => {
-            votes[row.coin_id] = row.count;
+
+        // Add regular votes
+        voteRows.forEach(row => {
+            votes[row.coin_id] = (votes[row.coin_id] || 0) + row.count;
         });
+
+        // Add share votes
+        shareRows.forEach(row => {
+            votes[row.coin_id] = (votes[row.coin_id] || 0) + row.count;
+        });
+
         res.json(votes);
     } catch (error) {
         console.error('Get votes error:', error);
@@ -188,53 +202,52 @@ app.get('/api/votes/time-based', async (req, res) => {
     try {
         const todayEST = getTodayDateEST(); // Get today's date in EST (YYYY-MM-DD)
 
-        // Get votes for TODAY only (resets at midnight EST)
+        // Count for 24h (Today)
         const [votes24h] = await db.query(`
             SELECT coin_id, COUNT(*) as count 
-            FROM votes 
-            WHERE DATE(CONVERT_TZ(created_at, '+00:00', '-05:00')) = ?
+            FROM (
+                SELECT coin_id FROM votes WHERE DATE(CONVERT_TZ(created_at, '+00:00', '-05:00')) = ?
+                UNION ALL
+                SELECT coin_id FROM share_logs WHERE DATE(CONVERT_TZ(created_at, '+00:00', '-05:00')) = ?
+            ) as combined
             GROUP BY coin_id
-        `, [todayEST]);
+        `, [todayEST, todayEST]);
 
-        // Get votes for last 7 days (rolling window)
+        // Count for 7d
         const [votes7d] = await db.query(`
             SELECT coin_id, COUNT(*) as count 
-            FROM votes 
-            WHERE created_at >= NOW() - INTERVAL 7 DAY 
+            FROM (
+                SELECT coin_id FROM votes WHERE created_at >= NOW() - INTERVAL 7 DAY
+                UNION ALL
+                SELECT coin_id FROM share_logs WHERE created_at >= NOW() - INTERVAL 7 DAY
+            ) as combined
             GROUP BY coin_id
         `);
 
-        // Get votes for last 3 months / 90 days (rolling window)
+        // Count for 3m
         const [votes3m] = await db.query(`
             SELECT coin_id, COUNT(*) as count 
-            FROM votes 
-            WHERE created_at >= NOW() - INTERVAL 90 DAY 
+            FROM (
+                SELECT coin_id FROM votes WHERE created_at >= NOW() - INTERVAL 90 DAY
+                UNION ALL
+                SELECT coin_id FROM share_logs WHERE created_at >= NOW() - INTERVAL 90 DAY
+            ) as combined
             GROUP BY coin_id
         `);
 
         // Combine all results into a single object
         const timeBasedVotes = {};
 
-        votes24h.forEach(row => {
-            if (!timeBasedVotes[row.coin_id]) {
-                timeBasedVotes[row.coin_id] = { votes_24h: 0, votes_7d: 0, votes_3m: 0 };
+        const addCount = (coinId, type, count) => {
+            if (!timeBasedVotes[coinId]) {
+                timeBasedVotes[coinId] = { votes_24h: 0, votes_7d: 0, votes_3m: 0 };
             }
-            timeBasedVotes[row.coin_id].votes_24h = row.count;
-        });
+            timeBasedVotes[coinId][type] = count;
+        };
 
-        votes7d.forEach(row => {
-            if (!timeBasedVotes[row.coin_id]) {
-                timeBasedVotes[row.coin_id] = { votes_24h: 0, votes_7d: 0, votes_3m: 0 };
-            }
-            timeBasedVotes[row.coin_id].votes_7d = row.count;
-        });
-
-        votes3m.forEach(row => {
-            if (!timeBasedVotes[row.coin_id]) {
-                timeBasedVotes[row.coin_id] = { votes_24h: 0, votes_7d: 0, votes_3m: 0 };
-            }
-            timeBasedVotes[row.coin_id].votes_3m = row.count;
-        });
+        votes24h.forEach(row => addCount(row.coin_id, 'votes_24h', row.count));
+        votes7d.forEach(row => addCount(row.coin_id, 'votes_7d', row.count));
+        votes3m.forEach(row => addCount(row.coin_id, 'votes_3m', row.count));
 
         res.json(timeBasedVotes);
     } catch (error) {
@@ -525,13 +538,7 @@ app.post('/api/share/x', authenticateToken, async (req, res) => {
                 [userId, coinId]
             );
 
-            // Insert into votes table to increment coin's vote count
-            await db.query(
-                'INSERT INTO votes (user_id, coin_id, coin_name) VALUES (?, ?, ?)',
-                [userId, coinId, coinName || coinId]
-            );
-
-            // Increment user points
+            // Increment user points (sharing does NOT count as a vote)
             await db.query('UPDATE users SET share_points = COALESCE(share_points, 0) + 1 WHERE id = ?', [userId]);
 
             // Commit transaction
@@ -585,13 +592,7 @@ app.post('/api/share/discord', authenticateToken, async (req, res) => {
                 [userId, coinId]
             );
 
-            // Insert into votes table to increment coin's vote count
-            await db.query(
-                'INSERT INTO votes (user_id, coin_id, coin_name) VALUES (?, ?, ?)',
-                [userId, coinId, coinName || coinId]
-            );
-
-            // Increment user points
+            // Increment user points (sharing does NOT count as a vote)
             await db.query('UPDATE users SET share_points = COALESCE(share_points, 0) + 1 WHERE id = ?', [userId]);
 
             // Commit transaction
@@ -645,13 +646,7 @@ app.post('/api/share/reddit', authenticateToken, async (req, res) => {
                 [userId, coinId]
             );
 
-            // Insert into votes table to increment coin's vote count
-            await db.query(
-                'INSERT INTO votes (user_id, coin_id, coin_name) VALUES (?, ?, ?)',
-                [userId, coinId, coinName || coinId]
-            );
-
-            // Increment user points
+            // Increment user points (sharing does NOT count as a vote)
             await db.query('UPDATE users SET share_points = COALESCE(share_points, 0) + 1 WHERE id = ?', [userId]);
 
             // Commit transaction

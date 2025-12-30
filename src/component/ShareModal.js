@@ -4,7 +4,7 @@ import { Close } from '@mui/icons-material';
 import { useAuth } from '../contexts/AuthContext';
 import styles from './ShareModal.module.scss';
 
-const ShareModal = ({ open, onClose, coinData }) => {
+const ShareModal = ({ open, onClose, coinData, onShareSuccess }) => {
     const { refreshUser } = useAuth();
     const shareText = `Check out ${coinData.name} (${coinData.symbol.toUpperCase()}) on CryptoCardiac! 🚀`;
     const shareUrl = window.location.href;
@@ -54,7 +54,7 @@ const ShareModal = ({ open, onClose, coinData }) => {
                     if (response.ok) {
                         const data = await response.json();
                         await refreshUser();
-                        alert(`✅ You earned +1 Share Point! Points Earned: ${data.share_points}`);
+                        if (onShareSuccess) onShareSuccess(data.share_points);
                     } else {
                         const errorData = await response.json();
                         if (errorData.error) {
@@ -107,7 +107,7 @@ const ShareModal = ({ open, onClose, coinData }) => {
             if (response.ok) {
                 const data = await response.json();
                 await refreshUser();
-                alert(`✅ You earned +1 Share Point! Points Earned: ${data.share_points}`);
+                if (onShareSuccess) onShareSuccess(data.share_points);
             } else {
                 const errorData = await response.json();
                 if (errorData.error) {
