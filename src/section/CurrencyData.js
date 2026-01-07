@@ -130,7 +130,7 @@ const CurrencyData = () => {
   if (coinData.length === 0) return <Loading />
 
   const pageUrl = window.location.href;
-  const logoUrl = coinData.image?.large || `${window.location.origin}/og-image.png`;
+  const logoUrl = coinData.image?.large || `${window.location.origin}/og-image.jpg`;
   const pageTitle = `${coinData.name} (${coinData.symbol.toUpperCase()}) — CryptoCardiac`;
   const pageDescription = `Vote for ${coinData.name} and explore real-time rankings, charts, and analytics on CryptoCardiac.`;
 
