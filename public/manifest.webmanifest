@@ -1,0 +1,20 @@
+{
+  "short_name": "CryptoCardiac",
+  "name": "CryptoCardiac — The Social Pulse of Crypto Communities",
+  "description": "Vote for your favorite cryptocurrencies and explore real-time community rankings, charts, and analytics.",
+  "icons": [
+    {
+      "src": "/icons-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/icons-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ],
+  "theme_color": "#ffffff",
+  "background_color": "#ffffff",
+  "display": "standalone"
+}
