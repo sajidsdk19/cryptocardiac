@@ -1,25 +1,30 @@
 import React, { useState, useEffect } from 'react';
 import Navbar from '../component/Navbar';
 import Footer from '../component/Footer';
+import { useMediaQuery, useTheme } from '@mui/material';
 
-const ArticleCard = ({ article, onClick }) => (
+const ArticleCard = ({ article, onClick, isMobile }) => (
     <div style={{
         background: 'rgba(255,255,255,0.04)',
         border: '1px solid rgba(255,255,255,0.08)',
         borderRadius: '16px',
-        padding: '24px',
+        padding: isMobile ? '20px' : '24px',
         marginBottom: '24px',
         transition: 'transform 0.2s, background 0.2s',
         cursor: 'pointer'
     }}
         onClick={() => onClick(article)}
         onMouseEnter={e => {
-            e.currentTarget.style.transform = 'translateY(-5px)';
-            e.currentTarget.style.background = 'rgba(255,255,255,0.06)';
+            if (!isMobile) {
+                e.currentTarget.style.transform = 'translateY(-5px)';
+                e.currentTarget.style.background = 'rgba(255,255,255,0.06)';
+            }
         }}
         onMouseLeave={e => {
-            e.currentTarget.style.transform = 'translateY(0)';
-            e.currentTarget.style.background = 'rgba(255,255,255,0.04)';
+            if (!isMobile) {
+                e.currentTarget.style.transform = 'translateY(0)';
+                e.currentTarget.style.background = 'rgba(255,255,255,0.04)';
+            }
         }}
     >
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '12px' }}>
@@ -28,25 +33,25 @@ const ArticleCard = ({ article, onClick }) => (
                 color: '#CE34EA',
                 padding: '4px 12px',
                 borderRadius: '20px',
-                fontSize: '0.75rem',
+                fontSize: '0.7rem',
                 fontWeight: 600,
                 textTransform: 'uppercase',
                 letterSpacing: '0.5px'
             }}>
                 {article.category}
             </span>
-            <span style={{ color: '#555', fontSize: '0.8rem' }}>Mar 2026</span>
+            <span style={{ color: '#555', fontSize: '0.75rem' }}>Mar 2026</span>
         </div>
-        <h3 style={{ color: '#fff', fontSize: '1.4rem', marginBottom: '12px', lineHeight: '1.4' }}>{article.title}</h3>
-        <p style={{ color: '#CE34EA', fontSize: '0.9rem', fontWeight: 600, marginBottom: '12px' }}>{article.source}</p>
-        <p style={{ color: '#888', fontSize: '1rem', lineHeight: '1.6' }}>{article.description}</p>
+        <h3 style={{ color: '#fff', fontSize: isMobile ? '1.2rem' : '1.4rem', marginBottom: '12px', lineHeight: '1.4' }}>{article.title}</h3>
+        <p style={{ color: '#CE34EA', fontSize: '0.85rem', fontWeight: 600, marginBottom: '12px' }}>{article.source}</p>
+        <p style={{ color: '#888', fontSize: isMobile ? '0.9rem' : '1rem', lineHeight: '1.6' }}>{article.description}</p>
         <div style={{ marginTop: '20px', borderTop: '1px solid rgba(255,255,255,0.05)', paddingTop: '15px' }}>
             <span style={{ color: '#fff', fontSize: '0.9rem', fontWeight: 500 }}>Read Full Article →</span>
         </div>
     </div>
 );
 
-const ArticleDetail = ({ article, onBack }) => (
+const ArticleDetail = ({ article, onBack, isMobile }) => (
     <div style={{ animation: 'fadeIn 0.4s ease-out' }}>
         <button
             onClick={onBack}
@@ -55,11 +60,11 @@ const ArticleDetail = ({ article, onBack }) => (
                 border: 'none',
                 color: '#CE34EA',
                 cursor: 'pointer',
-                fontSize: '1rem',
+                fontSize: '0.95rem',
                 fontWeight: 600,
                 display: 'flex',
                 alignItems: 'center',
-                marginBottom: '30px',
+                marginBottom: isMobile ? '20px' : '30px',
                 padding: 0
             }}
         >
@@ -71,44 +76,62 @@ const ArticleDetail = ({ article, onBack }) => (
             color: '#CE34EA',
             padding: '6px 16px',
             borderRadius: '20px',
-            fontSize: '0.85rem',
+            fontSize: '0.8rem',
             fontWeight: 600,
             textTransform: 'uppercase',
-            marginBottom: '20px',
+            marginBottom: '16px',
             display: 'inline-block'
         }}>
             {article.category}
         </span>
 
-        <h1 style={{ color: '#fff', fontSize: '2.5rem', fontWeight: 800, marginBottom: '16px', lineHeight: '1.2' }}>
+        <h1 style={{
+            color: '#fff',
+            fontSize: isMobile ? '1.8rem' : '2.5rem',
+            fontWeight: 800,
+            marginBottom: '16px',
+            lineHeight: '1.2'
+        }}>
             {article.title}
         </h1>
 
-        <div style={{ display: 'flex', alignItems: 'center', marginBottom: '40px', color: '#888', fontSize: '0.95rem' }}>
-            <span style={{ color: '#CE34EA', fontWeight: 600, marginRight: '10px' }}>{article.source}</span>
-            <span style={{ marginRight: '10px' }}>•</span>
-            <span>Published: March 12, 2026</span>
-            <span style={{ marginLeft: '10px', marginRight: '10px' }}>•</span>
-            <span>8 min read</span>
+        <div style={{
+            display: 'flex',
+            flexWrap: 'wrap',
+            alignItems: 'center',
+            marginBottom: isMobile ? '30px' : '40px',
+            color: '#888',
+            fontSize: '0.85rem',
+            gap: '8px'
+        }}>
+            <span style={{ color: '#CE34EA', fontWeight: 600 }}>{article.source}</span>
+            <span>•</span>
+            <span>March 12, 2026</span>
+            {!isMobile && (
+                <>
+                    <span>•</span>
+                    <span>8 min read</span>
+                </>
+            )}
         </div>
 
-        <div style={{ color: '#ccc', fontSize: '1.1rem', lineHeight: '1.8' }}>
+        <div style={{ color: '#ccc', fontSize: isMobile ? '1rem' : '1.1rem', lineHeight: '1.8' }}>
             {article.fullContent.map((paragraph, i) => (
                 <p key={i} style={{ marginBottom: '1.5rem' }}>{paragraph}</p>
             ))}
         </div>
 
         <div style={{
-            marginTop: '60px',
-            padding: '40px',
+            marginTop: isMobile ? '40px' : '60px',
+            padding: isMobile ? '25px' : '40px',
             background: 'rgba(255,255,255,0.02)',
             border: '1px solid rgba(255,255,255,0.08)',
             borderRadius: '20px',
             textAlign: 'center'
         }}>
-            <h3 style={{ color: '#fff', marginBottom: '15px' }}>Enjoyed this deep dive?</h3>
-            <p style={{ color: '#888', marginBottom: '30px' }}>Share it with your community and help grow the heart of crypto.</p>
-            <div style={{ display: 'flex', justifyContent: 'center', gap: '15px' }}>
+            <h3 style={{ color: '#fff', marginBottom: '15px', fontSize: isMobile ? '1.1rem' : '1.3rem' }}>Enjoyed this deep dive?</h3>
+            <p style={{ color: '#888', marginBottom: '25px', fontSize: '0.9rem' }}>Share it with your community and help grow the heart of crypto.</p>
+            <div style={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', justifyContent: 'center', gap: '12px' }}>
                 <button style={{ padding: '12px 25px', borderRadius: '8px', border: 'none', background: '#1DA1F2', color: '#fff', fontWeight: 600, cursor: 'pointer' }}>Share on X</button>
                 <button style={{ padding: '12px 25px', borderRadius: '8px', border: 'none', background: '#0088cc', color: '#fff', fontWeight: 600, cursor: 'pointer' }}>Telegram</button>
             </div>
@@ -124,8 +147,8 @@ const TrendingTopic = ({ title, trend }) => (
         justifyContent: 'space-between',
         alignItems: 'center'
     }}>
-        <span style={{ color: '#ccc', fontSize: '0.95rem' }}>{title}</span>
-        <span style={{ color: trend.startsWith('+') ? '#4caf50' : '#f44336', fontSize: '0.85rem' }}>{trend}</span>
+        <span style={{ color: '#ccc', fontSize: '0.9rem' }}>{title}</span>
+        <span style={{ color: trend.startsWith('+') ? '#4caf50' : '#f44336', fontSize: '0.8rem' }}>{trend}</span>
     </div>
 );
 
@@ -134,14 +157,15 @@ const Articles = () => {
     const [pulseEmail, setPulseEmail] = useState('');
     const [pulseSubscribed, setPulseSubscribed] = useState(false);
 
+    const theme = useTheme();
+    const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+
     const handlePulseSubscribe = (e) => {
         e.preventDefault();
         if (!pulseEmail || !pulseEmail.includes('@')) {
             alert('Please enter a valid email address.');
             return;
         }
-        // In a real app, you would send this to your backend
-        console.log('Subscribing:', pulseEmail);
         setPulseSubscribed(true);
         setPulseEmail('');
     };
@@ -236,18 +260,32 @@ const Articles = () => {
                 `}
             </style>
 
-            {/* Hero Section - Only show on list view */}
+            {/* Hero Section */}
             {!selectedArticle && (
                 <div style={{
                     background: 'linear-gradient(135deg, #5700F9 0%, #CE34EA 100%)',
-                    padding: '80px 20px',
+                    padding: isMobile ? '60px 20px' : '80px 20px',
                     textAlign: 'center',
-                    marginBottom: '40px',
+                    marginBottom: isMobile ? '30px' : '40px',
                     animation: 'fadeIn 0.6s ease-out'
                 }}>
-                    <h1 style={{ color: '#fff', fontSize: '3rem', fontWeight: 800, marginBottom: '16px' }}>Featured Insights</h1>
-                    <p style={{ color: 'rgba(255,255,255,0.9)', fontSize: '1.2rem', maxWidth: '800px', margin: '0 auto' }}>
-                        Curated market analysis, educational deep-dives, and industrial trends from the world's leading blockchain publications.
+                    <h1 style={{
+                        color: '#fff',
+                        fontSize: isMobile ? '2.2rem' : '3rem',
+                        fontWeight: 800,
+                        marginBottom: '16px',
+                        lineHeight: 1.1
+                    }}>
+                        Featured Insights
+                    </h1>
+                    <p style={{
+                        color: 'rgba(255,255,255,0.9)',
+                        fontSize: isMobile ? '1rem' : '1.2rem',
+                        maxWidth: '800px',
+                        margin: '0 auto',
+                        lineHeight: 1.5
+                    }}>
+                        Curated market analysis and industrial trends from the world's leading blockchain publications.
                     </p>
                 </div>
             )}
@@ -255,10 +293,12 @@ const Articles = () => {
             <div style={{
                 maxWidth: '1200px',
                 margin: '0 auto',
-                padding: selectedArticle ? '60px 20px 80px' : '0 20px 80px',
+                padding: selectedArticle
+                    ? (isMobile ? '40px 16px 80px' : '60px 20px 80px')
+                    : (isMobile ? '0 16px 60px' : '0 20px 80px'),
                 display: 'grid',
-                gridTemplateColumns: selectedArticle ? '1fr' : 'minmax(0, 1fr) 350px',
-                gap: '40px'
+                gridTemplateColumns: (selectedArticle || isMobile) ? '1fr' : 'minmax(0, 1fr) 350px',
+                gap: isMobile ? '40px' : '40px'
             }}>
 
                 {/* Main Content */}
@@ -267,20 +307,21 @@ const Articles = () => {
                         <ArticleDetail
                             article={selectedArticle}
                             onBack={() => setSelectedArticle(null)}
+                            isMobile={isMobile}
                         />
                     ) : (
                         <>
-                            <h2 style={{ color: '#fff', fontSize: '1.8rem', marginBottom: '30px', display: 'flex', alignItems: 'center' }}>
-                                <span style={{ width: '4px', height: '24px', background: '#CE34EA', marginRight: '12px', borderRadius: '2px' }}></span>
+                            <h2 style={{ color: '#fff', fontSize: isMobile ? '1.4rem' : '1.8rem', marginBottom: '25px', display: 'flex', alignItems: 'center' }}>
+                                <span style={{ width: '4px', height: isMobile ? '20px' : '24px', background: '#CE34EA', marginRight: '12px', borderRadius: '2px' }}></span>
                                 Must Read Stories
                             </h2>
 
                             {mainArticles.map((art) => (
-                                <ArticleCard key={art.id} article={art} onClick={setSelectedArticle} />
+                                <ArticleCard key={art.id} article={art} onClick={setSelectedArticle} isMobile={isMobile} />
                             ))}
 
-                            <div style={{ marginTop: '60px', padding: '40px', background: 'rgba(255,255,255,0.02)', borderRadius: '20px', border: '1px dashed rgba(255,255,255,0.1)', textAlign: 'center' }}>
-                                <p style={{ color: '#666' }}>More articles are being curated by our editorial team daily.</p>
+                            <div style={{ marginTop: '40px', padding: '30px', background: 'rgba(255,255,255,0.02)', borderRadius: '20px', border: '1px dashed rgba(255,255,255,0.1)', textAlign: 'center' }}>
+                                <p style={{ color: '#666', fontSize: '0.85rem' }}>More articles are being curated by our editorial team daily.</p>
                             </div>
                         </>
                     )}
@@ -288,16 +329,16 @@ const Articles = () => {
 
                 {/* Sidebar - Only show on list view */}
                 {!selectedArticle && (
-                    <aside>
+                    <aside style={{ marginTop: isMobile ? '40px' : '0' }}>
                         <div style={{
                             background: 'rgba(255,255,255,0.03)',
                             border: '1px solid rgba(255,255,255,0.08)',
                             borderRadius: '20px',
                             padding: '24px',
-                            position: 'sticky',
+                            position: isMobile ? 'static' : 'sticky',
                             top: '100px'
                         }}>
-                            <h3 style={{ color: '#fff', fontSize: '1.2rem', marginBottom: '20px' }}>Trending Topics</h3>
+                            <h3 style={{ color: '#fff', fontSize: '1.1rem', marginBottom: '20px' }}>Trending Topics</h3>
                             <TrendingTopic title="#BitcoinETF" trend="+14.2%" />
                             <TrendingTopic title="#SolanaSummer" trend="+8.5%" />
                             <TrendingTopic title="#ETH_Surge" trend="+5.1%" />
@@ -316,13 +357,12 @@ const Articles = () => {
                                 <h4 style={{ color: '#fff', marginBottom: '10px' }}>Join the Pulse</h4>
                                 {pulseSubscribed ? (
                                     <div style={{ animation: 'fadeIn 0.5s ease-out' }}>
-                                        <div style={{ fontSize: '2rem', marginBottom: '10px' }}>✨</div>
-                                        <p style={{ color: '#fff', fontWeight: 600 }}>Thanks for subscribing!</p>
-                                        <p style={{ color: '#aaa', fontSize: '0.8rem' }}>Welcome to the community.</p>
+                                        <div style={{ fontSize: '1.5rem', marginBottom: '10px' }}>✨</div>
+                                        <p style={{ color: '#fff', fontWeight: 600, fontSize: '0.9rem' }}>Thanks for subscribing!</p>
                                     </div>
                                 ) : (
                                     <>
-                                        <p style={{ color: '#aaa', fontSize: '0.85rem', marginBottom: '20px' }}>Get weekly curated insights delivered straight to your inbox.</p>
+                                        <p style={{ color: '#aaa', fontSize: '0.8rem', marginBottom: '20px' }}>Weekly insights delivered straight to your inbox.</p>
                                         <form onSubmit={handlePulseSubscribe}>
                                             <input
                                                 type="email"
@@ -336,9 +376,10 @@ const Articles = () => {
                                                     border: '1px solid rgba(255,255,255,0.1)',
                                                     background: 'rgba(0,0,0,0.2)',
                                                     color: '#fff',
-                                                    marginBottom: '12px',
+                                                    marginBottom: '10px',
                                                     outline: 'none',
-                                                    boxSizing: 'border-box'
+                                                    boxSizing: 'border-box',
+                                                    fontSize: '0.9rem'
                                                 }}
                                                 required
                                             />
@@ -352,7 +393,8 @@ const Articles = () => {
                                                     background: '#CE34EA',
                                                     color: '#fff',
                                                     fontWeight: 700,
-                                                    cursor: 'pointer'
+                                                    cursor: 'pointer',
+                                                    fontSize: '0.9rem'
                                                 }}
                                             >
                                                 Subscribe
