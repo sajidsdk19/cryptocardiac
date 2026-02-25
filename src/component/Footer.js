@@ -10,6 +10,7 @@ const Footer = () => {
     const links = [
         { label: 'About Us', to: '/about' },
         { label: 'Contact', to: '/contact' },
+        { label: 'Featured Articles', to: '/featured-articles' },
         { label: 'Privacy Policy', to: '/privacy-policy' },
         { label: 'Terms & Conditions', to: '/terms' },
         { label: 'Disclaimer', to: '/disclaimer' },

@@ -24,6 +24,7 @@ const Navbar = () => {
     const navLinks = [
         { title: 'Home', path: '/' },
         { title: 'Coins', path: '/coins' },
+        { title: 'Articles', path: '/featured-articles' },
     ];
 
     // Add My Votes link only if user is logged in

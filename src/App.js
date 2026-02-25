@@ -16,6 +16,7 @@ import TermsAndConditions from "pages/TermsAndConditions";
 import Disclaimer from "pages/Disclaimer";
 import Contact from "pages/Contact";
 import AboutUs from "pages/AboutUs";
+import Articles from "pages/Articles";
 import { AuthProvider } from "contexts/AuthContext";
 import styles from "./Styles.module.scss";
 
@@ -89,6 +90,7 @@ function App() {
           <Route path="/disclaimer" element={<Disclaimer />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/about" element={<AboutUs />} />
+          <Route path="/featured-articles" element={<Articles />} />
         </Routes>
       </AuthProvider>
     </HelmetProvider>
