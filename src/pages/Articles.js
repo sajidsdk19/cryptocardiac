@@ -131,6 +131,20 @@ const TrendingTopic = ({ title, trend }) => (
 
 const Articles = () => {
     const [selectedArticle, setSelectedArticle] = useState(null);
+    const [pulseEmail, setPulseEmail] = useState('');
+    const [pulseSubscribed, setPulseSubscribed] = useState(false);
+
+    const handlePulseSubscribe = (e) => {
+        e.preventDefault();
+        if (!pulseEmail || !pulseEmail.includes('@')) {
+            alert('Please enter a valid email address.');
+            return;
+        }
+        // In a real app, you would send this to your backend
+        console.log('Subscribing:', pulseEmail);
+        setPulseSubscribed(true);
+        setPulseEmail('');
+    };
 
     useEffect(() => {
         window.scrollTo(0, 0);
@@ -300,34 +314,52 @@ const Articles = () => {
                                 textAlign: 'center'
                             }}>
                                 <h4 style={{ color: '#fff', marginBottom: '10px' }}>Join the Pulse</h4>
-                                <p style={{ color: '#aaa', fontSize: '0.85rem', marginBottom: '20px' }}>Get weekly curated insights delivered straight to your inbox.</p>
-                                <input
-                                    type="email"
-                                    placeholder="Email address"
-                                    style={{
-                                        width: '100%',
-                                        padding: '12px',
-                                        borderRadius: '8px',
-                                        border: '1px solid rgba(255,255,255,0.1)',
-                                        background: 'rgba(0,0,0,0.2)',
-                                        color: '#fff',
-                                        marginBottom: '12px',
-                                        outline: 'none',
-                                        boxSizing: 'border-box'
-                                    }}
-                                />
-                                <button style={{
-                                    width: '100%',
-                                    padding: '12px',
-                                    borderRadius: '8px',
-                                    border: 'none',
-                                    background: '#CE34EA',
-                                    color: '#fff',
-                                    fontWeight: 700,
-                                    cursor: 'pointer'
-                                }}>
-                                    Subscribe
-                                </button>
+                                {pulseSubscribed ? (
+                                    <div style={{ animation: 'fadeIn 0.5s ease-out' }}>
+                                        <div style={{ fontSize: '2rem', marginBottom: '10px' }}>✨</div>
+                                        <p style={{ color: '#fff', fontWeight: 600 }}>Thanks for subscribing!</p>
+                                        <p style={{ color: '#aaa', fontSize: '0.8rem' }}>Welcome to the community.</p>
+                                    </div>
+                                ) : (
+                                    <>
+                                        <p style={{ color: '#aaa', fontSize: '0.85rem', marginBottom: '20px' }}>Get weekly curated insights delivered straight to your inbox.</p>
+                                        <form onSubmit={handlePulseSubscribe}>
+                                            <input
+                                                type="email"
+                                                placeholder="Email address"
+                                                value={pulseEmail}
+                                                onChange={(e) => setPulseEmail(e.target.value)}
+                                                style={{
+                                                    width: '100%',
+                                                    padding: '12px',
+                                                    borderRadius: '8px',
+                                                    border: '1px solid rgba(255,255,255,0.1)',
+                                                    background: 'rgba(0,0,0,0.2)',
+                                                    color: '#fff',
+                                                    marginBottom: '12px',
+                                                    outline: 'none',
+                                                    boxSizing: 'border-box'
+                                                }}
+                                                required
+                                            />
+                                            <button
+                                                type="submit"
+                                                style={{
+                                                    width: '100%',
+                                                    padding: '12px',
+                                                    borderRadius: '8px',
+                                                    border: 'none',
+                                                    background: '#CE34EA',
+                                                    color: '#fff',
+                                                    fontWeight: 700,
+                                                    cursor: 'pointer'
+                                                }}
+                                            >
+                                                Subscribe
+                                            </button>
+                                        </form>
+                                    </>
+                                )}
                             </div>
                         </div>
                     </aside>
