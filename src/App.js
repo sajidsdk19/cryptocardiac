@@ -11,6 +11,11 @@ import Leaderboard from "pages/Leaderboard";
 import AdminDashboard from "pages/AdminDashboard";
 import MyVotes from "pages/MyVotes";
 import Footer from "component/Footer";
+import PrivacyPolicy from "pages/PrivacyPolicy";
+import TermsAndConditions from "pages/TermsAndConditions";
+import Disclaimer from "pages/Disclaimer";
+import Contact from "pages/Contact";
+import AboutUs from "pages/AboutUs";
 import { AuthProvider } from "contexts/AuthContext";
 import styles from "./Styles.module.scss";
 
@@ -78,7 +83,12 @@ function App() {
           <Route path="/my-votes" element={<MyVotes />} />
           <Route path="/coins" element={<CoinPage />} />
           <Route path="/coins/:coinId" element={<CoinPage />} />
-          <Route path="/:coinId" element={<CoinPage />} /> {/* Keep for backward compatibility if needed, or remove */}
+          <Route path="/:coinId" element={<CoinPage />} />
+          <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+          <Route path="/terms" element={<TermsAndConditions />} />
+          <Route path="/disclaimer" element={<Disclaimer />} />
+          <Route path="/contact" element={<Contact />} />
+          <Route path="/about" element={<AboutUs />} />
         </Routes>
       </AuthProvider>
     </HelmetProvider>
