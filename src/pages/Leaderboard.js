@@ -7,6 +7,7 @@ import { getAllCurrencies, searchCoins, getCoinDetails } from '../component/api'
 import VoteButton from '../component/VoteButton';
 import Navbar from '../component/Navbar';
 import LogoLoader from '../component/LogoLoader';
+import Footer from '../component/Footer';
 import styles from '../styles/Leaderboard.module.scss';
 
 import ConsistentCommunities from '../component/ConsistentCommunities';
@@ -493,6 +494,7 @@ const Leaderboard = () => {
                 <ConsistentCommunities />
 
             </div>
+            <Footer />
             <Snackbar
                 open={notification.open}
                 autoHideDuration={1000}

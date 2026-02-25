@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { Box, Typography, Button, useMediaQuery, useTheme } from '@mui/material';
 import { ExitToApp } from '@mui/icons-material';
+import AdBanner from './AdBanner';
 
 import logo from '../assets/logo_crypto.png';
 
@@ -172,6 +173,12 @@ const Navbar = () => {
                     )}
                 </Box>
             </Box>
+
+            {/* Ad below header */}
+            <AdBanner
+                adSlot="6300978111"
+                style={{ background: '#0d0d1a', padding: '6px 0' }}
+            />
         </Box>
     );
 };

@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import Navbar from '../component/Navbar';
 import LogoLoader from '../component/LogoLoader';
+import Footer from '../component/Footer';
 import styles from '../styles/MyVotes.module.scss';
 
 const MyVotes = () => {
@@ -144,6 +145,7 @@ const MyVotes = () => {
                         </Link>
                     </div>
                 </div>
+                <Footer />
             </>
         );
     }
@@ -162,6 +164,7 @@ const MyVotes = () => {
                         <p>{error}</p>
                     </div>
                 </div>
+                <Footer />
             </>
         );
     }
@@ -271,6 +274,7 @@ const MyVotes = () => {
                     </div>
                 )}
             </div>
+            <Footer />
         </>
     );
 };

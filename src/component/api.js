@@ -4,7 +4,7 @@ const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
 
 const getAllCurrencies = async (vs_currency = 'usd') => {
   try {
-    // Use our backend proxy instead of direct CoinGecko call
+    // Use our backend proxy instead of direct CoinGecko call sdk
     const response = await axios.get(`${API_URL}/coins`, {
       params: {
         vs_currency,

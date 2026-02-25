@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Navbar from '../component/Navbar';
+import Footer from '../component/Footer';
 
 const AdminDashboard = () => {
     const [stats, setStats] = useState(null);
@@ -158,6 +159,7 @@ const AdminDashboard = () => {
                     </div>
                 )}
             </div>
+            <Footer />
         </>
     );
 };

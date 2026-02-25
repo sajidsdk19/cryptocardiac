@@ -10,6 +10,7 @@ import Signup from "component/Signup";
 import Leaderboard from "pages/Leaderboard";
 import AdminDashboard from "pages/AdminDashboard";
 import MyVotes from "pages/MyVotes";
+import Footer from "component/Footer";
 import { AuthProvider } from "contexts/AuthContext";
 import styles from "./Styles.module.scss";
 
@@ -60,6 +61,7 @@ function CoinPage() {
           </Box>
         </Box>
       </div>
+      <Footer />
     </AppContext.Provider>
   );
 }
