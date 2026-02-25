@@ -1,18 +1,15 @@
 import React from 'react';
-import AdBanner from './AdBanner';
 
 /**
- * Footer component with an ad slot above the footer content.
- * Appears at the bottom of every page.
+ * Footer component.
+ * Google Auto Ads (enabled via the script tag in index.html) will
+ * automatically inject ads near this footer. No slot IDs required.
  */
 const Footer = () => {
     return (
         <footer style={{ width: '100%', background: '#0d0d1a' }}>
-            {/* Ad above footer */}
-            <AdBanner
-                adSlot="6300978111"
-                style={{ background: '#0d0d1a', padding: '6px 0' }}
-            />
+            {/* Google Auto Ads injects above-footer ads automatically */}
+            <div style={{ width: '100%', minHeight: '0px', background: '#0d0d1a' }} />
             <div
                 style={{
                     textAlign: 'center',
