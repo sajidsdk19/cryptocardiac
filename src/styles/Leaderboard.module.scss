@@ -9,7 +9,8 @@
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
-    height: 300px;
+    min-height: 300px;
+    padding: 60px 0;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -248,15 +249,9 @@
         font-size: 0.85rem;
     }
 
-    .coinImage {
-        width: 28px;
-        height: 28px;
-    }
-
-    .voteButton {
-        min-width: 100px;
-        padding: 8px 16px;
-        font-size: 0.85rem;
+    .heroTitle {
+        font-size: 2.2rem;
+        padding: 0 10px;
     }
 }
 
@@ -266,13 +261,6 @@
     padding: 60px 20px;
     max-width: 500px;
     margin: 0 auto;
-}
-
-.loginPromptTitle {
-    color: #fff;
-    font-size: 1.8rem;
-    font-weight: 700;
-    margin-bottom: 16px;
 }
 
 .loginPromptText {
@@ -303,6 +291,7 @@
     padding: 60px 20px;
     font-size: 1.2rem;
 }
+
 /* Search Info */
 .searchInfo {
     text-align: center;

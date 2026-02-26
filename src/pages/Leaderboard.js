@@ -385,20 +385,33 @@ const Leaderboard = () => {
             <Navbar />
             <div className={styles.leaderboardContainer}>
                 <div className={styles.heroSection}>
-                    <h1 className={styles.heroTitle}>CryptoCardiac Leaderboard</h1>
-                    <h2 className={styles.heroSubtitle}>
+                    <h1 className={styles.heroTitle} style={{
+                        fontSize: 'clamp(1.5rem, 5vw, 3.5rem)',
+                        padding: '0 15px',
+                        width: '100%',
+                        lineHeight: '1.2'
+                    }}>CryptoCardiac Leaderboard</h1>
+                    <h2 className={styles.heroSubtitle} style={{
+                        fontSize: 'clamp(0.9rem, 3vw, 1.2rem)',
+                        padding: '0 15px',
+                        width: '100%',
+                        marginTop: '10px',
+                        lineHeight: '1.4'
+                    }}>
                         The most trusted cryptocurrency community voting platform.
                     </h2>
                     <div style={{
                         maxWidth: '800px',
+                        width: '100%',
                         margin: '20px auto 0',
                         color: '#fff',
-                        fontSize: '1.05rem',
+                        fontSize: 'clamp(0.85rem, 2vw, 1.05rem)',
                         lineHeight: '1.6',
                         textAlign: 'center',
-                        padding: '0 20px'
+                        padding: '0 20px',
+                        boxSizing: 'border-box'
                     }}>
-                        Discover the top trending cryptocurrencies backed by real user engagement. CryptoCardiac allows you to vote daily for your favorite blockchain projects, track 24-hour and 7-day community sentiment, and explore the best No-KYC crypto exchanges. Our real-time data helps you find emerging altcoins before they hit the mainstream market.
+                        Discover the top trending cryptocurrencies backed by real user engagement. CryptoCardiac allows you to vote daily for your favorite blockchain projects, track 24-hour and 7-day community sentiment, and explore the best No-KYC crypto exchanges.
                     </div>
                 </div>
                 <div className={styles.searchContainer}>
@@ -659,10 +672,14 @@ const Leaderboard = () => {
                     padding: '0 20px'
                 }}>
                     <div style={{
-                        padding: '40px',
+                        padding: 'clamp(20px, 5vw, 40px)', // Responsive padding
                         background: 'rgba(255,255,255,0.02)',
                         borderRadius: '20px',
-                        border: '1px solid rgba(255,255,255,0.08)'
+                        border: '1px solid rgba(255,255,255,0.08)',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'flex-start', // Left align main container
+                        textAlign: 'left' // Left align typography
                     }}>
                         <span style={{
                             background: 'rgba(206, 52, 234, 0.1)',
@@ -679,43 +696,45 @@ const Leaderboard = () => {
                         </span>
                         <h2 style={{
                             color: '#fff',
-                            fontSize: '1.8rem',
+                            fontSize: 'clamp(1.4rem, 4vw, 1.8rem)', // Responsive font size
                             marginBottom: '16px',
-                            textAlign: 'center'
+                            textAlign: 'left', // Left align title
+                            width: '100%'
                         }}>
                             5 Best No-KYC Crypto Exchanges for 2026
                         </h2>
                         <div style={{
                             display: 'flex',
                             flexWrap: 'wrap',
-                            justifyContent: 'center',
+                            justifyContent: 'flex-start', // Left align meta data
                             alignItems: 'center',
                             marginBottom: '30px',
                             color: '#888',
                             fontSize: '0.85rem',
-                            gap: '8px'
+                            gap: '8px',
+                            width: '100%'
                         }}>
-                            <span style={{ color: '#CE34EA', fontWeight: 600 }}>Blockchain Magazine (Featured)</span>
-                            <span>•</span>
-                            <span>Evergreen Content</span>
-                            <span>•</span>
-                            <span>8 min read</span>
+                            <span style={{ color: '#CE34EA', fontWeight: 600, textAlign: 'left' }}>Blockchain Magazine (Featured)</span>
+                            <span style={{ display: 'none', '@media (min-width: 600px)': { display: 'inline' } }}>•</span>
+                            <span style={{ textAlign: 'left' }}>Evergreen Content</span>
+                            <span style={{ display: 'none', '@media (min-width: 600px)': { display: 'inline' } }}>•</span>
+                            <span style={{ textAlign: 'left' }}>8 min read</span>
                         </div>
-                        <div style={{ color: '#aaa', lineHeight: '1.7', fontSize: '1.05rem', textAlign: 'center' }}>
+                        <div style={{ color: '#aaa', lineHeight: '1.7', fontSize: 'clamp(0.95rem, 3vw, 1.05rem)', textAlign: 'left', width: '100%' }}>
                             <p style={{ marginBottom: '24px' }}>
                                 In 2026, the landscape of cryptocurrency trading has split into two distinct paths: heavily regulated institutional platforms and the resilient, privacy-focused No-KYC exchanges. For many traders, the core ethos of decentralization remains paramount, leading to a surge in volume for platforms that respect user anonymity...
                             </p>
-                            <div style={{ display: 'flex', justifyContent: 'center', marginTop: '16px' }}>
+                            <div style={{ display: 'flex', justifyContent: 'flex-start', marginTop: '16px' }}> {/* Left align button */}
                                 <Link to="/featured-articles" style={{ textDecoration: 'none' }}>
                                     <button
                                         style={{
-                                            padding: '10px 20px',
+                                            padding: 'clamp(8px, 2vw, 10px) clamp(16px, 4vw, 20px)',
                                             background: 'transparent',
                                             color: '#CE34EA',
                                             border: '1px solid #CE34EA',
                                             borderRadius: '8px',
                                             fontWeight: '600',
-                                            fontSize: '0.9rem',
+                                            fontSize: 'clamp(0.85rem, 2.5vw, 0.9rem)',
                                             cursor: 'pointer',
                                             transition: 'all 0.2s',
                                             display: 'inline-flex',
