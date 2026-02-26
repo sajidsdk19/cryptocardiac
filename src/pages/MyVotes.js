@@ -5,6 +5,7 @@ import Navbar from '../component/Navbar';
 import LogoLoader from '../component/LogoLoader';
 import Footer from '../component/Footer';
 import styles from '../styles/MyVotes.module.scss';
+import { Helmet } from 'react-helmet-async';
 
 const MyVotes = () => {
     const { currentUser } = useAuth();
@@ -171,6 +172,11 @@ const MyVotes = () => {
 
     return (
         <>
+            <Helmet>
+                <title>My Votes - CryptoCardiac | Your Voting History & Share Points</title>
+                <meta name="description" content="View your cryptocurrency voting history on CryptoCardiac. Track your share points, voting patterns, and see which crypto projects you've supported." />
+                <meta name="keywords" content="my crypto votes, voting history, share points, crypto voting track, cryptocardiac dashboard" />
+            </Helmet>
             <Navbar />
             <div className={styles.container}>
                 <div className={styles.header}>

@@ -21,45 +21,98 @@ const Footer = () => {
             {/* Google Auto Ads injects above-footer ads automatically */}
             <div style={{ width: '100%', minHeight: '0px', background: '#0d0d1a' }} />
 
-            {/* Footer Links */}
+            {/* Main Footer Content */}
             <div style={{
-                borderTop: '1px solid rgba(255,255,255,0.08)',
-                padding: '24px 20px 8px',
-                display: 'flex',
-                flexWrap: 'wrap',
-                justifyContent: 'center',
-                gap: '8px 24px',
+                padding: '80px 20px 60px',
+                borderTop: '1px solid rgba(87, 0, 249, 0.3)',
+                boxShadow: 'inset 0px 20px 40px -20px rgba(87, 0, 249, 0.1)',
             }}>
-                {links.map((link) => (
-                    <Link
-                        key={link.to}
-                        to={link.to}
-                        style={{ color: '#888', textDecoration: 'none', fontSize: '0.85rem' }}
-                        onMouseEnter={e => e.target.style.color = '#CE34EA'}
-                        onMouseLeave={e => e.target.style.color = '#888'}
-                    >
-                        {link.label}
-                    </Link>
-                ))}
+                <div style={{
+                    maxWidth: '1200px',
+                    margin: '0 auto',
+                    display: 'flex',
+                    flexWrap: 'wrap',
+                    justifyContent: 'space-between',
+                    alignItems: 'flex-start',
+                    gap: '40px'
+                }}>
+
+                    {/* Brand Info */}
+                    <div style={{ flex: '1 1 300px' }}>
+                        <h2 style={{
+                            fontSize: '1.8rem',
+                            fontWeight: 800,
+                            marginBottom: '1rem',
+                            background: 'linear-gradient(135deg, #5700F9, #CE34EA)',
+                            WebkitBackgroundClip: 'text',
+                            WebkitTextFillColor: 'transparent',
+                            display: 'inline-block'
+                        }}>
+                            CryptoCardiac
+                        </h2>
+                        <p style={{ color: '#888', fontSize: '0.95rem', lineHeight: '1.7', maxWidth: '300px' }}>
+                            The social pulse of cryptocurrency communities. Vote daily, track real-time sentiment, and discover emerging projects backed by real people.
+                        </p>
+                    </div>
+
+                    {/* Quick Links */}
+                    <div style={{ flex: '1 1 150px' }}>
+                        <h3 style={{ color: '#fff', fontSize: '1.1rem', marginBottom: '1.5rem', fontWeight: 600 }}>Explore</h3>
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                            {links.slice(0, 3).map((link) => (
+                                <Link
+                                    key={link.to}
+                                    to={link.to}
+                                    style={{ color: '#aaa', textDecoration: 'none', fontSize: '0.95rem', transition: 'color 0.2s' }}
+                                    onMouseEnter={e => e.target.style.color = '#CE34EA'}
+                                    onMouseLeave={e => e.target.style.color = '#aaa'}
+                                >
+                                    {link.label}
+                                </Link>
+                            ))}
+                        </div>
+                    </div>
+
+                    {/* Legal Links */}
+                    <div style={{ flex: '1 1 150px' }}>
+                        <h3 style={{ color: '#fff', fontSize: '1.1rem', marginBottom: '1.5rem', fontWeight: 600 }}>Legal</h3>
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                            {links.slice(3).map((link) => (
+                                <Link
+                                    key={link.to}
+                                    to={link.to}
+                                    style={{ color: '#aaa', textDecoration: 'none', fontSize: '0.95rem', transition: 'color 0.2s' }}
+                                    onMouseEnter={e => e.target.style.color = '#CE34EA'}
+                                    onMouseLeave={e => e.target.style.color = '#aaa'}
+                                >
+                                    {link.label}
+                                </Link>
+                            ))}
+                        </div>
+                    </div>
+
+                </div>
             </div>
 
             {/* Copyright */}
             <div style={{
                 textAlign: 'center',
-                padding: '12px 16px 20px',
-                color: '#555',
-                fontSize: '0.8rem',
-                background: '#0d0d1a',
+                padding: '24px 20px',
+                color: '#666',
+                fontSize: '0.9rem',
+                borderTop: '1px solid rgba(255,255,255,0.05)',
+                background: '#0a0a14',
             }}>
                 © {new Date().getFullYear()} CryptoCardiac. All rights reserved.{' '}
-                Made by{' '}
+                <span style={{ margin: '0 8px' }}>|</span>{' '}
+                Designed by Raul & Developed by{' '}
                 <a
                     href="https://sajidkhan.me"
                     target="_blank"
                     rel="noopener noreferrer"
-                    style={{ color: '#CE34EA', textDecoration: 'none' }}
+                    style={{ color: '#CE34EA', textDecoration: 'none', fontWeight: 600 }}
                 >
-                    Raul and Developed by Sajid Khan
+                    Sajid Khan
                 </a>
             </div>
         </footer>
@@ -67,4 +120,3 @@ const Footer = () => {
 };
 
 export default Footer;
-

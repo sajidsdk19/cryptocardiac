@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Navbar from '../component/Navbar';
 import Footer from '../component/Footer';
 import { useMediaQuery, useTheme } from '@mui/material';
+import { Helmet } from 'react-helmet-async';
 
 const ArticleCard = ({ article, onClick, isMobile }) => (
     <div style={{
@@ -40,7 +41,7 @@ const ArticleCard = ({ article, onClick, isMobile }) => (
             }}>
                 {article.category}
             </span>
-            <span style={{ color: '#555', fontSize: '0.75rem' }}>Mar 2026</span>
+            <span style={{ color: '#555', fontSize: '0.75rem' }}>Featured Content</span>
         </div>
         <h3 style={{ color: '#fff', fontSize: isMobile ? '1.2rem' : '1.4rem', marginBottom: '12px', lineHeight: '1.4' }}>{article.title}</h3>
         <p style={{ color: '#CE34EA', fontSize: '0.85rem', fontWeight: 600, marginBottom: '12px' }}>{article.source}</p>
@@ -106,7 +107,7 @@ const ArticleDetail = ({ article, onBack, isMobile }) => (
         }}>
             <span style={{ color: '#CE34EA', fontWeight: 600 }}>{article.source}</span>
             <span>•</span>
-            <span>March 12, 2026</span>
+            <span>Evergreen Content</span>
             {!isMobile && (
                 <>
                     <span>•</span>
@@ -249,6 +250,33 @@ const Articles = () => {
 
     return (
         <div style={{ background: 'rgb(21,21,32)', minHeight: '100vh' }}>
+            <Helmet>
+                <title>Crypto Articles & Insights | CryptoCardiac Featured Content</title>
+                <meta name="description" content="Explore curated cryptocurrency articles, market analysis, and blockchain insights from leading publications. Stay informed with expert crypto content and industry trends." />
+                <meta name="keywords" content="crypto articles, blockchain insights, cryptocurrency analysis, market trends, crypto news, defi articles, no KYC exchanges, crypto education" />
+                <meta property="og:title" content="Crypto Articles & Insights | CryptoCardiac Featured Content" />
+                <meta property="og:description" content="Read our featured deep dives into the crypto market, including education, No-KYC exchanges, privacy tools, and global adoption trends." />
+                <meta property="og:type" content="article" />
+                <meta property="og:url" content="https://cryptocardiac.com/articles" />
+                <meta name="twitter:card" content="summary_large_image" />
+                <meta name="twitter:title" content="CryptoArticles | CryptoCardiac" />
+                <meta name="twitter:description" content="Handpicked crypto insights, articles, and educational content from leading blockchain researchers." />
+                <link rel="canonical" href="https://cryptocardiac.com/articles" />
+                <script type="application/ld+json">
+                    {JSON.stringify({
+                        "@context": "https://schema.org",
+                        "@type": "Blog",
+                        "name": "CryptoCardiac Featured Articles",
+                        "url": "https://cryptocardiac.com/articles",
+                        "description": "Curated cryptocurrency analysis, educational guides, and the latest blockchain insights.",
+                        "publisher": {
+                            "@type": "Organization",
+                            "name": "CryptoCardiac",
+                            "url": "https://cryptocardiac.com"
+                        }
+                    })}
+                </script>
+            </Helmet>
             <Navbar />
 
             <style>

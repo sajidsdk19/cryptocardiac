@@ -2,6 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import Navbar from '../component/Navbar';
 import Footer from '../component/Footer';
+import { Helmet } from 'react-helmet-async';
 
 const StatCard = ({ value, label }) => (
     <div style={{
@@ -32,6 +33,39 @@ const FeatureCard = ({ icon, title, desc }) => (
 const AboutUs = () => {
     return (
         <>
+            <Helmet>
+                <title>About CryptoCardiac | Community-Powered Crypto Voting Platform</title>
+                <meta name="description" content="Learn about CryptoCardiac's mission to provide transparent community-driven cryptocurrency rankings. Discover our voting system, real-time analytics, and commitment to crypto democracy." />
+                <meta name="keywords" content="about cryptocardiac, crypto voting platform, community crypto rankings, cryptocurrency analytics, crypto democracy, blockchain voting software, transparent crypto rankings" />
+                <meta property="og:title" content="About CryptoCardiac | Community-Powered Crypto Voting Platform" />
+                <meta property="og:description" content="The social pulse of cryptocurrency communities — where the crowd decides which coins are beating hardest. Built to give the crypto community a voice." />
+                <meta property="og:type" content="website" />
+                <meta property="og:url" content="https://cryptocardiac.com/about" />
+                <meta name="twitter:card" content="summary" />
+                <meta name="twitter:title" content="About CryptoCardiac" />
+                <meta name="twitter:description" content="Learn about CryptoCardiac's mission to provide transparent, community-driven cryptocurrency rankings." />
+                <link rel="canonical" href="https://cryptocardiac.com/about" />
+                <script type="application/ld+json">
+                    {JSON.stringify({
+                        "@context": "https://schema.org",
+                        "@type": "AboutPage",
+                        "name": "About CryptoCardiac",
+                        "url": "https://cryptocardiac.com/about",
+                        "description": "Learn about the mission and features of the CryptoCardiac community crypto voting platform.",
+                        "mainEntity": {
+                            "@type": "Organization",
+                            "name": "CryptoCardiac",
+                            "url": "https://cryptocardiac.com",
+                            "description": "A community-powered cryptocurrency voting platform built to capture genuine sentiment across 19,000+ crypto projects.",
+                            "founder": {
+                                "@type": "Person",
+                                "name": "Sajid Khan",
+                                "url": "https://sajidkhan.me"
+                            }
+                        }
+                    })}
+                </script>
+            </Helmet>
             <Navbar />
             <div style={{
                 minHeight: '100vh',
@@ -81,25 +115,6 @@ const AboutUs = () => {
                         <FeatureCard icon="🏆" title="Share Points" desc="Earn share points every time you vote. Climb the leaderboard and show your crypto conviction." />
                     </div>
 
-                    {/* Built by */}
-                    <div style={{
-                        background: 'rgba(87, 0, 249, 0.12)',
-                        border: '1px solid rgba(87, 0, 249, 0.3)',
-                        borderRadius: '16px',
-                        padding: '32px',
-                        textAlign: 'center',
-                        marginBottom: '3rem',
-                    }}>
-                        <h2 style={{ color: '#fff', marginBottom: '0.75rem', fontSize: '1.3rem' }}>Built By</h2>
-                        <p style={{ color: '#aaa' }}>
-                            CryptoCardiac was designed and developed by{' '}
-                            <a href="https://sajidkhan.me" target="_blank" rel="noopener noreferrer" style={{ color: '#CE34EA', fontWeight: 700, textDecoration: 'none' }}>
-                                Raul & Sajid Khan
-                            </a>
-                            {' '}— a full-stack developer passionate about building community-driven web applications.
-                        </p>
-                    </div>
-
                     {/* CTA */}
                     <div style={{ textAlign: 'center' }}>
                         <h2 style={{ color: '#fff', marginBottom: '1rem' }}>Ready to vote?</h2>
@@ -116,6 +131,113 @@ const AboutUs = () => {
                         }}>
                             Start Voting →
                         </Link>
+                    </div>
+
+                    {/* Additional Content Sections */}
+                    <div style={{ marginTop: '4rem' }}>
+                        <h2 style={{ color: '#fff', fontSize: '1.6rem', marginBottom: '1.5rem', textAlign: 'center' }}>🎯 How Crypto Voting Works</h2>
+                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '20px', marginBottom: '3rem' }}>
+                            <div style={{
+                                background: 'rgba(255,255,255,0.04)',
+                                border: '1px solid rgba(255,255,255,0.08)',
+                                borderRadius: '12px',
+                                padding: '24px',
+                            }}>
+                                <h4 style={{ color: '#CE34EA', marginBottom: '12px' }}>One Vote Per Day</h4>
+                                <p style={{ color: '#aaa', fontSize: '0.9rem', lineHeight: '1.6' }}>
+                                    Each user can vote for any cryptocurrency once every 24 hours. This prevents spam and ensures each vote represents genuine daily sentiment.
+                                </p>
+                            </div>
+                            <div style={{
+                                background: 'rgba(255,255,255,0.04)',
+                                border: '1px solid rgba(255,255,255,0.08)',
+                                borderRadius: '12px',
+                                padding: '24px',
+                            }}>
+                                <h4 style={{ color: '#CE34EA', marginBottom: '12px' }}>Time-Based Tracking</h4>
+                                <p style={{ color: '#aaa', fontSize: '0.9rem', lineHeight: '1.6' }}>
+                                    Votes are tracked across multiple time windows to identify both short-term trends and long-term community support patterns.
+                                </p>
+                            </div>
+                            <div style={{
+                                background: 'rgba(255,255,255,0.04)',
+                                border: '1px solid rgba(255,255,255,0.08)',
+                                borderRadius: '12px',
+                                padding: '24px',
+                            }}>
+                                <h4 style={{ color: '#CE34EA', marginBottom: '12px' }}>Share Points System</h4>
+                                <p style={{ color: '#aaa', fontSize: '0.9rem', lineHeight: '1.6' }}>
+                                    Earn points for each vote to climb the community leaderboard. Your voting history and consistency are rewarded with higher rankings.
+                                </p>
+                            </div>
+                            <div style={{
+                                background: 'rgba(255,255,255,0.04)',
+                                border: '1px solid rgba(255,255,255,0.08)',
+                                borderRadius: '12px',
+                                padding: '24px',
+                            }}>
+                                <h4 style={{ color: '#CE34EA', marginBottom: '12px' }}>Real Data, Real Impact</h4>
+                                <p style={{ color: '#aaa', fontSize: '0.9rem', lineHeight: '1.6' }}>
+                                    Unlike speculative price movements, community votes reflect actual user engagement and belief in cryptocurrency projects.
+                                </p>
+                            </div>
+                        </div>
+
+                        <h2 style={{ color: '#fff', fontSize: '1.6rem', marginBottom: '1.5rem', textAlign: 'center' }}>🌟 Platform Features & Benefits</h2>
+                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '20px' }}>
+                            <div style={{
+                                background: 'rgba(255,255,255,0.04)',
+                                border: '1px solid rgba(255,255,255,0.08)',
+                                borderRadius: '12px',
+                                padding: '24px',
+                            }}>
+                                <h4 style={{ color: '#CE34EA', marginBottom: '12px' }}>🗳️ Community-Powered Rankings</h4>
+                                <p style={{ color: '#aaa', fontSize: '0.9rem', lineHeight: '1.6' }}>
+                                    Real-time voting data from thousands of crypto enthusiasts worldwide. Each vote represents genuine community sentiment, not automated bots or fake engagement.
+                                </p>
+                            </div>
+                            <div style={{
+                                background: 'rgba(255,255,255,0.04)',
+                                border: '1px solid rgba(255,255,255,0.08)',
+                                borderRadius: '12px',
+                                padding: '24px',
+                            }}>
+                                <h4 style={{ color: '#CE34EA', marginBottom: '12px' }}>📊 Smart Analytics</h4>
+                                <p style={{ color: '#aaa', fontSize: '0.9rem', lineHeight: '1.6' }}>
+                                    Track voting trends across 24-hour, 7-day, and 3-month windows. Identify emerging cryptocurrencies before they explode in popularity.
+                                </p>
+                            </div>
+                            <div style={{
+                                background: 'rgba(255,255,255,0.04)',
+                                border: '1px solid rgba(255,255,255,0.08)',
+                                borderRadius: '12px',
+                                padding: '24px',
+                            }}>
+                                <h4 style={{ color: '#CE34EA', marginBottom: '12px' }}>🔍 Comprehensive Coverage</h4>
+                                <p style={{ color: '#aaa', fontSize: '0.9rem', lineHeight: '1.6' }}>
+                                    Search and vote for over 19,000 cryptocurrencies with live market data, price tracking, and community-driven insights.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Built by */}
+                    <div style={{
+                        marginTop: '4rem',
+                        background: 'rgba(87, 0, 249, 0.12)',
+                        border: '1px solid rgba(87, 0, 249, 0.3)',
+                        borderRadius: '16px',
+                        padding: '32px',
+                        textAlign: 'center',
+                    }}>
+                        <h2 style={{ color: '#fff', marginBottom: '0.75rem', fontSize: '1.3rem' }}>Built By</h2>
+                        <p style={{ color: '#aaa' }}>
+                            CryptoCardiac was designed and developed by{' '}
+                            <a href="https://sajidkhan.me" target="_blank" rel="noopener noreferrer" style={{ color: '#CE34EA', fontWeight: 700, textDecoration: 'none' }}>
+                                Raul & Sajid Khan
+                            </a>
+                            {' '}— a full-stack developer passionate about building community-driven web applications.
+                        </p>
                     </div>
                 </div>
             </div>

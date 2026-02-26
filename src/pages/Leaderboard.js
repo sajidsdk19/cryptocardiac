@@ -9,6 +9,7 @@ import Navbar from '../component/Navbar';
 import LogoLoader from '../component/LogoLoader';
 import Footer from '../component/Footer';
 import styles from '../styles/Leaderboard.module.scss';
+import { Helmet } from 'react-helmet-async';
 
 import ConsistentCommunities from '../component/ConsistentCommunities';
 
@@ -349,16 +350,57 @@ const Leaderboard = () => {
 
     return (
         <>
+            <Helmet>
+                <title>Crypto Leaderboard | Vote & Rank Top Cryptocurrencies | CryptoCardiac</title>
+                <meta name="description" content="View the real-time community-driven cryptocurrency leaderboard. Vote for your favorite coins, track daily ranking trends, and explore top No-KYC exchanges." />
+                <meta name="keywords" content="crypto leaderboard, cryptocurrency voting, top cryptocurrency, crypto rankings, community vote crypto, best crypto exchanges, no KYC crypto" />
+                <meta property="og:title" content="Crypto Leaderboard | Vote & Rank Top Cryptocurrencies" />
+                <meta property="og:description" content="Join the heart of crypto. Vote daily for the best cryptocurrency communities and track rankings based on real user engagement, not just price." />
+                <meta property="og:type" content="website" />
+                <meta property="og:url" content="https://cryptocardiac.com/" />
+                <meta name="twitter:card" content="summary_large_image" />
+                <meta name="twitter:title" content="Crypto Leaderboard | CryptoCardiac" />
+                <meta name="twitter:description" content="Track real-time cryptocurrency community rankings. Vote daily to boost your favorite crypto projects." />
+                <link rel="canonical" href="https://cryptocardiac.com/" />
+                <script type="application/ld+json">
+                    {JSON.stringify({
+                        "@context": "https://schema.org",
+                        "@type": "WebSite",
+                        "name": "CryptoCardiac Leaderboard",
+                        "url": "https://cryptocardiac.com",
+                        "description": "Community-powered cryptocurrency voting platform with real-time rankings and analytics for top tokens and altcoins.",
+                        "potentialAction": {
+                            "@type": "SearchAction",
+                            "target": "https://cryptocardiac.com/?search={search_term_string}",
+                            "query-input": "required name=search_term_string"
+                        },
+                        "mainEntity": {
+                            "@type": "ItemList",
+                            "name": "Top Cryptocurrencies by Community Vote",
+                            "description": "Real-time leaderboard of cryptocurrencies ranked by user sentiment."
+                        }
+                    })}
+                </script>
+            </Helmet>
             <Navbar />
             <div className={styles.leaderboardContainer}>
                 <div className={styles.heroSection}>
-                    <h1 className={styles.heroTitle}>Crypto Cardiac</h1>
-                    <p className={styles.heroSubtitle}>
-                        Feel the social pulse of your favorite cryptocurrency community!
-                    </p>
+                    <h1 className={styles.heroTitle}>CryptoCardiac Leaderboard</h1>
+                    <h2 className={styles.heroSubtitle}>
+                        The most trusted cryptocurrency community voting platform.
+                    </h2>
+                    <div style={{
+                        maxWidth: '800px',
+                        margin: '20px auto 0',
+                        color: '#fff',
+                        fontSize: '1.05rem',
+                        lineHeight: '1.6',
+                        textAlign: 'center',
+                        padding: '0 20px'
+                    }}>
+                        Discover the top trending cryptocurrencies backed by real user engagement. CryptoCardiac allows you to vote daily for your favorite blockchain projects, track 24-hour and 7-day community sentiment, and explore the best No-KYC crypto exchanges. Our real-time data helps you find emerging altcoins before they hit the mainstream market.
+                    </div>
                 </div>
-
-
                 <div className={styles.searchContainer}>
                     <input
                         type="text"
@@ -493,6 +535,208 @@ const Leaderboard = () => {
 
                 <ConsistentCommunities />
 
+                {/* How Crypto Voting Works Section */}
+                <div style={{
+                    maxWidth: '1400px',
+                    margin: '60px auto 40px',
+                    padding: '0 20px'
+                }}>
+                    <h2 style={{
+                        color: '#fff',
+                        fontSize: '1.8rem',
+                        marginBottom: '2rem',
+                        textAlign: 'center'
+                    }}>
+                        🎯 How CryptoCardiac Works
+                    </h2>
+                    <div style={{
+                        display: 'grid',
+                        gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+                        gap: '24px',
+                        marginBottom: '4rem'
+                    }}>
+                        <div style={{
+                            background: 'rgba(255,255,255,0.04)',
+                            border: '1px solid rgba(255,255,255,0.08)',
+                            borderRadius: '16px',
+                            padding: '28px',
+                            transition: 'transform 0.2s, background 0.2s',
+                        }}>
+                            <h3 style={{ color: '#CE34EA', marginBottom: '16px', fontSize: '1.1rem' }}>One Vote Per Day</h3>
+                            <p style={{ color: '#aaa', fontSize: '0.95rem', lineHeight: '1.7' }}>
+                                Each user can vote for any cryptocurrency once every 24 hours. This prevents spam and ensures each vote represents genuine daily sentiment.
+                            </p>
+                        </div>
+                        <div style={{
+                            background: 'rgba(255,255,255,0.04)',
+                            border: '1px solid rgba(255,255,255,0.08)',
+                            borderRadius: '16px',
+                            padding: '28px',
+                            transition: 'transform 0.2s, background 0.2s',
+                        }}>
+                            <h3 style={{ color: '#CE34EA', marginBottom: '16px', fontSize: '1.1rem' }}>Time-Based Tracking</h3>
+                            <p style={{ color: '#aaa', fontSize: '0.95rem', lineHeight: '1.7' }}>
+                                Votes are tracked across multiple time windows to identify both short-term trends and long-term community support patterns.
+                            </p>
+                        </div>
+                        <div style={{
+                            background: 'rgba(255,255,255,0.04)',
+                            border: '1px solid rgba(255,255,255,0.08)',
+                            borderRadius: '16px',
+                            padding: '28px',
+                            transition: 'transform 0.2s, background 0.2s',
+                        }}>
+                            <h3 style={{ color: '#CE34EA', marginBottom: '16px', fontSize: '1.1rem' }}>Share Points System</h3>
+                            <p style={{ color: '#aaa', fontSize: '0.95rem', lineHeight: '1.7' }}>
+                                Earn points for each vote to climb the community leaderboard. Your voting history and consistency are rewarded with higher rankings.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Platform Features & Benefits Section */}
+                <div style={{
+                    maxWidth: '1400px',
+                    margin: '60px auto 40px',
+                    padding: '0 20px'
+                }}>
+                    <h2 style={{
+                        color: '#fff',
+                        fontSize: '1.8rem',
+                        marginBottom: '2rem',
+                        textAlign: 'center'
+                    }}>
+                        🌟 Platform Features & Benefits
+                    </h2>
+                    <div style={{
+                        display: 'grid',
+                        gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
+                        gap: '24px'
+                    }}>
+                        <div style={{
+                            background: 'rgba(255,255,255,0.04)',
+                            border: '1px solid rgba(255,255,255,0.08)',
+                            borderRadius: '16px',
+                            padding: '28px',
+                            transition: 'transform 0.2s, background 0.2s',
+                        }}>
+                            <h3 style={{ color: '#CE34EA', marginBottom: '16px', fontSize: '1.1rem' }}>🗳️ Community-Powered Rankings</h3>
+                            <p style={{ color: '#aaa', fontSize: '0.95rem', lineHeight: '1.7' }}>
+                                Real-time voting data from thousands of crypto enthusiasts worldwide. Each vote represents genuine community sentiment, not automated bots or fake engagement.
+                            </p>
+                        </div>
+                        <div style={{
+                            background: 'rgba(255,255,255,0.04)',
+                            border: '1px solid rgba(255,255,255,0.08)',
+                            borderRadius: '16px',
+                            padding: '28px',
+                            transition: 'transform 0.2s, background 0.2s',
+                        }}>
+                            <h3 style={{ color: '#CE34EA', marginBottom: '16px', fontSize: '1.1rem' }}>📊 Smart Analytics</h3>
+                            <p style={{ color: '#aaa', fontSize: '0.95rem', lineHeight: '1.7' }}>
+                                Track voting trends across 24-hour, 7-day, and 3-month windows. Identify emerging cryptocurrencies before they explode in popularity.
+                            </p>
+                        </div>
+                        <div style={{
+                            background: 'rgba(255,255,255,0.04)',
+                            border: '1px solid rgba(255,255,255,0.08)',
+                            borderRadius: '16px',
+                            padding: '28px',
+                            transition: 'transform 0.2s, background 0.2s',
+                        }}>
+                            <h3 style={{ color: '#CE34EA', marginBottom: '16px', fontSize: '1.1rem' }}>🔍 Comprehensive Coverage</h3>
+                            <p style={{ color: '#aaa', fontSize: '0.95rem', lineHeight: '1.7' }}>
+                                Search and vote for over 19,000 cryptocurrencies with live market data, price tracking, and community-driven insights.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Featured Article Section */}
+                <div style={{
+                    maxWidth: '1400px',
+                    margin: '60px auto 40px',
+                    padding: '0 20px'
+                }}>
+                    <div style={{
+                        padding: '40px',
+                        background: 'rgba(255,255,255,0.02)',
+                        borderRadius: '20px',
+                        border: '1px solid rgba(255,255,255,0.08)'
+                    }}>
+                        <span style={{
+                            background: 'rgba(206, 52, 234, 0.1)',
+                            color: '#CE34EA',
+                            padding: '6px 16px',
+                            borderRadius: '20px',
+                            fontSize: '0.8rem',
+                            fontWeight: 600,
+                            textTransform: 'uppercase',
+                            marginBottom: '16px',
+                            display: 'inline-block'
+                        }}>
+                            Exchanges
+                        </span>
+                        <h2 style={{
+                            color: '#fff',
+                            fontSize: '1.8rem',
+                            marginBottom: '16px',
+                            textAlign: 'center'
+                        }}>
+                            5 Best No-KYC Crypto Exchanges for 2026
+                        </h2>
+                        <div style={{
+                            display: 'flex',
+                            flexWrap: 'wrap',
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            marginBottom: '30px',
+                            color: '#888',
+                            fontSize: '0.85rem',
+                            gap: '8px'
+                        }}>
+                            <span style={{ color: '#CE34EA', fontWeight: 600 }}>Blockchain Magazine (Featured)</span>
+                            <span>•</span>
+                            <span>Evergreen Content</span>
+                            <span>•</span>
+                            <span>8 min read</span>
+                        </div>
+                        <div style={{ color: '#aaa', lineHeight: '1.7', fontSize: '1.05rem', textAlign: 'center' }}>
+                            <p style={{ marginBottom: '24px' }}>
+                                In 2026, the landscape of cryptocurrency trading has split into two distinct paths: heavily regulated institutional platforms and the resilient, privacy-focused No-KYC exchanges. For many traders, the core ethos of decentralization remains paramount, leading to a surge in volume for platforms that respect user anonymity...
+                            </p>
+                            <div style={{ display: 'flex', justifyContent: 'center', marginTop: '16px' }}>
+                                <Link to="/featured-articles" style={{ textDecoration: 'none' }}>
+                                    <button
+                                        style={{
+                                            padding: '10px 20px',
+                                            background: 'transparent',
+                                            color: '#CE34EA',
+                                            border: '1px solid #CE34EA',
+                                            borderRadius: '8px',
+                                            fontWeight: '600',
+                                            fontSize: '0.9rem',
+                                            cursor: 'pointer',
+                                            transition: 'all 0.2s',
+                                            display: 'inline-flex',
+                                            alignItems: 'center',
+                                            gap: '6px'
+                                        }}
+                                        onMouseEnter={(e) => {
+                                            e.currentTarget.style.background = 'rgba(206, 52, 234, 0.1)';
+                                        }}
+                                        onMouseLeave={(e) => {
+                                            e.currentTarget.style.background = 'transparent';
+                                        }}
+                                    >
+                                        Read Full Article →
+                                    </button>
+                                </Link>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
             </div>
             <Footer />
             <Snackbar

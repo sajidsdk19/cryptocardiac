@@ -1,6 +1,7 @@
 import React from 'react';
 import Navbar from '../component/Navbar';
 import Footer from '../component/Footer';
+import { Helmet } from 'react-helmet-async';
 
 const Section = ({ title, children }) => (
     <div style={{ marginBottom: '2rem' }}>
@@ -12,6 +13,11 @@ const Section = ({ title, children }) => (
 const PrivacyPolicy = () => {
     return (
         <>
+            <Helmet>
+                <title>Privacy Policy - CryptoCardiac | Data Protection & User Privacy</title>
+                <meta name="description" content="CryptoCardiac's comprehensive privacy policy. Learn how we collect, use, and protect your data. Understand our cookie policy, Google AdSense usage, and your privacy rights." />
+                <meta name="keywords" content="cryptocardiac privacy policy, crypto data protection, user privacy, cryptocurrency privacy, cookie policy, google adsense privacy" />
+            </Helmet>
             <Navbar />
             <div style={{
                 minHeight: '100vh',

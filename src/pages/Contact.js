@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import Navbar from '../component/Navbar';
 import Footer from '../component/Footer';
+import { Helmet } from 'react-helmet-async';
 
 const inputStyle = {
     width: '100%',
@@ -32,6 +33,11 @@ const Contact = () => {
 
     return (
         <>
+            <Helmet>
+                <title>Contact CryptoCardiac | Get in Touch with Our Team</title>
+                <meta name="description" content="Contact the CryptoCardiac team for support, feedback, or partnerships. Reach us via email or our contact form. We're here to help with your crypto voting platform questions." />
+                <meta name="keywords" content="contact cryptocardiac, crypto support, cryptocurrency voting contact, crypto platform help" />
+            </Helmet>
             <Navbar />
             <div style={{
                 minHeight: '100vh',
