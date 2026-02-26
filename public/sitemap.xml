@@ -4,73 +4,73 @@
         xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9
         http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
   <url>
-    <loc>https://cryptolabs.app/</loc>
+    <loc>https://cryptocardiac.com/</loc>
     <lastmod>2025-02-26</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://cryptolabs.app/login</loc>
+    <loc>https://cryptocardiac.com/login</loc>
     <lastmod>2025-02-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://cryptolabs.app/signup</loc>
+    <loc>https://cryptocardiac.com/signup</loc>
     <lastmod>2025-02-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://cryptolabs.app/admin</loc>
+    <loc>https://cryptocardiac.com/admin</loc>
     <lastmod>2025-02-26</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.4</priority>
   </url>
   <url>
-    <loc>https://cryptolabs.app/my-votes</loc>
+    <loc>https://cryptocardiac.com/my-votes</loc>
     <lastmod>2025-02-26</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://cryptolabs.app/coins</loc>
+    <loc>https://cryptocardiac.com/coins</loc>
     <lastmod>2025-02-26</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://cryptolabs.app/privacy-policy</loc>
+    <loc>https://cryptocardiac.com/privacy-policy</loc>
     <lastmod>2025-02-26</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
   </url>
   <url>
-    <loc>https://cryptolabs.app/terms</loc>
+    <loc>https://cryptocardiac.com/terms</loc>
     <lastmod>2025-02-26</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
   </url>
   <url>
-    <loc>https://cryptolabs.app/disclaimer</loc>
+    <loc>https://cryptocardiac.com/disclaimer</loc>
     <lastmod>2025-02-26</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
   </url>
   <url>
-    <loc>https://cryptolabs.app/contact</loc>
+    <loc>https://cryptocardiac.com/contact</loc>
     <lastmod>2025-02-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://cryptolabs.app/about</loc>
+    <loc>https://cryptocardiac.com/about</loc>
     <lastmod>2025-02-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://cryptolabs.app/featured-articles</loc>
+    <loc>https://cryptocardiac.com/featured-articles</loc>
     <lastmod>2025-02-26</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
