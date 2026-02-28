@@ -61,6 +61,16 @@ const authenticateToken = (req, res, next) => {
     });
 };
 
+// Middleware to verify super admin password
+const SUPER_ADMIN_PASSWORD = process.env.SUPER_ADMIN_PASSWORD || 'cryptocardiac_super_admin_2026';
+const authenticateSuperAdmin = (req, res, next) => {
+    const password = req.headers['x-admin-password'];
+    if (!password || password !== SUPER_ADMIN_PASSWORD) {
+        return res.status(403).json({ error: 'Forbidden: Super admin access required' });
+    }
+    next();
+};
+
 // --- Auth Routes ---
 
 // Signup
@@ -837,6 +847,160 @@ app.get('/api/coins/details', async (req, res) => {
     }
 });
 
+// --- Articles Routes ---
+
+// GET all active articles (newest first by created_at)
+app.get('/api/articles', async (req, res) => {
+    try {
+        const [rows] = await db.query(
+            'SELECT id, title, source, category, description, full_content, created_at, updated_at FROM articles WHERE is_active = 1 ORDER BY created_at DESC'
+        );
+        const articles = rows.map(row => ({
+            ...row,
+            fullContent: JSON.parse(row.full_content)
+        }));
+        res.json(articles);
+    } catch (error) {
+        console.error('Get articles error:', error);
+        res.status(500).json({ error: 'Server error' });
+    }
+});
+
+// GET single article by ID
+app.get('/api/articles/:id', async (req, res) => {
+    try {
+        const [rows] = await db.query(
+            'SELECT id, title, source, category, description, full_content, created_at, updated_at FROM articles WHERE id = ? AND is_active = 1',
+            [req.params.id]
+        );
+        if (rows.length === 0) return res.status(404).json({ error: 'Article not found' });
+        const article = { ...rows[0], fullContent: JSON.parse(rows[0].full_content) };
+        res.json(article);
+    } catch (error) {
+        console.error('Get article error:', error);
+        res.status(500).json({ error: 'Server error' });
+    }
+});
+
+// POST create new article (super admin only)
+app.post('/api/articles', authenticateSuperAdmin, async (req, res) => {
+    const { title, source, category, description, fullContent } = req.body;
+    if (!title || !source || !category || !description || !fullContent) {
+        return res.status(400).json({ error: 'All fields are required: title, source, category, description, fullContent (array)' });
+    }
+    if (!Array.isArray(fullContent) || fullContent.length === 0) {
+        return res.status(400).json({ error: 'fullContent must be a non-empty array of paragraphs' });
+    }
+    try {
+        const [result] = await db.query(
+            'INSERT INTO articles (title, source, category, description, full_content) VALUES (?, ?, ?, ?, ?)',
+            [title, source, category, description, JSON.stringify(fullContent)]
+        );
+        res.status(201).json({ message: 'Article created', id: result.insertId });
+    } catch (error) {
+        console.error('Create article error:', error);
+        res.status(500).json({ error: 'Server error' });
+    }
+});
+
+// PUT update article (super admin only)
+app.put('/api/articles/:id', authenticateSuperAdmin, async (req, res) => {
+    const { title, source, category, description, fullContent } = req.body;
+    try {
+        const updates = {};
+        if (title) updates.title = title;
+        if (source) updates.source = source;
+        if (category) updates.category = category;
+        if (description) updates.description = description;
+        if (fullContent) updates.full_content = JSON.stringify(fullContent);
+        if (Object.keys(updates).length === 0) {
+            return res.status(400).json({ error: 'Nothing to update' });
+        }
+        const fields = Object.keys(updates).map(k => `${k} = ?`).join(', ');
+        const values = [...Object.values(updates), req.params.id];
+        await db.query(`UPDATE articles SET ${fields} WHERE id = ?`, values);
+        res.json({ message: 'Article updated' });
+    } catch (error) {
+        console.error('Update article error:', error);
+        res.status(500).json({ error: 'Server error' });
+    }
+});
+
+// DELETE article (soft delete, super admin only)
+app.delete('/api/articles/:id', authenticateSuperAdmin, async (req, res) => {
+    try {
+        await db.query('UPDATE articles SET is_active = 0 WHERE id = ?', [req.params.id]);
+        res.json({ message: 'Article deleted' });
+    } catch (error) {
+        console.error('Delete article error:', error);
+        res.status(500).json({ error: 'Server error' });
+    }
+});
+
+// --- Trending Topics Routes ---
+
+// GET all active trending topics
+app.get('/api/trending-topics', async (req, res) => {
+    try {
+        const [rows] = await db.query(
+            'SELECT id, title, trend FROM trending_topics WHERE is_active = 1 ORDER BY sort_order ASC'
+        );
+        res.json(rows);
+    } catch (error) {
+        console.error('Get trending topics error:', error);
+        res.status(500).json({ error: 'Server error' });
+    }
+});
+
+// POST create trending topic (super admin only)
+app.post('/api/trending-topics', authenticateSuperAdmin, async (req, res) => {
+    const { title, trend } = req.body;
+    if (!title || !trend) {
+        return res.status(400).json({ error: 'title and trend are required' });
+    }
+    try {
+        const [result] = await db.query(
+            'INSERT INTO trending_topics (title, trend) VALUES (?, ?)',
+            [title, trend]
+        );
+        res.status(201).json({ message: 'Trending topic created', id: result.insertId });
+    } catch (error) {
+        console.error('Create trending topic error:', error);
+        res.status(500).json({ error: 'Server error' });
+    }
+});
+
+// PUT update trending topic (super admin only)
+app.put('/api/trending-topics/:id', authenticateSuperAdmin, async (req, res) => {
+    const { title, trend } = req.body;
+    try {
+        const updates = {};
+        if (title) updates.title = title;
+        if (trend) updates.trend = trend;
+        if (Object.keys(updates).length === 0) {
+            return res.status(400).json({ error: 'Nothing to update' });
+        }
+        const fields = Object.keys(updates).map(k => `${k} = ?`).join(', ');
+        const values = [...Object.values(updates), req.params.id];
+        await db.query(`UPDATE trending_topics SET ${fields} WHERE id = ?`, values);
+        res.json({ message: 'Trending topic updated' });
+    } catch (error) {
+        console.error('Update trending topic error:', error);
+        res.status(500).json({ error: 'Server error' });
+    }
+});
+
+// DELETE trending topic (super admin only)
+app.delete('/api/trending-topics/:id', authenticateSuperAdmin, async (req, res) => {
+    try {
+        await db.query('UPDATE trending_topics SET is_active = 0 WHERE id = ?', [req.params.id]);
+        res.json({ message: 'Trending topic deleted' });
+    } catch (error) {
+        console.error('Delete trending topic error:', error);
+        res.status(500).json({ error: 'Server error' });
+    }
+});
+
 // --- Admin Stats Route ---
 app.get('/api/admin/stats', async (req, res) => {
     // In a real app, add admin check here: if (req.user.role !== 'admin') ...
@@ -881,6 +1045,7 @@ app.get('/api/admin/stats', async (req, res) => {
 // Import migration scripts
 const createShareLogsTable = require('./migrations/create_share_logs_table');
 const ensureSharePointsColumn = require('./ensure_share_points');
+const createArticlesAndTrending = require('./migrations/create_articles_and_trending');
 
 // Initialize database and start server
 const init = async () => {
@@ -888,6 +1053,7 @@ const init = async () => {
         // Run migrations
         await createShareLogsTable();
         await ensureSharePointsColumn();
+        await createArticlesAndTrending();
 
         app.listen(PORT, () => {
             console.log(`Server running on port ${PORT}`);
