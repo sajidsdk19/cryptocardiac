@@ -14,7 +14,7 @@ const inputStyle = {
 const labelStyle = { color: 'rgba(255,255,255,0.6)', fontSize: '0.8rem', textTransform: 'uppercase', letterSpacing: '0.8px', marginBottom: '6px', display: 'block' };
 const cardStyle = { background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '16px', padding: '24px', marginBottom: '20px' };
 const btnPrimary = { padding: '11px 22px', borderRadius: '10px', border: 'none', background: 'linear-gradient(135deg, #5700F9, #CE34EA)', color: '#fff', fontWeight: 700, cursor: 'pointer', fontSize: '0.9rem' };
-const btnDanger = { padding: '8px 16px', borderRadius: '8px', border: 'none', background: 'rgba(244,67,54,0.15)', color: '#f44336', fontWeight: 600, cursor: 'pointer', fontSize: '0.85rem', border: '1px solid rgba(244,67,54,0.3)' };
+const btnDanger = { padding: '8px 16px', borderRadius: '8px', border: '1px solid rgba(244,67,54,0.3)', background: 'rgba(244,67,54,0.15)', color: '#f44336', fontWeight: 600, cursor: 'pointer', fontSize: '0.85rem' };
 const btnSecondary = { padding: '8px 16px', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.15)', background: 'transparent', color: '#ccc', fontWeight: 600, cursor: 'pointer', fontSize: '0.85rem' };
 const tagStyle = { display: 'inline-block', padding: '3px 10px', borderRadius: '20px', background: 'rgba(206,52,234,0.15)', color: '#CE34EA', fontSize: '0.72rem', fontWeight: 600, border: '1px solid rgba(206,52,234,0.3)', marginRight: '6px' };
 
