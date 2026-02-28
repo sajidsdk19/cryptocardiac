@@ -133,8 +133,31 @@ const ArticleDetail = ({ article, onBack, isMobile }) => (
             <h3 style={{ color: '#fff', marginBottom: '15px', fontSize: isMobile ? '1.1rem' : '1.3rem' }}>Enjoyed this deep dive?</h3>
             <p style={{ color: '#888', marginBottom: '25px', fontSize: '0.9rem' }}>Share it with your community and help grow the heart of crypto.</p>
             <div style={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', justifyContent: 'center', gap: '12px' }}>
-                <button style={{ padding: '12px 25px', borderRadius: '8px', border: 'none', background: '#1DA1F2', color: '#fff', fontWeight: 600, cursor: 'pointer' }}>Share on X</button>
-                <button style={{ padding: '12px 25px', borderRadius: '8px', border: 'none', background: '#0088cc', color: '#fff', fontWeight: 600, cursor: 'pointer' }}>Telegram</button>
+                <button
+                    onClick={() => {
+                        const text = encodeURIComponent(`${article.title} — via CryptoCardiac`);
+                        const url = encodeURIComponent('https://cryptocardiac.com/articles');
+                        window.open(`https://twitter.com/intent/tweet?text=${text}&url=${url}`, '_blank', 'noopener,noreferrer');
+                    }}
+                    onMouseEnter={e => { e.currentTarget.style.opacity = '0.85'; e.currentTarget.style.transform = 'translateY(-2px)'; }}
+                    onMouseLeave={e => { e.currentTarget.style.opacity = '1'; e.currentTarget.style.transform = 'translateY(0)'; }}
+                    style={{ padding: '12px 25px', borderRadius: '8px', border: 'none', background: '#1DA1F2', color: '#fff', fontWeight: 600, cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '8px', fontSize: '0.95rem', transition: 'opacity 0.2s, transform 0.2s' }}
+                >
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.746l7.73-8.835L1.254 2.25H8.08l4.259 5.63L18.244 2.25zm-1.161 17.52h1.833L7.084 4.126H5.117L17.083 19.77z" /></svg>
+                    Share on X
+                </button>
+                <button
+                    onClick={() => {
+                        const text = encodeURIComponent(`${article.title} — via CryptoCardiac\nhttps://cryptocardiac.com/articles`);
+                        window.open(`https://t.me/share/url?url=https://cryptocardiac.com/articles&text=${text}`, '_blank', 'noopener,noreferrer');
+                    }}
+                    onMouseEnter={e => { e.currentTarget.style.opacity = '0.85'; e.currentTarget.style.transform = 'translateY(-2px)'; }}
+                    onMouseLeave={e => { e.currentTarget.style.opacity = '1'; e.currentTarget.style.transform = 'translateY(0)'; }}
+                    style={{ padding: '12px 25px', borderRadius: '8px', border: 'none', background: '#0088cc', color: '#fff', fontWeight: 600, cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '8px', fontSize: '0.95rem', transition: 'opacity 0.2s, transform 0.2s' }}
+                >
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8-1.7 8.02c-.13.59-.47.73-.95.46l-2.6-1.92-1.25 1.21c-.14.14-.26.26-.53.26l.19-2.66 4.83-4.36c.21-.19-.05-.29-.33-.1L7.1 14.53l-2.56-.8c-.56-.17-.57-.56.12-.83l10-3.86c.46-.17.87.11.98.76z" /></svg>
+                    Telegram
+                </button>
             </div>
         </div>
     </div>
@@ -245,6 +268,58 @@ const Articles = () => {
                 "The government's stance has also shifted. Seeing the influx of foreign investment and the potential for a digital hub, regulators have moved from skepticism to a constructive framework that recognizes crypto-assets as tradable commodities.",
                 "More than just an asset, Bitcoin in Indonesia has become a symbol of 'Merdeka' (Freedom). For many Indonesians, it represents the first time they have had access to a truly global, unbiased, and uncensorable asset that protects their labor from local inflation."
             ]
+        },
+        {
+            id: 6,
+            title: "Solana's High-Speed Ecosystem: The Future of Scalable DeFi",
+            source: "Crypto Trends",
+            category: "Altcoins",
+            description: "Explore how Solana's lightning-fast blockchain and low transaction fees are driving a new wave of decentralized applications. #Solana #SOL #DeFi #Crypto #Blockchain #CryptoNews #Web3 #SmartContracts #CryptoTrading",
+            fullContent: [
+                "Solana has rapidly established itself as a premier blockchain, distinguished by its incredible speed and cost-effectiveness. Utilizing a unique Proof-of-History consensus mechanism, Solana processes thousands of transactions per second, leaving traditional networks behind.",
+                "This scalability makes it the ideal foundation for decentralized finance (DeFi), non-fungible tokens (NFTs), and Web3 gaming. As user adoption surges, the Solana ecosystem continues to attract top developers building the future of finance.",
+                "Despite occasional network halts in its early days, its relentless innovation and vibrant community solidify its position as a top-tier cryptocurrency. The ecosystem's growth is a testament to the demand for fast, accessible blockchain solutions.",
+                "#Solana #Crypto #Blockchain #Web3 #DeFi #CryptoNews #SolanaNFT #SOL #InvestInCrypto"
+            ]
+        },
+        {
+            id: 7,
+            title: "Bitcoin's Enduring Legacy: Digital Gold in the Modern Era",
+            source: "Blockchain Insights",
+            category: "Market Leaders",
+            description: "An overview of Bitcoin's dominance as the pioneer cryptocurrency, serving as a reliable store of value and a hedge against inflation. #Bitcoin #BTC #Crypto #Hodl #DigitalGold #CryptoMarket #BlockchainTechnology",
+            fullContent: [
+                "Bitcoin remains the undisputed king of the cryptocurrency market. Created as a decentralized, peer-to-peer electronic cash system, it has evolved into a globally recognized store of value—often dubbed digital gold.",
+                "With its capped supply of 21 million coins, Bitcoin provides a robust hedge against fiat inflation and economic instability. Institutional adoption has accelerated significantly, with major financial players integrating Bitcoin ETFs and corporate treasuries.",
+                "As the foundational pillar of the crypto industry, Bitcoin's robust security, unwavering decentralization, and network effects continue to inspire confidence among retail and institutional investors worldwide.",
+                "#Bitcoin #BTC #Crypto #DigitalAsset #Hodl #Blockchain #CryptoInvesting #BitcoinNews #StoreOfValue"
+            ]
+        },
+        {
+            id: 8,
+            title: "Dogecoin: How a Meme Became a Crypto Phenomenon",
+            source: "Meme Coin Watch",
+            category: "Meme Coins",
+            description: "Discover how Dogecoin transcended its comedic origins to build a massive, passionate community and achieve significant market capitalization. #Dogecoin #DOGE #CryptoCommunity #MemeCoin #CryptoTips #Dogearmy #ToTheMoon",
+            fullContent: [
+                "What started as a lighthearted joke has transformed into one of the most recognized cryptocurrencies globally. Dogecoin, featuring the iconic Shiba Inu, owes its massive success to a passionate, community-driven approach rather than complex technological utility.",
+                "Propelled by social media trends and high-profile endorsements, Dogecoin has captured the public's imagination like no other digital asset. Its low transaction fees and fast block times make it surprisingly practical for micro-tipping and everyday online transactions.",
+                "The Doge army proves that community engagement, viral marketing, and a fun, welcoming culture can be powerful drivers in the modern cryptocurrency economy.",
+                "#Dogecoin #DOGE #MemeCoin #Crypto #ToTheMoon #DogecoinCommunity #CryptoTwitter #ShibaInu"
+            ]
+        },
+        {
+            id: 9,
+            title: "Trump Coin and Political Tokens: A New Era of PolitiFi",
+            source: "Crypto Politics",
+            category: "PolitiFi",
+            description: "Analyzing the surprising rise of Trump Coin and how political figures are inspiring a new niche of meme tokens in the cryptocurrency space. #TrumpCoin #MAGA #Crypto #PolitiFi #MemeCoin #BlockchainNews #ElectionCrypto",
+            fullContent: [
+                "The intersection of politics and cryptocurrency has birthed a fascinating new sector known as PolitiFi. Trump Coin represents the tip of this spear, a token driven largely by political sentiment and grassroots support rather than traditional financial metrics.",
+                "These politically themed meme coins thrive on news cycles, election events, and social media fervor. While highly volatile and speculative, Trump Coin demonstrates exactly how blockchain technology can monetize, track, and gamify political enthusiasm in real-time.",
+                "As the landscape evolves, investors are closely watching these tokens not just as jokes, but as unique, high-risk assets dynamically tied to rapidly shifting cultural and political movements.",
+                "#TrumpCoin #PolitiFi #Crypto #MemeCoin #MAGA #CryptoTrends #BlockchainPolitics #CryptoTrading"
+            ]
         }
     ];
 
@@ -253,7 +328,7 @@ const Articles = () => {
             <Helmet>
                 <title>Crypto Articles & Insights | CryptoCardiac Featured Content</title>
                 <meta name="description" content="Explore curated cryptocurrency articles, market analysis, and blockchain insights from leading publications. Stay informed with expert crypto content and industry trends." />
-                <meta name="keywords" content="crypto articles, blockchain insights, cryptocurrency analysis, market trends, crypto news, defi articles, no KYC exchanges, crypto education" />
+                <meta name="keywords" content="crypto articles, blockchain insights, cryptocurrency analysis, market trends, crypto news, defi articles, solana, bitcoin, dogecoin, trump coin, no KYC exchanges, crypto education" />
                 <meta property="og:title" content="Crypto Articles & Insights | CryptoCardiac Featured Content" />
                 <meta property="og:description" content="Read our featured deep dives into the crypto market, including education, No-KYC exchanges, privacy tools, and global adoption trends." />
                 <meta property="og:type" content="article" />
