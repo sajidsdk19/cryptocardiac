@@ -27,6 +27,8 @@ const Leaderboard = () => {
     const [isSearchingAPI, setIsSearchingAPI] = useState(false); // Loading state for API search
     const [sortConfig, setSortConfig] = useState({ key: 'votes_24h', direction: 'desc' });
     const [notification, setNotification] = useState({ open: false, message: '', severity: 'success' });
+    const [latestArticles, setLatestArticles] = useState([]);
+    const [sliderIndex, setSliderIndex] = useState(0);
     const searchTimeout = useRef(null);
     const COINS_PER_PAGE = 15;
     const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
@@ -126,6 +128,15 @@ const Leaderboard = () => {
         loadLeaderboard();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [currentUser]); // Reload if user changes (login/logout)
+
+    // Fetch latest 4 articles for the slider
+    useEffect(() => {
+        fetch(`${API_URL}/articles`)
+            .then(r => r.json())
+            .then(data => { if (Array.isArray(data)) setLatestArticles(data.slice(0, 4)); })
+            .catch(() => { });
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
     // Debounced API search when no local results found
     useEffect(() => {
@@ -665,97 +676,198 @@ const Leaderboard = () => {
                     </div>
                 </div>
 
-                {/* Featured Article Section */}
-                <div style={{
-                    maxWidth: '1400px',
-                    margin: '60px auto 40px',
-                    padding: '0 20px'
-                }}>
-                    <div style={{
-                        padding: 'clamp(20px, 5vw, 40px)', // Responsive padding
-                        background: 'rgba(255,255,255,0.02)',
-                        borderRadius: '20px',
-                        border: '1px solid rgba(255,255,255,0.08)',
-                        display: 'flex',
-                        flexDirection: 'column',
-                        alignItems: 'flex-start', // Left align main container
-                        textAlign: 'left' // Left align typography
-                    }}>
-                        <span style={{
-                            background: 'rgba(206, 52, 234, 0.1)',
-                            color: '#CE34EA',
-                            padding: '6px 16px',
-                            borderRadius: '20px',
-                            fontSize: '0.8rem',
-                            fontWeight: 600,
-                            textTransform: 'uppercase',
-                            marginBottom: '16px',
-                            display: 'inline-block'
-                        }}>
-                            Exchanges
-                        </span>
-                        <h2 style={{
-                            color: '#fff',
-                            fontSize: 'clamp(1.4rem, 4vw, 1.8rem)', // Responsive font size
-                            marginBottom: '16px',
-                            textAlign: 'left', // Left align title
-                            width: '100%'
-                        }}>
-                            5 Best No-KYC Crypto Exchanges for 2026
-                        </h2>
-                        <div style={{
-                            display: 'flex',
-                            flexWrap: 'wrap',
-                            justifyContent: 'flex-start', // Left align meta data
-                            alignItems: 'center',
-                            marginBottom: '30px',
-                            color: '#888',
-                            fontSize: '0.85rem',
-                            gap: '8px',
-                            width: '100%'
-                        }}>
-                            <span style={{ color: '#CE34EA', fontWeight: 600, textAlign: 'left' }}>Blockchain Magazine (Featured)</span>
-                            <span style={{ display: 'none', '@media (min-width: 600px)': { display: 'inline' } }}>•</span>
-                            <span style={{ textAlign: 'left' }}>Evergreen Content</span>
-                            <span style={{ display: 'none', '@media (min-width: 600px)': { display: 'inline' } }}>•</span>
-                            <span style={{ textAlign: 'left' }}>8 min read</span>
-                        </div>
-                        <div style={{ color: '#aaa', lineHeight: '1.7', fontSize: 'clamp(0.95rem, 3vw, 1.05rem)', textAlign: 'left', width: '100%' }}>
-                            <p style={{ marginBottom: '24px' }}>
-                                In 2026, the landscape of cryptocurrency trading has split into two distinct paths: heavily regulated institutional platforms and the resilient, privacy-focused No-KYC exchanges. For many traders, the core ethos of decentralization remains paramount, leading to a surge in volume for platforms that respect user anonymity...
-                            </p>
-                            <div style={{ display: 'flex', justifyContent: 'flex-start', marginTop: '16px' }}> {/* Left align button */}
+                {/* Latest Articles Slider */}
+                {latestArticles.length > 0 && (
+                    <div style={{ maxWidth: '1400px', margin: '60px auto 40px', padding: '0 20px' }}>
+                        <style>{`
+                            @keyframes articleFadeIn {
+                                from { opacity: 0; transform: translateY(12px); }
+                                to   { opacity: 1; transform: translateY(0); }
+                            }
+                            .article-slider-grid {
+                                display: grid;
+                                grid-template-columns: repeat(4, 1fr);
+                                gap: 20px;
+                            }
+                            @media (max-width: 1024px) {
+                                .article-slider-grid { grid-template-columns: repeat(2, 1fr); }
+                            }
+                            @media (max-width: 600px) {
+                                .article-slider-grid { grid-template-columns: 1fr; }
+                            }
+                            .article-card-hover:hover {
+                                transform: translateY(-4px) !important;
+                                background: rgba(255,255,255,0.07) !important;
+                            }
+                            .slider-arrow:hover {
+                                background: rgba(206,52,234,0.25) !important;
+                                border-color: #CE34EA !important;
+                            }
+                        `}</style>
+
+                        {/* Section header */}
+                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '28px', flexWrap: 'wrap', gap: '12px' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                                <span style={{ width: '4px', height: '28px', background: 'linear-gradient(180deg,#5700F9,#CE34EA)', borderRadius: '2px', display: 'inline-block' }} />
+                                <h2 style={{ color: '#fff', fontSize: 'clamp(1.2rem,3vw,1.7rem)', fontWeight: 800, margin: 0 }}>Latest Insights</h2>
+                            </div>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                                <button
+                                    className="slider-arrow"
+                                    aria-label="Previous articles"
+                                    onClick={() => setSliderIndex(i => Math.max(0, i - 1))}
+                                    disabled={sliderIndex === 0}
+                                    style={{
+                                        width: '38px', height: '38px', borderRadius: '50%',
+                                        border: '1px solid rgba(255,255,255,0.15)',
+                                        background: 'rgba(255,255,255,0.05)',
+                                        color: sliderIndex === 0 ? '#444' : '#fff',
+                                        cursor: sliderIndex === 0 ? 'default' : 'pointer',
+                                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                        fontSize: '1rem', transition: 'all 0.2s', outline: 'none'
+                                    }}
+                                >
+                                    ‹
+                                </button>
+                                <button
+                                    className="slider-arrow"
+                                    aria-label="Next articles"
+                                    onClick={() => setSliderIndex(i => Math.min(latestArticles.length - 1, i + 1))}
+                                    disabled={sliderIndex >= latestArticles.length - 1}
+                                    style={{
+                                        width: '38px', height: '38px', borderRadius: '50%',
+                                        border: '1px solid rgba(255,255,255,0.15)',
+                                        background: 'rgba(255,255,255,0.05)',
+                                        color: sliderIndex >= latestArticles.length - 1 ? '#444' : '#fff',
+                                        cursor: sliderIndex >= latestArticles.length - 1 ? 'default' : 'pointer',
+                                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                        fontSize: '1rem', transition: 'all 0.2s', outline: 'none'
+                                    }}
+                                >
+                                    ›
+                                </button>
                                 <Link to="/featured-articles" style={{ textDecoration: 'none' }}>
-                                    <button
-                                        style={{
-                                            padding: 'clamp(8px, 2vw, 10px) clamp(16px, 4vw, 20px)',
-                                            background: 'transparent',
-                                            color: '#CE34EA',
-                                            border: '1px solid #CE34EA',
-                                            borderRadius: '8px',
-                                            fontWeight: '600',
-                                            fontSize: 'clamp(0.85rem, 2.5vw, 0.9rem)',
-                                            cursor: 'pointer',
-                                            transition: 'all 0.2s',
-                                            display: 'inline-flex',
-                                            alignItems: 'center',
-                                            gap: '6px'
-                                        }}
-                                        onMouseEnter={(e) => {
-                                            e.currentTarget.style.background = 'rgba(206, 52, 234, 0.1)';
-                                        }}
-                                        onMouseLeave={(e) => {
-                                            e.currentTarget.style.background = 'transparent';
-                                        }}
-                                    >
-                                        Read Full Article →
-                                    </button>
+                                    <span style={{ color: '#CE34EA', fontSize: '0.85rem', fontWeight: 600, cursor: 'pointer', whiteSpace: 'nowrap' }}>View All →</span>
                                 </Link>
                             </div>
                         </div>
-                    </div>
 
-                </div>
+                        {/* Cards grid — reorders based on sliderIndex */}
+                        <div className="article-slider-grid">
+                            {(() => {
+                                // Rotate array so sliderIndex is first
+                                const rotated = [
+                                    ...latestArticles.slice(sliderIndex),
+                                    ...latestArticles.slice(0, sliderIndex)
+                                ].slice(0, 4);
+                                return rotated.map((art, idx) => (
+                                    <Link
+                                        key={art.id}
+                                        to="/featured-articles"
+                                        style={{ textDecoration: 'none' }}
+                                    >
+                                        <div
+                                            className="article-card-hover"
+                                            style={{
+                                                background: 'rgba(255,255,255,0.04)',
+                                                border: '1px solid rgba(255,255,255,0.08)',
+                                                borderRadius: '16px',
+                                                padding: '22px',
+                                                height: '100%',
+                                                boxSizing: 'border-box',
+                                                display: 'flex',
+                                                flexDirection: 'column',
+                                                gap: '10px',
+                                                transition: 'transform 0.25s, background 0.25s',
+                                                animation: `articleFadeIn 0.35s ease-out ${idx * 0.05}s both`,
+                                                cursor: 'pointer'
+                                            }}
+                                        >
+                                            {/* Category tag */}
+                                            <div>
+                                                <span style={{
+                                                    background: 'rgba(206,52,234,0.12)',
+                                                    color: '#CE34EA',
+                                                    padding: '3px 10px',
+                                                    borderRadius: '20px',
+                                                    fontSize: '0.68rem',
+                                                    fontWeight: 700,
+                                                    textTransform: 'uppercase',
+                                                    letterSpacing: '0.5px'
+                                                }}>
+                                                    {art.category}
+                                                </span>
+                                            </div>
+
+                                            {/* Title */}
+                                            <h3 style={{
+                                                color: '#fff',
+                                                fontSize: 'clamp(0.95rem,1.5vw,1.05rem)',
+                                                fontWeight: 700,
+                                                lineHeight: '1.4',
+                                                margin: 0,
+                                                display: '-webkit-box',
+                                                WebkitLineClamp: 3,
+                                                WebkitBoxOrient: 'vertical',
+                                                overflow: 'hidden'
+                                            }}>
+                                                {art.title}
+                                            </h3>
+
+                                            {/* Source */}
+                                            <p style={{ color: '#CE34EA', fontSize: '0.78rem', fontWeight: 600, margin: 0 }}>{art.source}</p>
+
+                                            {/* Description */}
+                                            <p style={{
+                                                color: '#888',
+                                                fontSize: '0.82rem',
+                                                lineHeight: '1.55',
+                                                margin: 0,
+                                                flex: 1,
+                                                display: '-webkit-box',
+                                                WebkitLineClamp: 3,
+                                                WebkitBoxOrient: 'vertical',
+                                                overflow: 'hidden'
+                                            }}>
+                                                {art.description}
+                                            </p>
+
+                                            {/* Footer */}
+                                            <div style={{ borderTop: '1px solid rgba(255,255,255,0.06)', paddingTop: '10px', marginTop: 'auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                                <span style={{ color: '#555', fontSize: '0.72rem' }}>
+                                                    {art.created_at ? new Date(art.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : 'Featured'}
+                                                </span>
+                                                <span style={{ color: '#CE34EA', fontSize: '0.78rem', fontWeight: 600 }}>Read →</span>
+                                            </div>
+                                        </div>
+                                    </Link>
+                                ));
+                            })()}
+                        </div>
+
+                        {/* Dot indicators */}
+                        <div style={{ display: 'flex', justifyContent: 'center', gap: '8px', marginTop: '24px' }}>
+                            {latestArticles.map((_, i) => (
+                                <button
+                                    key={i}
+                                    onClick={() => setSliderIndex(i)}
+                                    aria-label={`Go to article ${i + 1}`}
+                                    style={{
+                                        width: i === sliderIndex ? '22px' : '8px',
+                                        height: '8px',
+                                        borderRadius: '4px',
+                                        border: 'none',
+                                        background: i === sliderIndex ? '#CE34EA' : 'rgba(255,255,255,0.2)',
+                                        cursor: 'pointer',
+                                        padding: 0,
+                                        transition: 'all 0.25s'
+                                    }}
+                                />
+                            ))}
+                        </div>
+                    </div>
+                )}
+
             </div>
             <Footer />
             <Snackbar

@@ -17,6 +17,8 @@ import Disclaimer from "pages/Disclaimer";
 import Contact from "pages/Contact";
 import AboutUs from "pages/AboutUs";
 import Articles from "pages/Articles";
+import NotFound from "pages/NotFound";
+import CookieConsent from "component/CookieConsent";
 import { AuthProvider } from "contexts/AuthContext";
 import styles from "./Styles.module.scss";
 
@@ -76,6 +78,7 @@ function App() {
   return (
     <HelmetProvider>
       <AuthProvider>
+        <CookieConsent />
         <Routes>
           <Route path="/" element={<Leaderboard />} />
           <Route path="/login" element={<Login />} />
@@ -91,6 +94,7 @@ function App() {
           <Route path="/contact" element={<Contact />} />
           <Route path="/about" element={<AboutUs />} />
           <Route path="/featured-articles" element={<Articles />} />
+          <Route path="*" element={<NotFound />} />
         </Routes>
       </AuthProvider>
     </HelmetProvider>

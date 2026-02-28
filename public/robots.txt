@@ -1,14 +1,10 @@
-# https://www.robotstxt.org/robotstxt.html
 User-agent: *
-Disallow:
+Allow: /
 
-User-agent: Googlebot
-Disallow:
-
-User-agent: Googlebot-Image
-Disallow:
-
-User-agent: Googlebot-News
-Disallow:
+# Disallow admin and auth pages from being indexed
+Disallow: /admin
+Disallow: /login
+Disallow: /signup
+Disallow: /my-votes
 
 Sitemap: https://cryptocardiac.com/sitemap.xml
