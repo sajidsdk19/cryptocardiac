@@ -26,9 +26,28 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "react-scripts build",
+    "build": "react-scripts build && react-snap",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "postbuild": "react-snap"
+  },
+  "reactSnap": {
+    "source": "build",
+    "minifyHtml": {
+      "collapseWhitespace": false,
+      "removeComments": false
+    },
+    "puppeteerArgs": [
+      "--no-sandbox",
+      "--disable-setuid-sandbox"
+    ],
+    "crawl": false,
+    "include": [
+      "/",
+      "/featured-articles",
+      "/about",
+      "/contact"
+    ]
   },
   "eslintConfig": {
     "extends": [
@@ -49,6 +68,7 @@
     ]
   },
   "devDependencies": {
-    "nth-check": "^2.1.1"
+    "nth-check": "^2.1.1",
+    "react-snap": "^1.23.0"
   }
 }
