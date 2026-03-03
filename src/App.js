@@ -87,13 +87,13 @@ function App() {
           <Route path="/my-votes" element={<MyVotes />} />
           <Route path="/coins" element={<CoinPage />} />
           <Route path="/coins/:coinId" element={<CoinPage />} />
-          <Route path="/:coinId" element={<CoinPage />} />
           <Route path="/privacy-policy" element={<PrivacyPolicy />} />
           <Route path="/terms" element={<TermsAndConditions />} />
           <Route path="/disclaimer" element={<Disclaimer />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/about" element={<AboutUs />} />
           <Route path="/featured-articles" element={<Articles />} />
+          <Route path="/featured-articles/:id" element={<Articles />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </AuthProvider>
