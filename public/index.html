@@ -75,54 +75,13 @@
     #root {
       min-height: 100vh
     }
-
-    /* Static LCP hero shell — matches Leaderboard heroSection exactly */
-    #cc-lcp-shell {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      padding: 80px 20px 60px;
-      background: #151520;
-      contain: layout style;
-      /* prevent forced reflow from this element */
-    }
-
-    #cc-lcp-shell h1 {
-      font-size: clamp(1.5rem, 5vw, 3.5rem);
-      font-weight: 800;
-      line-height: 1.2;
-      background: linear-gradient(135deg, #5700F9, #CE34EA);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
-
-    #cc-lcp-shell p {
-      font-size: clamp(0.9rem, 3vw, 1.2rem);
-      color: rgba(255, 255, 255, 0.7);
-      margin-top: 12px;
-      max-width: 600px;
-      line-height: 1.5;
-    }
   </style>
 </head>
 
 <body>
   <noscript>You need to enable JavaScript to run this app.</noscript>
 
-  <div id="root">
-    <!--
-      Static LCP shell: Google/crawlers see this immediately from HTML without
-      waiting for React JS bundle. React replaces it on mount — zero user impact.
-      fetchpriority is already signalled via the <link rel="preload"> above.
-    -->
-    <div id="cc-lcp-shell" aria-hidden="true">
-      <h1>CryptoCardiac Leaderboard</h1>
-      <p>The most trusted cryptocurrency community voting platform.</p>
-    </div>
-  </div>
+  <div id="root"></div>
 </body>
 
 </html>
