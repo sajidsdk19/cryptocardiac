@@ -4,6 +4,16 @@
 <head>
   <meta charset="utf-8" />
 
+  <!-- ── Preconnect: establish early TCP connections for LCP-critical origins ── -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="preconnect" href="https://api.coingecko.com" crossorigin />
+  <link rel="preconnect" href="https://pagead2.googlesyndication.com" crossorigin />
+  <link rel="dns-prefetch" href="https://coin-images.coingecko.com" />
+
+  <!-- ── Preload logo so Navbar image has fetchpriority=high in initial request ── -->
+  <link rel="preload" as="image" href="/logo192.png" fetchpriority="high" />
+
   <link rel="icon" href="/favicon.ico" type="image/x-icon">
   <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
   <link rel="manifest" href="/manifest.webmanifest">
@@ -39,15 +49,80 @@
     content="Vote for your favorite cryptocurrencies and explore real-time community rankings, charts, and analytics." />
   <meta name="twitter:image" content="https://cryptocardiac.com/og-image.jpg" />
 
-  <!-- Google AdSense -->
+  <!-- Google AdSense — async so it never blocks rendering -->
   <meta name="google-adsense-account" content="ca-pub-3326984644187937">
   <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3326984644187937"
     crossorigin="anonymous"></script>
+
+  <!-- ── Critical CSS: static hero shell renders with zero layout shift ── -->
+  <style>
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0
+    }
+
+    html,
+    body {
+      background: #151520;
+      color: #fff;
+      font-family: system-ui, -apple-system, sans-serif;
+      min-height: 100vh
+    }
+
+    #root {
+      min-height: 100vh
+    }
+
+    /* Static LCP hero shell — matches Leaderboard heroSection exactly */
+    #cc-lcp-shell {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 80px 20px 60px;
+      background: #151520;
+      contain: layout style;
+      /* prevent forced reflow from this element */
+    }
+
+    #cc-lcp-shell h1 {
+      font-size: clamp(1.5rem, 5vw, 3.5rem);
+      font-weight: 800;
+      line-height: 1.2;
+      background: linear-gradient(135deg, #5700F9, #CE34EA);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    #cc-lcp-shell p {
+      font-size: clamp(0.9rem, 3vw, 1.2rem);
+      color: rgba(255, 255, 255, 0.7);
+      margin-top: 12px;
+      max-width: 600px;
+      line-height: 1.5;
+    }
+  </style>
 </head>
 
 <body>
   <noscript>You need to enable JavaScript to run this app.</noscript>
-  <div id="root"></div>
+
+  <div id="root">
+    <!--
+      Static LCP shell: Google/crawlers see this immediately from HTML without
+      waiting for React JS bundle. React replaces it on mount — zero user impact.
+      fetchpriority is already signalled via the <link rel="preload"> above.
+    -->
+    <div id="cc-lcp-shell" aria-hidden="true">
+      <h1>CryptoCardiac Leaderboard</h1>
+      <p>The most trusted cryptocurrency community voting platform.</p>
+    </div>
+  </div>
 </body>
 
 </html>

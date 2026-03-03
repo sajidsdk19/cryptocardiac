@@ -307,29 +307,94 @@ const TrendingManager = ({ adminPassword }) => {
     );
 };
 
-// ─── Stats Bar ─────────────────────────────────────────────────────────────────
+// ─── Stats Panel ───────────────────────────────────────────────────────────────
 const StatsBar = () => {
     const [stats, setStats] = useState(null);
+    const [lastUpdated, setLastUpdated] = useState(null);
 
-    useEffect(() => {
-        fetch(`${API_URL}/admin/stats`).then(r => r.json()).then(setStats).catch(() => { });
+    const fetchStats = useCallback(() => {
+        fetch(`${API_URL}/admin/stats`)
+            .then(r => r.json())
+            .then(data => { setStats(data); setLastUpdated(new Date()); })
+            .catch(() => { });
     }, []);
 
-    const items = stats ? [
-        { label: 'Users', value: stats.totalUsers },
+    useEffect(() => {
+        fetchStats();
+        const interval = setInterval(fetchStats, 60000); // auto-refresh every 60s
+        return () => clearInterval(interval);
+    }, [fetchStats]);
+
+    const todayCards = stats ? [
+        { icon: '🗳️', label: 'Votes Today', value: stats.votesToday ?? 0, color: '#5700F9', bg: 'rgba(87,0,249,0.12)', border: 'rgba(87,0,249,0.3)' },
+        { icon: '👤', label: 'New Accounts Today', value: stats.newUsersToday ?? 0, color: '#CE34EA', bg: 'rgba(206,52,234,0.12)', border: 'rgba(206,52,234,0.3)' },
+        { icon: '👁️', label: 'Visitors Today', value: stats.visitorsToday ?? 0, color: '#00D4AA', bg: 'rgba(0,212,170,0.1)', border: 'rgba(0,212,170,0.3)' },
+    ] : [];
+
+    const allTimeItems = stats ? [
+        { label: 'Total Users', value: stats.totalUsers },
         { label: 'Total Votes', value: stats.totalVotes },
         { label: 'API Hits Today', value: stats.apiHitsToday },
         { label: 'Top Coin', value: stats.topCoinAllTime?.coin_name || '—' },
     ] : [];
 
+    const fmt = (d) => d ? d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '';
+
     return (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: '12px', marginBottom: '32px' }}>
-            {items.map(({ label, value }) => (
-                <div key={label} style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '12px', padding: '16px', textAlign: 'center' }}>
-                    <div style={{ color: '#888', fontSize: '0.72rem', textTransform: 'uppercase', letterSpacing: '0.7px', marginBottom: '6px' }}>{label}</div>
-                    <div style={{ color: '#fff', fontWeight: 700, fontSize: '1.4rem', background: 'linear-gradient(135deg, #5700F9, #CE34EA)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>{value}</div>
+        <div>
+            {/* ── Today's Activity ── */}
+            <div style={{ marginBottom: '28px' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px' }}>
+                    <h3 style={{ margin: 0, color: '#fff', fontWeight: 700, fontSize: '1.05rem' }}>
+                        📅 Today's Activity
+                    </h3>
+                    {lastUpdated && (
+                        <span style={{ color: '#555', fontSize: '0.75rem' }}>
+                            Updated {fmt(lastUpdated)}
+                            <button
+                                onClick={fetchStats}
+                                style={{ marginLeft: '10px', background: 'none', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '6px', color: '#888', padding: '2px 8px', cursor: 'pointer', fontSize: '0.72rem' }}
+                            >↻ Refresh</button>
+                        </span>
+                    )}
                 </div>
-            ))}
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '14px' }}>
+                    {todayCards.length === 0
+                        ? [1, 2, 3].map(i => (
+                            <div key={i} style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: '16px', padding: '22px 20px', height: '90px' }} />
+                        ))
+                        : todayCards.map(({ icon, label, value, color, bg, border }) => (
+                            <div key={label} style={{ background: bg, border: `1px solid ${border}`, borderRadius: '16px', padding: '22px 20px', display: 'flex', alignItems: 'center', gap: '16px', position: 'relative', overflow: 'hidden' }}>
+                                {/* Glow blob */}
+                                <div style={{ position: 'absolute', top: '-20px', right: '-20px', width: '80px', height: '80px', borderRadius: '50%', background: color, opacity: 0.08, filter: 'blur(20px)' }} />
+                                <div style={{ fontSize: '2rem', flexShrink: 0 }}>{icon}</div>
+                                <div>
+                                    <div style={{ color: 'rgba(255,255,255,0.5)', fontSize: '0.72rem', textTransform: 'uppercase', letterSpacing: '0.8px', marginBottom: '4px' }}>{label}</div>
+                                    <div style={{ fontSize: '2rem', fontWeight: 800, color: color, lineHeight: 1 }}>{value.toLocaleString()}</div>
+                                </div>
+                            </div>
+                        ))
+                    }
+                </div>
+            </div>
+
+            {/* ── All-Time Overview ── */}
+            <div>
+                <h3 style={{ margin: '0 0 14px', color: '#fff', fontWeight: 700, fontSize: '1.05rem' }}>📊 All-Time Overview</h3>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: '12px' }}>
+                    {allTimeItems.length === 0
+                        ? [1, 2, 3, 4].map(i => (
+                            <div key={i} style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '12px', padding: '16px', height: '70px' }} />
+                        ))
+                        : allTimeItems.map(({ label, value }) => (
+                            <div key={label} style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '12px', padding: '16px', textAlign: 'center' }}>
+                                <div style={{ color: '#888', fontSize: '0.72rem', textTransform: 'uppercase', letterSpacing: '0.7px', marginBottom: '6px' }}>{label}</div>
+                                <div style={{ fontWeight: 700, fontSize: '1.4rem', background: 'linear-gradient(135deg, #5700F9, #CE34EA)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>{typeof value === 'number' ? value.toLocaleString() : value}</div>
+                            </div>
+                        ))
+                    }
+                </div>
+            </div>
         </div>
     );
 };

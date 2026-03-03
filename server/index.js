@@ -20,6 +20,9 @@ const NodeCache = require('node-cache');
 const myCache = new NodeCache({ stdTTL: 300 }); // Cache for 5 minutes
 let apiHitsToday = 0;
 
+// Unique visitor tracking (Set of IPs, resets daily at midnight EST)
+let visitorsToday = new Set();
+
 // Timezone handling for EST midnight reset
 const moment = require('moment-timezone');
 
@@ -42,10 +45,27 @@ const getMsUntilMidnightEST = () => {
     return nextMidnight.diff(now);
 };
 
-// Reset API hits counter every 24 hours (simple implementation)
-setInterval(() => {
-    apiHitsToday = 0;
-}, 24 * 60 * 60 * 1000);
+// Schedule a reset of daily counters at the next midnight EST, then every 24h after that
+const scheduleMidnightReset = () => {
+    const msUntilMidnight = getMsUntilMidnightEST();
+    setTimeout(() => {
+        apiHitsToday = 0;
+        visitorsToday = new Set();
+        // Schedule again for the following midnight
+        setInterval(() => {
+            apiHitsToday = 0;
+            visitorsToday = new Set();
+        }, 24 * 60 * 60 * 1000);
+    }, msUntilMidnight);
+};
+scheduleMidnightReset();
+
+// Middleware: track unique visitors by IP
+app.use((req, res, next) => {
+    const ip = req.headers['x-forwarded-for']?.split(',')[0].trim() || req.socket.remoteAddress || 'unknown';
+    visitorsToday.add(ip);
+    next();
+});
 
 // Middleware to verify JWT token
 const authenticateToken = (req, res, next) => {
@@ -1003,14 +1023,14 @@ app.delete('/api/trending-topics/:id', authenticateSuperAdmin, async (req, res) 
 
 // --- Admin Stats Route ---
 app.get('/api/admin/stats', async (req, res) => {
-    // In a real app, add admin check here: if (req.user.role !== 'admin') ...
-
     try {
+        const todayEST = getTodayDateEST();
+
         // 1. Total Users
         const [userRows] = await db.query('SELECT COUNT(*) as count FROM users');
         const totalUsers = userRows[0].count;
 
-        // 2. Total Votes
+        // 2. Total Votes (all-time)
         const [voteRows] = await db.query('SELECT COUNT(*) as count FROM votes');
         const totalVotes = voteRows[0].count;
 
@@ -1029,12 +1049,36 @@ app.get('/api/admin/stats', async (req, res) => {
         `);
         const topCoin24h = topCoin24hRows.length > 0 ? topCoin24hRows[0] : null;
 
+        // 5. Votes cast TODAY (EST) — votes + share_logs
+        const [votesTodayRows] = await db.query(`
+            SELECT COUNT(*) as count
+            FROM (
+                SELECT id FROM votes WHERE DATE(CONVERT_TZ(created_at, '+00:00', '-05:00')) = ?
+                UNION ALL
+                SELECT id FROM share_logs WHERE DATE(CONVERT_TZ(created_at, '+00:00', '-05:00')) = ?
+            ) as combined
+        `, [todayEST, todayEST]);
+        const votesToday = votesTodayRows[0].count;
+
+        // 6. New accounts created TODAY (EST)
+        const [newUserRows] = await db.query(
+            `SELECT COUNT(*) as count FROM users WHERE DATE(CONVERT_TZ(created_at, '+00:00', '-05:00')) = ?`,
+            [todayEST]
+        );
+        const newUsersToday = newUserRows[0].count;
+
+        // 7. Unique visitors today (in-memory Set)
+        const visitorsCount = visitorsToday.size;
+
         res.json({
             apiHitsToday,
             totalUsers,
             totalVotes,
             topCoinAllTime,
-            topCoin24h
+            topCoin24h,
+            votesToday,
+            newUsersToday,
+            visitorsToday: visitorsCount
         });
     } catch (error) {
         console.error('Admin stats error:', error);
