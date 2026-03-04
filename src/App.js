@@ -94,6 +94,7 @@ function App() {
           <Route path="/about" element={<AboutUs />} />
           <Route path="/featured-articles" element={<Articles />} />
           <Route path="/featured-articles/:id" element={<Articles />} />
+          <Route path="/404" element={<NotFound />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </AuthProvider>
