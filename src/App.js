@@ -39,7 +39,7 @@ function CoinPage() {
 
   const handleSetCurrency = (newCurrency) => {
     setCurrency(newCurrency);
-    navigate(`/${newCurrency}`);
+    navigate(`/coins/${newCurrency}`);
   };
 
   return (
