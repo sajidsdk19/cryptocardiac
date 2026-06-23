@@ -1,6 +1,6 @@
 import { Box, Grid } from "@mui/material";
 import React, { useState, createContext, useEffect } from "react";
-import { Routes, Route, useParams, useNavigate } from "react-router-dom";
+import { Routes, Route, useParams, useNavigate, Navigate } from "react-router-dom";
 import { HelmetProvider } from 'react-helmet-async';
 import CurrencyData from "section/CurrencyData";
 import Capitalization from "section/Capitalization";
@@ -74,6 +74,11 @@ function CoinPage() {
   );
 }
 
+function ArticleAlias() {
+  const { slug } = useParams();
+  return <Navigate to={slug ? `/featured-articles/${slug}` : "/featured-articles"} replace />;
+}
+
 function App() {
   return (
     <HelmetProvider>
@@ -93,7 +98,9 @@ function App() {
           <Route path="/contact" element={<Contact />} />
           <Route path="/about" element={<AboutUs />} />
           <Route path="/featured-articles" element={<Articles />} />
-          <Route path="/featured-articles/:id" element={<Articles />} />
+          <Route path="/featured-articles/:slug" element={<Articles />} />
+          <Route path="/articles" element={<ArticleAlias />} />
+          <Route path="/articles/:slug" element={<ArticleAlias />} />
           <Route path="/404" element={<NotFound />} />
           <Route path="*" element={<NotFound />} />
         </Routes>

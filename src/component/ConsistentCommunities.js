@@ -11,20 +11,26 @@ const ConsistentCommunities = () => {
 
     useEffect(() => {
         const fetchConsistent = async () => {
+            const controller = new AbortController();
+            const timeout = setTimeout(() => controller.abort(), 3500);
+
             try {
-                const response = await fetch(`${API_URL}/votes/consistent`);
+                const response = await fetch(`${API_URL}/votes/consistent`, { signal: controller.signal });
+                if (!response.ok) {
+                    throw new Error(`Request failed with ${response.status}`);
+                }
                 const data = await response.json();
 
                 if (Array.isArray(data)) {
                     setCommunities(data);
                 } else {
-                    console.error("Consistent communities API returned invalid data:", data);
+                    console.warn("Consistent communities API returned invalid data.");
                     setCommunities([]);
                 }
-            } catch (error) {
-                console.error("Error fetching consistent communities", error);
+            } catch {
                 setCommunities([]);
             } finally {
+                clearTimeout(timeout);
                 setLoading(false);
             }
         };

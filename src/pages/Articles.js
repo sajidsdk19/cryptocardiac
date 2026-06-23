@@ -1,461 +1,430 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
+import { Link, useParams } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
+import { useMediaQuery, useTheme } from '@mui/material';
 import Navbar from '../component/Navbar';
 import Footer from '../component/Footer';
-import { useMediaQuery, useTheme } from '@mui/material';
-import { Helmet } from 'react-helmet-async';
+import {
+    EDITORIAL_ARTICLES,
+    TRENDING_TOPICS,
+    findArticleBySlug,
+    getArticlePath,
+    getArticleUrl,
+    getPublicArticles,
+    SITE_URL
+} from '../data/articles';
 
 const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
 
-const ArticleCard = ({ article, onClick, isMobile }) => (
-    <div style={{
-        background: 'rgba(255,255,255,0.04)',
-        border: '1px solid rgba(255,255,255,0.08)',
-        borderRadius: '16px',
-        padding: isMobile ? '20px' : '24px',
-        marginBottom: '24px',
-        transition: 'transform 0.2s, background 0.2s',
-        cursor: 'pointer'
-    }}
-        onClick={() => onClick(article)}
-        onMouseEnter={e => {
-            if (!isMobile) {
-                e.currentTarget.style.transform = 'translateY(-5px)';
-                e.currentTarget.style.background = 'rgba(255,255,255,0.06)';
-            }
-        }}
-        onMouseLeave={e => {
-            if (!isMobile) {
-                e.currentTarget.style.transform = 'translateY(0)';
-                e.currentTarget.style.background = 'rgba(255,255,255,0.04)';
-            }
-        }}
-    >
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '12px' }}>
-            <span style={{
-                background: 'rgba(206, 52, 234, 0.1)',
-                color: '#CE34EA',
-                padding: '4px 12px',
-                borderRadius: '20px',
-                fontSize: '0.7rem',
-                fontWeight: 600,
-                textTransform: 'uppercase',
-                letterSpacing: '0.5px'
-            }}>
-                {article.category}
-            </span>
-            <span style={{ color: '#555', fontSize: '0.75rem' }}>
-                {article.created_at ? new Date(article.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : 'Featured Content'}
-            </span>
-        </div>
-        <h3 style={{ color: '#fff', fontSize: isMobile ? '1.2rem' : '1.4rem', marginBottom: '12px', lineHeight: '1.4' }}>{article.title}</h3>
-        <p style={{ color: '#CE34EA', fontSize: '0.85rem', fontWeight: 600, marginBottom: '12px' }}>{article.source}</p>
-        <p style={{ color: '#888', fontSize: isMobile ? '0.9rem' : '1rem', lineHeight: '1.6' }}>{article.description}</p>
-        <div style={{ marginTop: '20px', borderTop: '1px solid rgba(255,255,255,0.05)', paddingTop: '15px' }}>
-            <span style={{ color: '#fff', fontSize: '0.9rem', fontWeight: 500 }}>Read Full Article →</span>
-        </div>
-    </div>
-);
+const formatDate = (dateValue) => {
+    if (!dateValue) return 'Updated guide';
+    const date = new Date(dateValue);
+    if (Number.isNaN(date.getTime())) return 'Updated guide';
+    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+};
 
-const ArticleDetail = ({ article, onBack, isMobile }) => (
-    <div style={{ animation: 'fadeIn 0.4s ease-out' }}>
-        <button
-            onClick={onBack}
+const pageShell = {
+    background: 'rgb(21,21,32)',
+    color: '#fff',
+    minHeight: '100vh'
+};
+
+const ArticleCard = ({ article, isMobile }) => (
+    <Link to={getArticlePath(article)} style={{ textDecoration: 'none', display: 'block' }}>
+        <article
+            className="cc-article-card"
             style={{
-                background: 'none',
-                border: 'none',
-                color: '#CE34EA',
-                cursor: 'pointer',
-                fontSize: '0.95rem',
-                fontWeight: 600,
+                background: 'rgba(255,255,255,0.04)',
+                border: '1px solid rgba(255,255,255,0.08)',
+                borderRadius: '12px',
+                padding: isMobile ? '20px' : '24px',
+                marginBottom: '24px',
+                transition: 'transform 0.2s, background 0.2s, border-color 0.2s',
+                minHeight: isMobile ? 'auto' : '260px',
                 display: 'flex',
-                alignItems: 'center',
-                marginBottom: isMobile ? '20px' : '30px',
-                padding: 0
+                flexDirection: 'column'
             }}
         >
-            ← Back to Articles
-        </button>
-
-        <span style={{
-            background: 'rgba(206, 52, 234, 0.1)',
-            color: '#CE34EA',
-            padding: '6px 16px',
-            borderRadius: '20px',
-            fontSize: '0.8rem',
-            fontWeight: 600,
-            textTransform: 'uppercase',
-            marginBottom: '16px',
-            display: 'inline-block'
-        }}>
-            {article.category}
-        </span>
-
-        <h1 style={{
-            color: '#fff',
-            fontSize: isMobile ? '1.8rem' : '2.5rem',
-            fontWeight: 800,
-            marginBottom: '16px',
-            lineHeight: '1.2'
-        }}>
-            {article.title}
-        </h1>
-
-        <div style={{
-            display: 'flex',
-            flexWrap: 'wrap',
-            alignItems: 'center',
-            marginBottom: isMobile ? '30px' : '40px',
-            color: '#888',
-            fontSize: '0.85rem',
-            gap: '8px'
-        }}>
-            <span style={{ color: '#CE34EA', fontWeight: 600 }}>{article.source}</span>
-            <span>•</span>
-            <span>Evergreen Content</span>
-            {!isMobile && (
-                <>
-                    <span>•</span>
-                    <span>8 min read</span>
-                </>
-            )}
-        </div>
-
-        <div style={{ color: '#ccc', fontSize: isMobile ? '1rem' : '1.1rem', lineHeight: '1.8' }}>
-            {(article.fullContent || []).map((paragraph, i) => (
-                <p key={i} style={{ marginBottom: '1.5rem' }}>{paragraph}</p>
-            ))}
-        </div>
-
-        <div style={{
-            marginTop: isMobile ? '40px' : '60px',
-            padding: isMobile ? '25px' : '40px',
-            background: 'rgba(255,255,255,0.02)',
-            border: '1px solid rgba(255,255,255,0.08)',
-            borderRadius: '20px',
-            textAlign: 'center'
-        }}>
-            <h3 style={{ color: '#fff', marginBottom: '15px', fontSize: isMobile ? '1.1rem' : '1.3rem' }}>Enjoyed this deep dive?</h3>
-            <p style={{ color: '#888', marginBottom: '25px', fontSize: '0.9rem' }}>Share it with your community and help grow the heart of crypto.</p>
-            <div style={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', justifyContent: 'center', gap: '12px' }}>
-                <button
-                    onClick={() => {
-                        const text = encodeURIComponent(`${article.title} — via CryptoCardiac`);
-                        const url = encodeURIComponent('https://cryptocardiac.com/articles');
-                        window.open(`https://twitter.com/intent/tweet?text=${text}&url=${url}`, '_blank', 'noopener,noreferrer');
-                    }}
-                    onMouseEnter={e => { e.currentTarget.style.opacity = '0.85'; e.currentTarget.style.transform = 'translateY(-2px)'; }}
-                    onMouseLeave={e => { e.currentTarget.style.opacity = '1'; e.currentTarget.style.transform = 'translateY(0)'; }}
-                    style={{ padding: '12px 25px', borderRadius: '8px', border: 'none', background: '#1DA1F2', color: '#fff', fontWeight: 600, cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '8px', fontSize: '0.95rem', transition: 'opacity 0.2s, transform 0.2s' }}
-                >
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.746l7.73-8.835L1.254 2.25H8.08l4.259 5.63L18.244 2.25zm-1.161 17.52h1.833L7.084 4.126H5.117L17.083 19.77z" /></svg>
-                    Share on X
-                </button>
-                <button
-                    onClick={() => {
-                        const text = encodeURIComponent(`${article.title} — via CryptoCardiac\nhttps://cryptocardiac.com/articles`);
-                        window.open(`https://t.me/share/url?url=https://cryptocardiac.com/articles&text=${text}`, '_blank', 'noopener,noreferrer');
-                    }}
-                    onMouseEnter={e => { e.currentTarget.style.opacity = '0.85'; e.currentTarget.style.transform = 'translateY(-2px)'; }}
-                    onMouseLeave={e => { e.currentTarget.style.opacity = '1'; e.currentTarget.style.transform = 'translateY(0)'; }}
-                    style={{ padding: '12px 25px', borderRadius: '8px', border: 'none', background: '#0088cc', color: '#fff', fontWeight: 600, cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '8px', fontSize: '0.95rem', transition: 'opacity 0.2s, transform 0.2s' }}
-                >
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8-1.7 8.02c-.13.59-.47.73-.95.46l-2.6-1.92-1.25 1.21c-.14.14-.26.26-.53.26l.19-2.66 4.83-4.36c.21-.19-.05-.29-.33-.1L7.1 14.53l-2.56-.8c-.56-.17-.57-.56.12-.83l10-3.86c.46-.17.87.11.98.76z" /></svg>
-                    Telegram
-                </button>
+            <div style={{ display: 'flex', justifyContent: 'space-between', gap: '16px', alignItems: 'flex-start', marginBottom: '14px' }}>
+                <span style={{
+                    background: 'rgba(206, 52, 234, 0.12)',
+                    color: '#CE34EA',
+                    padding: '5px 12px',
+                    borderRadius: '999px',
+                    fontSize: '0.72rem',
+                    fontWeight: 700,
+                    textTransform: 'uppercase'
+                }}>
+                    {article.category}
+                </span>
+                <span style={{ color: '#777', fontSize: '0.78rem', whiteSpace: 'nowrap' }}>
+                    {formatDate(article.updated_at || article.created_at)}
+                </span>
             </div>
+
+            <h2 style={{
+                color: '#fff',
+                fontSize: isMobile ? '1.18rem' : '1.38rem',
+                margin: '0 0 12px',
+                lineHeight: 1.35
+            }}>
+                {article.title}
+            </h2>
+
+            <p style={{ color: '#CE34EA', fontSize: '0.86rem', fontWeight: 700, margin: '0 0 12px' }}>
+                {article.source}
+            </p>
+
+            <p style={{ color: '#aaa', fontSize: isMobile ? '0.94rem' : '1rem', lineHeight: 1.65, margin: 0, flex: 1 }}>
+                {article.description}
+            </p>
+
+            <div style={{ marginTop: '20px', borderTop: '1px solid rgba(255,255,255,0.06)', paddingTop: '14px', display: 'flex', justifyContent: 'space-between', color: '#fff', fontSize: '0.9rem', fontWeight: 700 }}>
+                <span>Read full guide</span>
+                <span>{article.readMinutes} min</span>
+            </div>
+        </article>
+    </Link>
+);
+
+const ArticleDetail = ({ article, isMobile }) => {
+    const articleUrl = getArticleUrl(article);
+    const publishDate = article.created_at || '2026-06-23';
+    const modifiedDate = article.updated_at || publishDate;
+
+    const shareOnX = () => {
+        const text = encodeURIComponent(`${article.title} via CryptoCardiac`);
+        const url = encodeURIComponent(articleUrl);
+        window.open(`https://twitter.com/intent/tweet?text=${text}&url=${url}`, '_blank', 'noopener,noreferrer');
+    };
+
+    const shareOnTelegram = () => {
+        const text = encodeURIComponent(`${article.title} via CryptoCardiac`);
+        window.open(`https://t.me/share/url?url=${encodeURIComponent(articleUrl)}&text=${text}`, '_blank', 'noopener,noreferrer');
+    };
+
+    return (
+        <>
+            <Helmet>
+                <title>{article.title} | CryptoCardiac</title>
+                <meta name="description" content={article.description} />
+                <meta name="keywords" content={`${article.category}, crypto education, cryptocurrency risk, blockchain guide, CryptoCardiac`} />
+                <meta property="og:title" content={`${article.title} | CryptoCardiac`} />
+                <meta property="og:description" content={article.description} />
+                <meta property="og:type" content="article" />
+                <meta property="og:url" content={articleUrl} />
+                <meta property="article:published_time" content={publishDate} />
+                <meta property="article:modified_time" content={modifiedDate} />
+                <meta name="twitter:card" content="summary_large_image" />
+                <meta name="twitter:title" content={`${article.title} | CryptoCardiac`} />
+                <meta name="twitter:description" content={article.description} />
+                <link rel="canonical" href={articleUrl} />
+                <script type="application/ld+json">
+                    {JSON.stringify({
+                        '@context': 'https://schema.org',
+                        '@type': 'Article',
+                        headline: article.title,
+                        description: article.description,
+                        author: {
+                            '@type': 'Organization',
+                            name: article.author
+                        },
+                        publisher: {
+                            '@type': 'Organization',
+                            name: 'CryptoCardiac',
+                            url: SITE_URL
+                        },
+                        datePublished: publishDate,
+                        dateModified: modifiedDate,
+                        mainEntityOfPage: articleUrl
+                    })}
+                </script>
+            </Helmet>
+
+            <article style={{ maxWidth: '860px', margin: '0 auto' }}>
+                <Link to="/featured-articles" style={{ color: '#CE34EA', textDecoration: 'none', fontSize: '0.95rem', fontWeight: 700 }}>
+                    Back to articles
+                </Link>
+
+                <div style={{ marginTop: isMobile ? '24px' : '34px' }}>
+                    <span style={{
+                        background: 'rgba(206, 52, 234, 0.12)',
+                        color: '#CE34EA',
+                        padding: '6px 14px',
+                        borderRadius: '999px',
+                        fontSize: '0.78rem',
+                        fontWeight: 700,
+                        textTransform: 'uppercase',
+                        display: 'inline-block',
+                        marginBottom: '18px'
+                    }}>
+                        {article.category}
+                    </span>
+
+                    <h1 style={{
+                        color: '#fff',
+                        fontSize: isMobile ? '2rem' : '2.85rem',
+                        fontWeight: 900,
+                        lineHeight: 1.15,
+                        margin: '0 0 18px'
+                    }}>
+                        {article.title}
+                    </h1>
+
+                    <p style={{ color: '#cfcfe8', fontSize: isMobile ? '1rem' : '1.12rem', lineHeight: 1.75, margin: '0 0 22px' }}>
+                        {article.description}
+                    </p>
+
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px 14px', color: '#888', fontSize: '0.88rem', marginBottom: isMobile ? '34px' : '44px' }}>
+                        <span style={{ color: '#CE34EA', fontWeight: 700 }}>{article.source}</span>
+                        <span>{formatDate(article.updated_at || article.created_at)}</span>
+                        <span>{article.readMinutes} min read</span>
+                    </div>
+                </div>
+
+                <div style={{
+                    color: '#d7d7e8',
+                    fontSize: isMobile ? '1rem' : '1.08rem',
+                    lineHeight: 1.85
+                }}>
+                    {article.fullContent.map((paragraph, index) => (
+                        <p key={index} style={{ margin: '0 0 1.45rem' }}>
+                            {paragraph}
+                        </p>
+                    ))}
+                </div>
+
+                <aside style={{
+                    marginTop: isMobile ? '34px' : '48px',
+                    padding: isMobile ? '22px' : '28px',
+                    borderRadius: '12px',
+                    border: '1px solid rgba(206,52,234,0.22)',
+                    background: 'rgba(206,52,234,0.06)'
+                }}>
+                    <h2 style={{ fontSize: '1.05rem', margin: '0 0 10px', color: '#fff' }}>Important risk note</h2>
+                    <p style={{ color: '#bbb', lineHeight: 1.7, margin: 0, fontSize: '0.95rem' }}>
+                        CryptoCardiac publishes educational content only. Community votes, articles, rankings, and market data are not financial, investment, legal, or tax advice.
+                    </p>
+                </aside>
+
+                <div style={{ marginTop: '32px', display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
+                    <button onClick={shareOnX} style={shareButtonStyle('#1DA1F2')}>Share on X</button>
+                    <button onClick={shareOnTelegram} style={shareButtonStyle('#0088cc')}>Share on Telegram</button>
+                </div>
+            </article>
+        </>
+    );
+};
+
+const shareButtonStyle = (background) => ({
+    padding: '12px 18px',
+    borderRadius: '8px',
+    border: 'none',
+    background,
+    color: '#fff',
+    fontWeight: 700,
+    cursor: 'pointer',
+    fontSize: '0.92rem'
+});
+
+const ArticleNotFound = () => (
+    <>
+        <Helmet>
+            <title>Article Not Found | CryptoCardiac</title>
+            <meta name="description" content="The requested CryptoCardiac article could not be found." />
+            <meta name="robots" content="noindex, follow" />
+        </Helmet>
+        <div style={{ maxWidth: '720px', margin: '0 auto', textAlign: 'center', padding: '80px 20px' }}>
+            <h1 style={{ color: '#fff', fontSize: '2rem', marginBottom: '12px' }}>Article not found</h1>
+            <p style={{ color: '#aaa', lineHeight: 1.7, marginBottom: '28px' }}>
+                This article may have moved or been unpublished.
+            </p>
+            <Link to="/featured-articles" style={{ color: '#CE34EA', fontWeight: 700, textDecoration: 'none' }}>
+                View all articles
+            </Link>
         </div>
-    </div>
+    </>
 );
 
 const TrendingTopic = ({ title, trend }) => (
     <div style={{
         padding: '12px 0',
-        borderBottom: '1px solid rgba(255,255,255,0.05)',
+        borderBottom: '1px solid rgba(255,255,255,0.06)',
         display: 'flex',
         justifyContent: 'space-between',
+        gap: '16px',
         alignItems: 'center'
     }}>
-        <span style={{ color: '#ccc', fontSize: '0.9rem' }}>{title}</span>
-        <span style={{ color: trend.startsWith('+') ? '#4caf50' : '#f44336', fontSize: '0.8rem' }}>{trend}</span>
-    </div>
-);
-
-// Skeleton loader for articles
-const ArticleSkeleton = () => (
-    <div style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '16px', padding: '24px', marginBottom: '24px' }}>
-        {[80, 60, 40, 90, 70].map((w, i) => (
-            <div key={i} style={{ height: i === 1 ? '20px' : '12px', background: 'rgba(255,255,255,0.06)', borderRadius: '6px', marginBottom: '12px', width: `${w}%`, animation: 'pulse 1.5s ease-in-out infinite' }} />
-        ))}
+        <span style={{ color: '#ccc', fontSize: '0.92rem' }}>{title}</span>
+        <span style={{ color: trend.startsWith('+') ? '#56d364' : '#ff7b72', fontSize: '0.82rem', fontWeight: 700 }}>{trend}</span>
     </div>
 );
 
 const Articles = () => {
-    const [selectedArticle, setSelectedArticle] = useState(null);
-    const [pulseEmail, setPulseEmail] = useState('');
-    const [pulseSubscribed, setPulseSubscribed] = useState(false);
-    const [articles, setArticles] = useState([]);
-    const [trendingTopics, setTrendingTopics] = useState([]);
-    const [articlesLoading, setArticlesLoading] = useState(true);
-    const [trendingLoading, setTrendingLoading] = useState(true);
-    const [articlesError, setArticlesError] = useState('');
-
+    const { slug } = useParams();
+    const [articles, setArticles] = useState(EDITORIAL_ARTICLES);
+    const [trendingTopics, setTrendingTopics] = useState(TRENDING_TOPICS);
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
-    // Fetch articles
     useEffect(() => {
-        setArticlesLoading(true);
         fetch(`${API_URL}/articles`)
-            .then(r => r.json())
-            .then(data => {
-                setArticles(Array.isArray(data) ? data : []);
-                setArticlesError('');
-            })
-            .catch(() => setArticlesError('Unable to load articles. Please try again later.'))
-            .finally(() => setArticlesLoading(false));
+            .then((response) => response.ok ? response.json() : Promise.reject(new Error('Article API unavailable')))
+            .then((data) => setArticles(getPublicArticles(data)))
+            .catch(() => setArticles(getPublicArticles([])));
     }, []);
 
-    // Fetch trending topics
     useEffect(() => {
-        setTrendingLoading(true);
         fetch(`${API_URL}/trending-topics`)
-            .then(r => r.json())
-            .then(data => setTrendingTopics(Array.isArray(data) ? data : []))
-            .catch(() => setTrendingTopics([]))
-            .finally(() => setTrendingLoading(false));
+            .then((response) => response.ok ? response.json() : Promise.reject(new Error('Trending API unavailable')))
+            .then((data) => setTrendingTopics(Array.isArray(data) && data.length ? data : TRENDING_TOPICS))
+            .catch(() => setTrendingTopics(TRENDING_TOPICS));
     }, []);
-
-    const handlePulseSubscribe = (e) => {
-        e.preventDefault();
-        if (!pulseEmail || !pulseEmail.includes('@')) {
-            alert('Please enter a valid email address.');
-            return;
-        }
-        setPulseSubscribed(true);
-        setPulseEmail('');
-    };
 
     useEffect(() => {
         window.scrollTo(0, 0);
-    }, [selectedArticle]);
+    }, [slug]);
+
+    const selectedArticle = useMemo(() => findArticleBySlug(articles, slug), [articles, slug]);
+    const listJsonLd = useMemo(() => ({
+        '@context': 'https://schema.org',
+        '@type': 'Blog',
+        name: 'CryptoCardiac Articles',
+        url: `${SITE_URL}/featured-articles`,
+        description: 'Original cryptocurrency education, risk explainers, and community-signal guides from CryptoCardiac.',
+        publisher: {
+            '@type': 'Organization',
+            name: 'CryptoCardiac',
+            url: SITE_URL
+        },
+        blogPost: EDITORIAL_ARTICLES.map((article) => ({
+            '@type': 'BlogPosting',
+            headline: article.title,
+            url: getArticleUrl(article),
+            dateModified: article.updated_at
+        }))
+    }), []);
 
     return (
-        <div style={{ background: 'rgb(21,21,32)', minHeight: '100vh' }}>
-            <Helmet>
-                <title>Crypto Articles & Insights | CryptoCardiac Featured Content</title>
-                <meta name="description" content="Explore curated cryptocurrency articles, market analysis, and blockchain insights from leading publications. Stay informed with expert crypto content and industry trends." />
-                <meta name="keywords" content="crypto articles, blockchain insights, cryptocurrency analysis, market trends, crypto news, defi articles, solana, bitcoin, dogecoin, trump coin, no KYC exchanges, crypto education" />
-                <meta property="og:title" content="Crypto Articles & Insights | CryptoCardiac Featured Content" />
-                <meta property="og:description" content="Read our featured deep dives into the crypto market, including education, No-KYC exchanges, privacy tools, and global adoption trends." />
-                <meta property="og:type" content="article" />
-                <meta property="og:url" content="https://cryptocardiac.com/articles" />
-                <meta name="twitter:card" content="summary_large_image" />
-                <meta name="twitter:title" content="CryptoArticles | CryptoCardiac" />
-                <meta name="twitter:description" content="Handpicked crypto insights, articles, and educational content from leading blockchain researchers." />
-                <link rel="canonical" href="https://cryptocardiac.com/articles" />
-                <script type="application/ld+json">
-                    {JSON.stringify({
-                        "@context": "https://schema.org",
-                        "@type": "Blog",
-                        "name": "CryptoCardiac Featured Articles",
-                        "url": "https://cryptocardiac.com/articles",
-                        "description": "Curated cryptocurrency analysis, educational guides, and the latest blockchain insights.",
-                        "publisher": {
-                            "@type": "Organization",
-                            "name": "CryptoCardiac",
-                            "url": "https://cryptocardiac.com"
-                        }
-                    })}
-                </script>
-            </Helmet>
-            <Navbar />
+        <div style={pageShell}>
+            <style>{`
+                .cc-article-card:hover {
+                    transform: translateY(-4px);
+                    background: rgba(255,255,255,0.065) !important;
+                    border-color: rgba(206,52,234,0.28) !important;
+                }
+                @media (prefers-reduced-motion: reduce) {
+                    .cc-article-card { transition: none !important; }
+                    .cc-article-card:hover { transform: none !important; }
+                }
+            `}</style>
 
-            <style>
-                {`
-                    @keyframes fadeIn {
-                        from { opacity: 0; transform: translateY(20px); }
-                        to { opacity: 1; transform: translateY(0); }
-                    }
-                    @keyframes pulse {
-                        0%, 100% { opacity: 1; }
-                        50% { opacity: 0.4; }
-                    }
-                `}
-            </style>
-
-            {/* Hero Section */}
-            {!selectedArticle && (
-                <div style={{
-                    background: 'linear-gradient(135deg, #5700F9 0%, #CE34EA 100%)',
-                    padding: isMobile ? '60px 20px' : '80px 20px',
-                    textAlign: 'center',
-                    marginBottom: isMobile ? '30px' : '40px',
-                    animation: 'fadeIn 0.6s ease-out'
-                }}>
-                    <h1 style={{
-                        color: '#fff',
-                        fontSize: isMobile ? '2.2rem' : '3rem',
-                        fontWeight: 800,
-                        marginBottom: '16px',
-                        lineHeight: 1.1
-                    }}>
-                        Featured Insights
-                    </h1>
-                    <p style={{
-                        color: 'rgba(255,255,255,0.9)',
-                        fontSize: isMobile ? '1rem' : '1.2rem',
-                        maxWidth: '800px',
-                        margin: '0 auto',
-                        lineHeight: 1.5
-                    }}>
-                        Curated market analysis and industrial trends from the world's leading blockchain publications.
-                    </p>
-                </div>
+            {!slug && (
+                <Helmet>
+                    <title>Crypto Articles & Education | CryptoCardiac</title>
+                    <meta name="description" content="Read original CryptoCardiac guides about cryptocurrency community signals, market trends, exchange risk, privacy, wallets, and blockchain education." />
+                    <meta name="keywords" content="crypto articles, cryptocurrency education, crypto risk, blockchain privacy, crypto voting, market trends" />
+                    <meta property="og:title" content="Crypto Articles & Education | CryptoCardiac" />
+                    <meta property="og:description" content="Original educational crypto guides from CryptoCardiac, written for readers who want context before chasing market noise." />
+                    <meta property="og:type" content="website" />
+                    <meta property="og:url" content={`${SITE_URL}/featured-articles`} />
+                    <meta name="twitter:card" content="summary_large_image" />
+                    <meta name="twitter:title" content="Crypto Articles & Education | CryptoCardiac" />
+                    <meta name="twitter:description" content="Original cryptocurrency education, privacy, exchange, and risk guides from CryptoCardiac." />
+                    <link rel="canonical" href={`${SITE_URL}/featured-articles`} />
+                    <script type="application/ld+json">{JSON.stringify(listJsonLd)}</script>
+                </Helmet>
             )}
 
-            <div style={{
+            <Navbar />
+
+            {!slug && (
+                <header style={{
+                    background: 'linear-gradient(135deg, #5700F9 0%, #CE34EA 100%)',
+                    padding: isMobile ? '58px 20px' : '78px 20px',
+                    textAlign: 'center',
+                    borderBottom: '1px solid rgba(255,255,255,0.08)'
+                }}>
+                    <h1 style={{ color: '#fff', fontSize: isMobile ? '2.15rem' : '3rem', fontWeight: 900, margin: '0 0 16px', lineHeight: 1.12 }}>
+                        CryptoCardiac Articles
+                    </h1>
+                    <p style={{ color: 'rgba(255,255,255,0.92)', fontSize: isMobile ? '1rem' : '1.18rem', maxWidth: '760px', margin: '0 auto', lineHeight: 1.6 }}>
+                        Original guides for understanding crypto communities, market signals, privacy, exchange risk, and safer research habits.
+                    </p>
+                </header>
+            )}
+
+            <main style={{
                 maxWidth: '1200px',
                 margin: '0 auto',
-                padding: selectedArticle
-                    ? (isMobile ? '40px 16px 80px' : '60px 20px 80px')
-                    : (isMobile ? '0 16px 60px' : '0 20px 80px'),
-                display: 'grid',
-                gridTemplateColumns: (selectedArticle || isMobile) ? '1fr' : 'minmax(0, 1fr) 350px',
-                gap: isMobile ? '40px' : '40px'
+                padding: slug ? (isMobile ? '42px 16px 80px' : '64px 20px 90px') : (isMobile ? '34px 16px 70px' : '46px 20px 90px'),
+                display: slug || isMobile ? 'block' : 'grid',
+                gridTemplateColumns: 'minmax(0, 1fr) 340px',
+                gap: '42px'
             }}>
-
-                {/* Main Content */}
-                <div style={{ maxWidth: selectedArticle ? '850px' : 'none', margin: selectedArticle ? '0 auto' : '0' }}>
-                    {selectedArticle ? (
-                        <ArticleDetail
-                            article={selectedArticle}
-                            onBack={() => setSelectedArticle(null)}
-                            isMobile={isMobile}
-                        />
-                    ) : (
-                        <>
-                            <h2 style={{ color: '#fff', fontSize: isMobile ? '1.4rem' : '1.8rem', marginBottom: '25px', display: 'flex', alignItems: 'center' }}>
-                                <span style={{ width: '4px', height: isMobile ? '20px' : '24px', background: '#CE34EA', marginRight: '12px', borderRadius: '2px' }}></span>
-                                Must Read Stories
-                            </h2>
-
-                            {articlesError && (
-                                <div style={{ background: 'rgba(244,67,54,0.08)', border: '1px solid rgba(244,67,54,0.2)', borderRadius: '12px', padding: '20px', textAlign: 'center', color: '#f44336', marginBottom: '24px' }}>
-                                    {articlesError}
-                                </div>
-                            )}
-
-                            {articlesLoading ? (
-                                [1, 2, 3].map(i => <ArticleSkeleton key={i} />)
-                            ) : (
-                                articles.map((art) => (
-                                    <ArticleCard key={art.id} article={art} onClick={setSelectedArticle} isMobile={isMobile} />
-                                ))
-                            )}
-
-                            {!articlesLoading && !articlesError && articles.length === 0 && (
-                                <div style={{ textAlign: 'center', padding: '60px 20px', color: '#555' }}>
-                                    <div style={{ fontSize: '2.5rem', marginBottom: '12px' }}>📭</div>
-                                    <p>No articles published yet. Check back soon!</p>
-                                </div>
-                            )}
-
-                            <div style={{ marginTop: '40px', padding: '30px', background: 'rgba(255,255,255,0.02)', borderRadius: '20px', border: '1px dashed rgba(255,255,255,0.1)', textAlign: 'center' }}>
-                                <p style={{ color: '#666', fontSize: '0.85rem' }}>More articles are being curated by our editorial team daily.</p>
+                {slug ? (
+                    selectedArticle ? <ArticleDetail article={selectedArticle} isMobile={isMobile} /> : <ArticleNotFound />
+                ) : (
+                    <>
+                        <section>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '26px' }}>
+                                <span style={{ width: '4px', height: '28px', background: '#CE34EA', borderRadius: '2px', display: 'inline-block' }} />
+                                <h2 style={{ color: '#fff', fontSize: isMobile ? '1.42rem' : '1.85rem', margin: 0 }}>
+                                    Original Crypto Guides
+                                </h2>
                             </div>
-                        </>
-                    )}
-                </div>
 
-                {/* Sidebar - Only show on list view */}
-                {!selectedArticle && (
-                    <aside style={{ marginTop: isMobile ? '40px' : '0' }}>
-                        <div style={{
-                            background: 'rgba(255,255,255,0.03)',
-                            border: '1px solid rgba(255,255,255,0.08)',
-                            borderRadius: '20px',
-                            padding: '24px',
-                            position: isMobile ? 'static' : 'sticky',
-                            top: '100px'
-                        }}>
-                            <h3 style={{ color: '#fff', fontSize: '1.1rem', marginBottom: '20px' }}>Trending Topics</h3>
+                            {articles.map((article) => (
+                                <ArticleCard key={article.slug} article={article} isMobile={isMobile} />
+                            ))}
+                        </section>
 
-                            {trendingLoading ? (
-                                [1, 2, 3, 4, 5, 6].map(i => (
-                                    <div key={i} style={{ height: '12px', background: 'rgba(255,255,255,0.06)', borderRadius: '6px', marginBottom: '14px', animation: 'pulse 1.5s ease-in-out infinite' }} />
-                                ))
-                            ) : (
-                                trendingTopics.map(t => (
-                                    <TrendingTopic key={t.id} title={t.title} trend={t.trend} />
-                                ))
-                            )}
-
-                            {!trendingLoading && trendingTopics.length === 0 && (
-                                <p style={{ color: '#555', fontSize: '0.85rem', textAlign: 'center', padding: '10px 0' }}>No trending topics yet.</p>
-                            )}
-
+                        <aside style={{ marginTop: isMobile ? '42px' : 0 }}>
                             <div style={{
-                                marginTop: '40px',
+                                background: 'rgba(255,255,255,0.03)',
+                                border: '1px solid rgba(255,255,255,0.08)',
+                                borderRadius: '12px',
                                 padding: '24px',
-                                background: 'linear-gradient(135deg, rgba(87, 0, 249, 0.2) 0%, rgba(206, 52, 234, 0.2) 100%)',
-                                borderRadius: '16px',
-                                border: '1px solid rgba(206, 52, 234, 0.3)',
-                                textAlign: 'center'
+                                position: isMobile ? 'static' : 'sticky',
+                                top: '100px'
                             }}>
-                                <h4 style={{ color: '#fff', marginBottom: '10px' }}>Join the Pulse</h4>
-                                {pulseSubscribed ? (
-                                    <div style={{ animation: 'fadeIn 0.5s ease-out' }}>
-                                        <div style={{ fontSize: '1.5rem', marginBottom: '10px' }}>✨</div>
-                                        <p style={{ color: '#fff', fontWeight: 600, fontSize: '0.9rem' }}>Thanks for subscribing!</p>
-                                    </div>
-                                ) : (
-                                    <>
-                                        <p style={{ color: '#aaa', fontSize: '0.8rem', marginBottom: '20px' }}>Weekly insights delivered straight to your inbox.</p>
-                                        <form onSubmit={handlePulseSubscribe}>
-                                            <input
-                                                type="email"
-                                                placeholder="Email address"
-                                                value={pulseEmail}
-                                                onChange={(e) => setPulseEmail(e.target.value)}
-                                                style={{
-                                                    width: '100%',
-                                                    padding: '12px',
-                                                    borderRadius: '8px',
-                                                    border: '1px solid rgba(255,255,255,0.1)',
-                                                    background: 'rgba(0,0,0,0.2)',
-                                                    color: '#fff',
-                                                    marginBottom: '10px',
-                                                    outline: 'none',
-                                                    boxSizing: 'border-box',
-                                                    fontSize: '0.9rem'
-                                                }}
-                                                required
-                                            />
-                                            <button
-                                                type="submit"
-                                                style={{
-                                                    width: '100%',
-                                                    padding: '12px',
-                                                    borderRadius: '8px',
-                                                    border: 'none',
-                                                    background: '#CE34EA',
-                                                    color: '#fff',
-                                                    fontWeight: 700,
-                                                    cursor: 'pointer',
-                                                    fontSize: '0.9rem'
-                                                }}
-                                            >
-                                                Subscribe
-                                            </button>
-                                        </form>
-                                    </>
-                                )}
-                            </div>
-                        </div>
-                    </aside>
-                )}
+                                <h2 style={{ color: '#fff', fontSize: '1.08rem', margin: '0 0 18px' }}>Trending Topics</h2>
+                                {trendingTopics.map((topic) => (
+                                    <TrendingTopic key={topic.id || topic.title} title={topic.title} trend={topic.trend} />
+                                ))}
 
-            </div>
+                                <div style={{
+                                    marginTop: '34px',
+                                    paddingTop: '24px',
+                                    borderTop: '1px solid rgba(255,255,255,0.08)'
+                                }}>
+                                    <h2 style={{ color: '#fff', fontSize: '1.08rem', margin: '0 0 14px' }}>Editorial Standards</h2>
+                                    <p style={{ color: '#aaa', lineHeight: 1.7, fontSize: '0.92rem', margin: '0 0 14px' }}>
+                                        CryptoCardiac articles are written for education, not promotion. We avoid guaranteed-return language and separate community attention from investment advice.
+                                    </p>
+                                    <Link to="/disclaimer" style={{ color: '#CE34EA', fontWeight: 700, textDecoration: 'none', fontSize: '0.92rem' }}>
+                                        Read the full disclaimer
+                                    </Link>
+                                </div>
+
+                                <div style={{
+                                    marginTop: '26px',
+                                    paddingTop: '24px',
+                                    borderTop: '1px solid rgba(255,255,255,0.08)'
+                                }}>
+                                    <h2 style={{ color: '#fff', fontSize: '1.08rem', margin: '0 0 14px' }}>Research Checklist</h2>
+                                    <ul style={{ color: '#aaa', lineHeight: 1.75, paddingLeft: '18px', margin: 0, fontSize: '0.92rem' }}>
+                                        <li>Check liquidity and token distribution.</li>
+                                        <li>Read project docs before trusting social claims.</li>
+                                        <li>Compare short-term hype with longer-term activity.</li>
+                                        <li>Never treat rankings as financial advice.</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </aside>
+                    </>
+                )}
+            </main>
 
             <Footer />
         </div>

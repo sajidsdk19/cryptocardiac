@@ -23,7 +23,7 @@ const getAllCurrencies = async (vs_currency = 'usd') => {
 
     return response.data;
   } catch (error) {
-    console.error('Error fetching currencies:', error);
+    console.warn('Unable to fetch live currency data; checking local cache.');
 
     // Fallback to cache if available
     const cached = localStorage.getItem('cachedCryptos');
@@ -59,7 +59,7 @@ const searchCoins = async (query) => {
     });
     return response.data;
   } catch (error) {
-    console.error('Error searching coins:', error);
+    console.warn('Unable to search coins from the API.');
     throw error;
   }
 };
@@ -74,7 +74,7 @@ const getCoinDetails = async (coinIds, vs_currency = 'usd') => {
     });
     return response.data;
   } catch (error) {
-    console.error('Error fetching coin details:', error);
+    console.warn('Unable to fetch coin details from the API.');
     throw error;
   }
 };

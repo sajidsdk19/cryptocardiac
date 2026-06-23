@@ -120,7 +120,7 @@ const NotFound = () => {
                         WebkitTextFillColor: 'transparent',
                         animation: 'float 4s ease-in-out infinite, gradientShift 4s ease infinite',
                         userSelect: 'none',
-                        letterSpacing: '-4px',
+                        letterSpacing: 0,
                         position: 'relative',
                         zIndex: 1,
                     }}>
@@ -139,7 +139,7 @@ const NotFound = () => {
                         animation: 'flicker 5s linear infinite',
                     }}>
                         <span style={{ width: '7px', height: '7px', borderRadius: '50%', background: '#CE34EA', display: 'inline-block', boxShadow: '0 0 8px #CE34EA' }} />
-                        <span style={{ color: '#CE34EA', fontWeight: 700, fontSize: '0.78rem', letterSpacing: '1.5px', textTransform: 'uppercase' }}>Page Not Found</span>
+                        <span style={{ color: '#CE34EA', fontWeight: 700, fontSize: '0.78rem', letterSpacing: 0, textTransform: 'uppercase' }}>Page Not Found</span>
                     </div>
 
                     {/* ── Heading & subtext ── */}
@@ -180,7 +180,7 @@ const NotFound = () => {
 
                     {/* ── Quick navigation cards ── */}
                     <div style={{ width: '100%', maxWidth: '620px', animation: 'fadeInUp 0.5s ease 0.4s both' }}>
-                        <div style={{ color: '#444', fontSize: '0.72rem', textTransform: 'uppercase', letterSpacing: '1.5px', marginBottom: '14px', textAlign: 'center' }}>
+                        <div style={{ color: '#444', fontSize: '0.72rem', textTransform: 'uppercase', letterSpacing: 0, marginBottom: '14px', textAlign: 'center' }}>
                             — Quick navigation —
                         </div>
                         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '10px' }}>

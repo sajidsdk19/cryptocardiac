@@ -6,5 +6,6 @@ Disallow: /admin
 Disallow: /login
 Disallow: /signup
 Disallow: /my-votes
+Disallow: /404
 
 Sitemap: https://cryptocardiac.com/sitemap.xml

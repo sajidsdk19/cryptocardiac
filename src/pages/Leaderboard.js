@@ -10,6 +10,8 @@ import LogoLoader from '../component/LogoLoader';
 import Footer from '../component/Footer';
 import styles from '../styles/Leaderboard.module.scss';
 import { Helmet } from 'react-helmet-async';
+import { EDITORIAL_ARTICLES, getArticlePath, getPublicArticles } from '../data/articles';
+import { FALLBACK_CRYPTOS, FALLBACK_TIME_VOTES } from '../data/fallbackCoins';
 
 import ConsistentCommunities from '../component/ConsistentCommunities';
 
@@ -27,22 +29,35 @@ const Leaderboard = () => {
     const [isSearchingAPI, setIsSearchingAPI] = useState(false); // Loading state for API search
     const [sortConfig, setSortConfig] = useState({ key: 'votes_24h', direction: 'desc' });
     const [notification, setNotification] = useState({ open: false, message: '', severity: 'success' });
-    const [latestArticles, setLatestArticles] = useState([]);
+    const [latestArticles, setLatestArticles] = useState(EDITORIAL_ARTICLES.slice(0, 4));
     const [sliderIndex, setSliderIndex] = useState(0);
     const searchTimeout = useRef(null);
     const COINS_PER_PAGE = 15;
     const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
 
+    const fetchJsonWithTimeout = async (url, timeoutMs = 3500) => {
+        const controller = new AbortController();
+        const timeout = setTimeout(() => controller.abort(), timeoutMs);
+
+        try {
+            const response = await fetch(url, { signal: controller.signal });
+            if (!response.ok) {
+                throw new Error(`Request failed with ${response.status}`);
+            }
+            return await response.json();
+        } finally {
+            clearTimeout(timeout);
+        }
+    };
+
     const loadLeaderboard = async () => {
         try {
             // 1. Get time-based vote counts first to know which coins have votes
-            const timeResponse = await fetch(`${API_URL}/votes/time-based`);
-            const timeVotes = await timeResponse.json();
+            const timeVotes = await fetchJsonWithTimeout(`${API_URL}/votes/time-based`);
             setTimeBasedVotes(timeVotes);
 
             // 2. Get total vote counts
-            const response = await fetch(`${API_URL}/votes`);
-            const voteCounts = await response.json();
+            const voteCounts = await fetchJsonWithTimeout(`${API_URL}/votes`);
 
             // 3. Get top cryptocurrencies from CoinGecko (top 100 for better coverage)
             const allCryptos = await getAllCurrencies('usd');
@@ -58,8 +73,8 @@ const Leaderboard = () => {
                 try {
                     const missingCoinsData = await getCoinDetails(missingCoinIds.join(','), 'usd');
                     missingCryptos = Array.isArray(missingCoinsData) ? missingCoinsData : [missingCoinsData];
-                } catch (error) {
-                    console.error('Error fetching missing coins:', error);
+                } catch {
+                    console.warn('Skipping extended coin details because the API is unavailable.');
                 }
             }
 
@@ -117,8 +132,10 @@ const Leaderboard = () => {
                 setUserVoteStatus(statusMap);
             }
 
-        } catch (error) {
-            console.error('Error loading leaderboard:', error);
+        } catch {
+            setTimeBasedVotes(FALLBACK_TIME_VOTES);
+            setAllCryptos(FALLBACK_CRYPTOS);
+            console.warn('Using fallback leaderboard data because the API is unavailable.');
         } finally {
             setLoading(false);
         }
@@ -132,9 +149,9 @@ const Leaderboard = () => {
     // Fetch latest 4 articles for the slider
     useEffect(() => {
         fetch(`${API_URL}/articles`)
-            .then(r => r.json())
-            .then(data => { if (Array.isArray(data)) setLatestArticles(data.slice(0, 4)); })
-            .catch(() => { });
+            .then(r => r.ok ? r.json() : Promise.reject(new Error('Article API unavailable')))
+            .then(data => setLatestArticles(getPublicArticles(data).slice(0, 4)))
+            .catch(() => setLatestArticles(EDITORIAL_ARTICLES.slice(0, 4)));
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
@@ -495,8 +512,8 @@ const Leaderboard = () => {
 
                                 return (
                                     <tr key={crypto.id} className={styles.tr}>
-                                        <td className={`${styles.td} ${styles.rank}`}>{globalRank}</td>
-                                        <td className={styles.td}>
+                                        <td className={`${styles.td} ${styles.rank}`} data-label="Rank">{globalRank}</td>
+                                        <td className={styles.td} data-label="Coin">
                                             <Link to={`/coins/${crypto.id}`} style={{ textDecoration: 'none' }}>
                                                 <div className={styles.coinCell}>
                                                     <img src={crypto.image} alt={crypto.name} className={styles.coinImage} />
@@ -507,12 +524,12 @@ const Leaderboard = () => {
                                                 </div>
                                             </Link>
                                         </td>
-                                        <td className={styles.td}>{formatPrice(crypto.current_price)}</td>
-                                        <td className={styles.td}>{coinTimeVotes.votes_24h.toLocaleString()}</td>
-                                        <td className={styles.td}>{coinTimeVotes.votes_7d.toLocaleString()}</td>
-                                        <td className={styles.td}>{coinTimeVotes.votes_3m.toLocaleString()}</td>
-                                        <td className={`${styles.td} ${styles.voteCount}`}>{crypto.votes.toLocaleString()}</td>
-                                        <td className={styles.td}>
+                                        <td className={styles.td} data-label="Price">{formatPrice(crypto.current_price)}</td>
+                                        <td className={styles.td} data-label="24h Votes">{coinTimeVotes.votes_24h.toLocaleString()}</td>
+                                        <td className={styles.td} data-label="7d Votes">{coinTimeVotes.votes_7d.toLocaleString()}</td>
+                                        <td className={styles.td} data-label="3m Votes">{coinTimeVotes.votes_3m.toLocaleString()}</td>
+                                        <td className={`${styles.td} ${styles.voteCount}`} data-label="Total Votes">{crypto.votes.toLocaleString()}</td>
+                                        <td className={styles.td} data-label="Action">
                                             <VoteButton
                                                 crypto={crypto}
                                                 canVote={userCanVote}
@@ -762,8 +779,8 @@ const Leaderboard = () => {
                                 ].slice(0, 4);
                                 return rotated.map((art, idx) => (
                                     <Link
-                                        key={art.id}
-                                        to="/featured-articles"
+                                        key={art.slug || art.id}
+                                        to={getArticlePath(art)}
                                         style={{ textDecoration: 'none' }}
                                     >
                                         <div
@@ -793,7 +810,7 @@ const Leaderboard = () => {
                                                     fontSize: '0.68rem',
                                                     fontWeight: 700,
                                                     textTransform: 'uppercase',
-                                                    letterSpacing: '0.5px'
+                                                    letterSpacing: 0
                                                 }}>
                                                     {art.category}
                                                 </span>
