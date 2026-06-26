@@ -17,6 +17,7 @@ const TermsAndConditions = () => {
                 <title>Terms & Conditions - CryptoCardiac | Platform Usage Rules</title>
                 <meta name="description" content="CryptoCardiac's terms and conditions. Read our platform usage rules, voting guidelines, account policies, and user responsibilities for the crypto voting platform." />
                 <meta name="keywords" content="cryptocardiac terms, crypto platform terms, voting platform rules, cryptocurrency terms, user agreement, crypto voting terms" />
+                <link rel="canonical" href="https://cryptocardiac.com/terms" />
             </Helmet>
             <Navbar />
             <div style={{

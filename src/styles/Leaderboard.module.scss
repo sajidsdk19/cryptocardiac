@@ -408,3 +408,22 @@
     min-width: 120px;
     text-align: center;
 }
+
+@media (max-width: 480px) {
+    .paginationContainer {
+        gap: 8px;
+        padding: 16px 0;
+        width: 100%;
+    }
+
+    .paginationButton {
+        min-width: 86px;
+        padding: 10px 12px;
+        font-size: 0.85rem;
+    }
+
+    .pageInfo {
+        min-width: 68px;
+        font-size: 0.85rem;
+    }
+}

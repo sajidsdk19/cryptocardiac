@@ -37,6 +37,7 @@ const Contact = () => {
                 <title>Contact CryptoCardiac | Get in Touch with Our Team</title>
                 <meta name="description" content="Contact the CryptoCardiac team for support, feedback, or partnerships. Reach us via email or our contact form. We're here to help with your crypto voting platform questions." />
                 <meta name="keywords" content="contact cryptocardiac, crypto support, cryptocurrency voting contact, crypto platform help" />
+                <link rel="canonical" href="https://cryptocardiac.com/contact" />
             </Helmet>
             <Navbar />
             <div style={{

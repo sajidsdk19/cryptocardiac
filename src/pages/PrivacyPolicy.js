@@ -17,6 +17,7 @@ const PrivacyPolicy = () => {
                 <title>Privacy Policy - CryptoCardiac | Data Protection & User Privacy</title>
                 <meta name="description" content="CryptoCardiac's comprehensive privacy policy. Learn how we collect, use, and protect your data. Understand our cookie policy, Google AdSense usage, and your privacy rights." />
                 <meta name="keywords" content="cryptocardiac privacy policy, crypto data protection, user privacy, cryptocurrency privacy, cookie policy, google adsense privacy" />
+                <link rel="canonical" href="https://cryptocardiac.com/privacy-policy" />
             </Helmet>
             <Navbar />
             <div style={{
