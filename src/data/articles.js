@@ -9,6 +9,7 @@ export const slugifyArticle = (value = '') =>
         .replace(/^-+|-+$/g, '');
 
 const updatedAt = '2026-06-23';
+const adminArticleCutoff = new Date(updatedAt).getTime();
 
 export const EDITORIAL_ARTICLES = [
     {
@@ -248,15 +249,23 @@ export const getPublicArticles = (apiArticles = []) => {
     const additionalArticles = Array.isArray(apiArticles)
         ? apiArticles
             .map(normalizeArticle)
-            .filter((article) =>
-                !editorialSlugs.has(article.slug) &&
-                article.source.toLowerCase().includes('cryptocardiac') &&
-                article.fullContent.length >= 4
-            )
+            .filter((article) => {
+                const wordCount = article.fullContent.join(' ').trim().split(/\s+/).filter(Boolean).length;
+                const createdTime = new Date(article.created_at || article.updated_at || 0).getTime();
+                const isRecentAdminArticle = Number.isFinite(createdTime) && createdTime >= adminArticleCutoff;
+                const isCryptoCardiacArticle = article.source.toLowerCase().includes('cryptocardiac');
+
+                return !editorialSlugs.has(article.slug) &&
+                    wordCount >= 250 &&
+                    (isCryptoCardiacArticle || isRecentAdminArticle);
+            })
+            .sort((a, b) => new Date(b.created_at || b.updated_at || 0) - new Date(a.created_at || a.updated_at || 0))
         : [];
 
-    return [...EDITORIAL_ARTICLES, ...additionalArticles]
-        .sort((a, b) => (a.sort_order || 999) - (b.sort_order || 999));
+    return [
+        ...additionalArticles,
+        ...EDITORIAL_ARTICLES.sort((a, b) => (a.sort_order || 999) - (b.sort_order || 999))
+    ];
 };
 
 export const findArticleBySlug = (articles, slug) => {
