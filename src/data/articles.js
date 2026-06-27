@@ -38,6 +38,20 @@ const getReferencesFromSource = (source = '') => {
 };
 
 const getArticleEnhancements = (article) => ARTICLE_ENHANCEMENTS_BY_ORDER[article.sort_order] || [];
+const getPublishedTime = (article) => {
+    const time = new Date(article.created_at || article.updated_at || updatedAt).getTime();
+    return Number.isFinite(time) ? time : 0;
+};
+
+const sortArticlesNewestFirst = (a, b) => {
+    const dateDiff = getPublishedTime(b) - getPublishedTime(a);
+    if (dateDiff !== 0) return dateDiff;
+
+    const orderDiff = (a.sort_order || 999) - (b.sort_order || 999);
+    if (orderDiff !== 0) return orderDiff;
+
+    return String(a.title || '').localeCompare(String(b.title || ''));
+};
 
 export const EDITORIAL_ARTICLES = [
     {
@@ -679,7 +693,7 @@ export const EDITORIAL_ARTICLES = [
         slug: slugifyArticle(article.title),
         readMinutes: Math.max(4, Math.ceil(fullContent.join(' ').split(/\s+/).length / 210))
     };
-});
+}).sort(sortArticlesNewestFirst);
 
 export const TRENDING_TOPICS = [
     { id: 'risk-management', title: 'Risk management', trend: '+12.4%' },
@@ -735,13 +749,13 @@ export const getPublicArticles = (apiArticles = []) => {
                     wordCount >= 250 &&
                     (isCryptoCardiacArticle || isRecentAdminArticle);
             })
-            .sort((a, b) => new Date(b.created_at || b.updated_at || 0) - new Date(a.created_at || a.updated_at || 0))
+            .sort(sortArticlesNewestFirst)
         : [];
 
     return [
         ...additionalArticles,
-        ...EDITORIAL_ARTICLES.sort((a, b) => (a.sort_order || 999) - (b.sort_order || 999))
-    ];
+        ...EDITORIAL_ARTICLES
+    ].sort(sortArticlesNewestFirst);
 };
 
 export const findArticleBySlug = (articles, slug) => {

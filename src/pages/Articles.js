@@ -23,6 +23,8 @@ const formatDate = (dateValue) => {
     return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
 };
 
+const getPublishDate = (article) => article.created_at || article.updated_at;
+
 const getWordCount = (article) => article.fullContent
     .join(' ')
     .trim()
@@ -65,7 +67,7 @@ const ArticleCard = ({ article, isMobile }) => (
                     {article.category}
                 </span>
                 <span style={{ color: '#777', fontSize: '0.78rem', whiteSpace: 'nowrap' }}>
-                    {formatDate(article.updated_at || article.created_at)}
+                    {formatDate(getPublishDate(article))}
                 </span>
             </div>
 
@@ -187,7 +189,7 @@ const ArticleDetail = ({ article, isMobile }) => {
 
                     <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px 14px', color: '#888', fontSize: '0.88rem', marginBottom: isMobile ? '34px' : '44px' }}>
                         <span style={{ color: '#CE34EA', fontWeight: 700 }}>{article.source}</span>
-                        <span>{formatDate(article.updated_at || article.created_at)}</span>
+                        <span>{formatDate(getPublishDate(article))}</span>
                         <span>{article.readMinutes} min read</span>
                     </div>
                 </div>

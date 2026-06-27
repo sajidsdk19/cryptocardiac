@@ -419,6 +419,21 @@ const getWordCount = (article) => {
     return paragraphs.join(' ').trim().split(/\s+/).filter(Boolean).length;
 };
 
+const getPublishedTime = (article) => {
+    const time = new Date(article.created_at || article.updated_at || '2026-06-23').getTime();
+    return Number.isFinite(time) ? time : 0;
+};
+
+const sortArticlesNewestFirst = (a, b) => {
+    const dateDiff = getPublishedTime(b) - getPublishedTime(a);
+    if (dateDiff !== 0) return dateDiff;
+
+    const orderDiff = (a.sort_order || 999) - (b.sort_order || 999);
+    if (orderDiff !== 0) return orderDiff;
+
+    return String(a.title || '').localeCompare(String(b.title || ''));
+};
+
 const normalizeArticle = (article) => {
     const rawSource = article.source || '';
     const fullContent = parseArticleContent(article);
@@ -484,7 +499,7 @@ const getPublicArticles = async () => {
             });
 
         const articles = Array.from(articleMap.values())
-            .sort((a, b) => new Date(b.updated_at || b.created_at || 0) - new Date(a.updated_at || a.created_at || 0));
+            .sort(sortArticlesNewestFirst);
 
         articlesCache = {
             expiresAt: now + sitemapCacheMs,
