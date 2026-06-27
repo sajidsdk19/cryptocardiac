@@ -10,6 +10,28 @@ export const slugifyArticle = (value = '') =>
 
 const updatedAt = '2026-06-23';
 const adminArticleCutoff = new Date(updatedAt).getTime();
+const defaultArticleSource = 'CryptoCardiac Research Desk';
+
+const referenceSourcePattern = /(^|\|)\s*\d+\.\s+|coinbase\.com|bitcoin\.org|csrc\.nist\.gov|sec\.gov|fca\.org\.uk|public law|esma/i;
+
+const normalizeSource = (source = '') => {
+    const cleanedSource = source.toString().trim();
+    if (!cleanedSource) return defaultArticleSource;
+    if (referenceSourcePattern.test(cleanedSource) || cleanedSource.length > 140) {
+        return defaultArticleSource;
+    }
+    return cleanedSource;
+};
+
+const getReferencesFromSource = (source = '') => {
+    const cleanedSource = source.toString().trim();
+    if (!referenceSourcePattern.test(cleanedSource)) return [];
+
+    return cleanedSource
+        .split('|')
+        .map((reference) => reference.trim())
+        .filter(Boolean);
+};
 
 export const EDITORIAL_ARTICLES = [
     {
@@ -222,6 +244,7 @@ export const getArticleUrl = (article) => `${SITE_URL}${getArticlePath(article)}
 
 export const normalizeArticle = (article) => {
     let fullContent = article.fullContent || article.full_content || [];
+    const rawSource = article.source || '';
     if (typeof fullContent === 'string') {
         try {
             fullContent = JSON.parse(fullContent);
@@ -232,8 +255,9 @@ export const normalizeArticle = (article) => {
 
     const normalized = {
         ...article,
-        source: article.source || 'CryptoCardiac Editorial',
-        author: article.author || 'CryptoCardiac Research Desk',
+        source: normalizeSource(rawSource),
+        author: article.author || defaultArticleSource,
+        references: article.references || getReferencesFromSource(rawSource),
         fullContent: Array.isArray(fullContent) ? fullContent : [],
         slug: article.slug || slugifyArticle(article.title),
         created_at: article.created_at || updatedAt,

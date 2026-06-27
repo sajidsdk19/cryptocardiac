@@ -194,6 +194,23 @@ const ArticleDetail = ({ article, isMobile }) => {
                     ))}
                 </div>
 
+                {Array.isArray(article.references) && article.references.length > 0 && (
+                    <aside style={{
+                        marginTop: isMobile ? '30px' : '40px',
+                        padding: isMobile ? '20px' : '24px',
+                        borderRadius: '12px',
+                        border: '1px solid rgba(255,255,255,0.1)',
+                        background: 'rgba(255,255,255,0.035)'
+                    }}>
+                        <h2 style={{ fontSize: '1.05rem', margin: '0 0 12px', color: '#fff' }}>References</h2>
+                        <ol style={{ color: '#bbb', lineHeight: 1.7, paddingLeft: '20px', margin: 0, fontSize: '0.94rem' }}>
+                            {article.references.map((reference, index) => (
+                                <li key={index} style={{ marginBottom: '8px' }}>{reference}</li>
+                            ))}
+                        </ol>
+                    </aside>
+                )}
+
                 <aside style={{
                     marginTop: isMobile ? '34px' : '48px',
                     padding: isMobile ? '22px' : '28px',
@@ -297,13 +314,13 @@ const Articles = () => {
             name: 'CryptoCardiac',
             url: SITE_URL
         },
-        blogPost: EDITORIAL_ARTICLES.map((article) => ({
+        blogPost: articles.map((article) => ({
             '@type': 'BlogPosting',
             headline: article.title,
             url: getArticleUrl(article),
             dateModified: article.updated_at
         }))
-    }), []);
+    }), [articles]);
 
     return (
         <div style={pageShell}>
