@@ -2,6 +2,7 @@ const fs = require('fs');
 const http = require('http');
 const https = require('https');
 const path = require('path');
+const vm = require('vm');
 
 const root = path.join(__dirname, 'build');
 const port = Number(process.env.PORT) || 3000;
@@ -10,6 +11,8 @@ const siteUrl = 'https://cryptocardiac.com';
 const articleCutoff = new Date('2026-06-23').getTime();
 const apiBaseUrl = (process.env.SITEMAP_API_URL || process.env.REACT_APP_API_URL || `${siteUrl}/api/api`).replace(/\/+$/, '');
 const sitemapCacheMs = Number(process.env.SITEMAP_CACHE_MS) || 5 * 60 * 1000;
+const defaultArticleSource = 'CryptoCardiac Research Desk';
+const referenceSourcePattern = /(^|\|)\s*\d+\.\s+|coinbase\.com|bitcoin\.org|csrc\.nist\.gov|sec\.gov|fca\.org\.uk|public law|esma|federalregister|treasury\.gov|bis\.org|journal|review of financial studies/i;
 
 let sitemapCache = {
     expiresAt: 0,
@@ -20,6 +23,8 @@ let articlesCache = {
     expiresAt: 0,
     articles: []
 };
+
+let staticArticlesCache = null;
 
 const mimeTypes = {
     '.css': 'text/css; charset=utf-8',
@@ -55,29 +60,35 @@ const staticRoutes = [
     { path: '/disclaimer', lastmod: '2026-06-27', changefreq: 'yearly', priority: '0.5' }
 ];
 
-const fallbackArticles = [
-    ['from-speculation-to-market-design-the-new-finance-of-crypto-markets', 'FROM SPECULATION TO MARKET DESIGN: THE NEW FINANCE OF CRYPTO MARKETS', 'The newest top-tier finance research on cryptocurrency is moving toward market design, transaction ordering, liquidity provision, stablecoin fragility, retail speculation, manipulation, and crypto-specific asset pricing.', '2026-06-27'],
-    ['what-cryptocurrency-is-and-what-blockchain-is', 'What Cryptocurrency Is and What Blockchain Is', 'A plain-English guide to cryptocurrency, blockchain, coins, tokens, smart contracts, and the practical risks that new readers should understand.', '2026-06-26'],
-    ['crypto-world-regulation-is-now-more-important-than-memes', 'Crypto World: Regulation Is Now More Important Than Memes', 'Crypto is increasingly being reorganized by legal and supervisory architecture that determines which assets, firms, and products can survive.', '2026-06-24'],
-    ['how-cryptocardiac-ranks-community-interest-without-giving-investment-advice', 'How CryptoCardiac Ranks Community Interest Without Giving Investment Advice', 'A plain-English explanation of how community voting, time windows, and transparent limits help readers understand crypto attention without treating votes as financial advice.', '2026-06-23'],
-    ['what-crypto-market-trends-can-tell-you-and-what-they-cannot', 'What Crypto Market Trends Can Tell You and What They Cannot', 'Market trends can help readers notice changing attention, liquidity, and sentiment, but they have limits. This guide explains how to read them carefully.', '2026-06-23'],
-    ['no-kyc-crypto-exchanges-privacy-benefits-practical-risks-and-safer-habits', 'No-KYC Crypto Exchanges: Privacy Benefits, Practical Risks, and Safer Habits', 'A neutral guide to No-KYC crypto exchanges, including why people use them, what risks to watch for, and how to think about privacy responsibly.', '2026-06-23'],
-    ['xrp-and-the-xrp-ledger-a-plain-english-guide', 'XRP and the XRP Ledger: A Plain-English Guide', 'An educational overview of XRP, the XRP Ledger, payments use cases, validator concepts, and the difference between network utility and market price.', '2026-06-23'],
-    ['why-proof-of-reserves-is-useful-but-not-a-complete-safety-check', 'Why Proof of Reserves Is Useful but Not a Complete Safety Check', 'Proof of reserves can improve transparency, but readers should understand assets, liabilities, audit scope, timing, and custody controls before trusting the headline.', '2026-06-23'],
-    ['how-blockchain-tracking-works-and-what-it-means-for-wallet-privacy', 'How Blockchain Tracking Works and What It Means for Wallet Privacy', 'Public blockchains are transparent by design. This guide explains address clustering, exchange links, dusting, and practical privacy habits.', '2026-06-23'],
-    ['bitcoin-as-digital-cash-digital-gold-and-community-signal', 'Bitcoin as Digital Cash, Digital Gold, and Community Signal', 'Bitcoin is discussed in several different ways. This article separates payment use, store-of-value narratives, network security, and community attention.', '2026-06-23'],
-    ['solana-s-high-speed-design-benefits-tradeoffs-and-common-use-cases', "Solana's High-Speed Design: Benefits, Tradeoffs, and Common Use Cases", 'A balanced look at Solana, including fast settlement, low fees, application design, validator demands, and the tradeoffs that come with performance.', '2026-06-23'],
-    ['meme-coins-community-energy-and-the-limits-of-hype', 'Meme Coins, Community Energy, and the Limits of Hype', 'Meme coins can build powerful communities, but hype can hide liquidity, supply, contract, and concentration risks. This guide explains how to read the signal.', '2026-06-23'],
-    ['political-tokens-and-event-driven-crypto-communities', 'Political Tokens and Event-Driven Crypto Communities', 'Political and event-driven tokens can move with news cycles. This article explains why they attract attention and why readers should treat them carefully.', '2026-06-23']
-].map(([slug, title, description, updatedAt]) => ({
-    slug,
-    title,
-    description,
-    source: 'CryptoCardiac Research Desk',
-    author: 'CryptoCardiac Research Desk',
-    created_at: updatedAt,
-    updated_at: updatedAt
-}));
+const apiFallbackArticles = [
+    {
+        slug: 'from-speculation-to-market-design-the-new-finance-of-crypto-markets',
+        title: 'FROM SPECULATION TO MARKET DESIGN: THE NEW FINANCE OF CRYPTO MARKETS',
+        description: 'The newest top-tier finance research on cryptocurrency is moving toward market design, transaction ordering, liquidity provision, stablecoin fragility, retail speculation, manipulation, and crypto-specific asset pricing.',
+        source: defaultArticleSource,
+        author: defaultArticleSource,
+        created_at: '2026-06-27',
+        updated_at: '2026-06-27'
+    },
+    {
+        slug: 'what-cryptocurrency-is-and-what-blockchain-is',
+        title: 'What Cryptocurrency Is and What Blockchain Is',
+        description: 'A plain-English guide to cryptocurrency, blockchain, coins, tokens, smart contracts, and the practical risks that new readers should understand.',
+        source: defaultArticleSource,
+        author: defaultArticleSource,
+        created_at: '2026-06-26',
+        updated_at: '2026-06-26'
+    },
+    {
+        slug: 'crypto-world-regulation-is-now-more-important-than-memes',
+        title: 'Crypto World: Regulation Is Now More Important Than Memes',
+        description: 'Crypto is increasingly being reorganized by legal and supervisory architecture that determines which assets, firms, and products can survive.',
+        source: defaultArticleSource,
+        author: defaultArticleSource,
+        created_at: '2026-06-24',
+        updated_at: '2026-06-24'
+    }
+];
 
 const pageMeta = {
     '/': {
@@ -122,6 +133,104 @@ const pageMeta = {
     }
 };
 
+const noIndexPaths = new Set(['/admin', '/login', '/signup', '/my-votes', '/404']);
+
+const utilityPageMeta = {
+    '/login': {
+        title: 'Login | CryptoCardiac',
+        description: 'Log in to CryptoCardiac to vote and view your account activity.',
+        type: 'website',
+        noIndex: true
+    },
+    '/signup': {
+        title: 'Create Account | CryptoCardiac',
+        description: 'Create a CryptoCardiac account to participate in daily community voting.',
+        type: 'website',
+        noIndex: true
+    },
+    '/admin': {
+        title: 'Admin Dashboard | CryptoCardiac',
+        description: 'CryptoCardiac administrator dashboard.',
+        type: 'website',
+        noIndex: true
+    },
+    '/my-votes': {
+        title: 'My Votes | CryptoCardiac',
+        description: 'Private CryptoCardiac voting history page for signed-in users.',
+        type: 'website',
+        noIndex: true
+    },
+    '/404': {
+        title: 'Page Not Found | CryptoCardiac',
+        description: 'The requested CryptoCardiac page could not be found.',
+        type: 'website',
+        noIndex: true
+    }
+};
+
+const crawlablePageContent = {
+    '/featured-articles': {
+        heading: 'CryptoCardiac Featured Articles',
+        paragraphs: [
+            'CryptoCardiac publishes educational cryptocurrency guides for readers who want context before reacting to market noise.',
+            'The article library explains community voting, market sentiment, wallet safety, exchange risk, proof of reserves, regulation, blockchain privacy, and the limits of hype.',
+            'Articles are written for general education only. Rankings, votes, articles, charts, and market data on CryptoCardiac are not financial, legal, tax, or investment advice.'
+        ]
+    },
+    '/about': {
+        heading: 'About CryptoCardiac',
+        paragraphs: [
+            'CryptoCardiac is a community-powered cryptocurrency voting and education platform. The site helps readers see which crypto communities are active while keeping a clear separation between popularity and investment quality.',
+            'The leaderboard shows public attention signals, including daily and longer-term voting activity. These signals can be useful for discovery, but they do not prove that any coin is safe, undervalued, or suitable for purchase.',
+            'CryptoCardiac combines community rankings with educational articles, risk explanations, and clear disclaimers so readers can slow down, compare evidence, and do their own research.'
+        ]
+    },
+    '/contact': {
+        heading: 'Contact CryptoCardiac',
+        paragraphs: [
+            'Readers, project communities, and partners can contact CryptoCardiac for support, feedback, corrections, and general platform questions.',
+            'CryptoCardiac does not provide personal financial advice, portfolio recommendations, trading instructions, or guaranteed-return claims.',
+            'For privacy, policy, or content concerns, users can contact the team through the public contact page and include the relevant URL or account details needed to investigate the issue.'
+        ]
+    },
+    '/privacy-policy': {
+        heading: 'CryptoCardiac Privacy Policy',
+        paragraphs: [
+            'CryptoCardiac collects information needed to operate the platform, including account information when users register, voting activity, device information, and basic technical logs.',
+            'The site uses cookies and similar technologies for account sessions, security, analytics, user experience, and advertising. Users can control cookies through browser settings, though disabling cookies may affect site functionality.',
+            'CryptoCardiac may display advertisements through Google AdSense. Google and its partners may use cookies, including advertising cookies, to serve ads based on visits to this site and other sites on the internet.',
+            'Users may opt out of personalized Google advertising through Google Ads Settings and may also review third-party advertising choices through industry opt-out tools.',
+            'CryptoCardiac does not sell personal financial advice. Information is used to operate the voting platform, improve security, measure usage, provide support, and display relevant content or advertisements.'
+        ]
+    },
+    '/terms': {
+        heading: 'CryptoCardiac Terms and Conditions',
+        paragraphs: [
+            'CryptoCardiac is a cryptocurrency community voting and education platform. By using the site, users agree to follow platform rules and use the information responsibly.',
+            'Users may vote for cryptocurrency projects, view community rankings, read educational articles, and explore market information. Users may not abuse the system, attempt to manipulate votes, attack the service, or submit unlawful content.',
+            'CryptoCardiac may display third-party advertisements and third-party cryptocurrency data. The site is not responsible for external advertisements, external websites, or the accuracy of third-party market data.',
+            'Nothing on CryptoCardiac is financial, investment, legal, or tax advice. Users are responsible for their own research and decisions.'
+        ]
+    },
+    '/disclaimer': {
+        heading: 'CryptoCardiac Disclaimer',
+        paragraphs: [
+            'CryptoCardiac provides educational content, community voting data, rankings, and cryptocurrency information for general informational purposes only.',
+            'Community votes show user interest and participation. High vote counts do not guarantee project quality, safety, liquidity, legal compliance, future performance, or investment suitability.',
+            'Cryptocurrency assets are volatile and risky. Prices can change quickly, liquidity can disappear, platforms can fail, and users can lose money.',
+            'Readers should verify information independently and consult qualified professionals where appropriate. CryptoCardiac does not provide personal financial, investment, tax, or legal advice.'
+        ]
+    },
+    '/': {
+        heading: 'CryptoCardiac Cryptocurrency Leaderboard',
+        paragraphs: [
+            'CryptoCardiac tracks public community voting signals for cryptocurrency projects and presents them as a real-time leaderboard.',
+            'The leaderboard helps readers discover active crypto communities, compare time-based voting activity, and explore educational context around market attention.',
+            'Votes represent community interest only. They are not recommendations to buy, sell, or hold any cryptocurrency.'
+        ]
+    }
+};
+
 const xmlEscape = (value = '') => value
     .toString()
     .replace(/&/g, '&amp;')
@@ -143,6 +252,125 @@ const slugifyArticle = (value = '') => value
     .replace(/&/g, ' and ')
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/^-+|-+$/g, '');
+
+const normalizeArticleSource = (source = '') => {
+    const cleanedSource = source.toString().trim();
+    if (!cleanedSource) return defaultArticleSource;
+    if (referenceSourcePattern.test(cleanedSource) || cleanedSource.length > 140) {
+        return defaultArticleSource;
+    }
+    return cleanedSource;
+};
+
+const getReferencesFromSource = (source = '') => {
+    const cleanedSource = source.toString().trim();
+    if (!referenceSourcePattern.test(cleanedSource)) return [];
+
+    return cleanedSource
+        .split('|')
+        .map((reference) => reference.trim())
+        .filter(Boolean);
+};
+
+const parseArticleContent = (article) => {
+    let content = article.fullContent || article.full_content || [];
+
+    if (typeof content === 'string') {
+        try {
+            content = JSON.parse(content);
+        } catch (error) {
+            content = [content];
+        }
+    }
+
+    if (!Array.isArray(content)) {
+        content = [content];
+    }
+
+    return content
+        .map((paragraph) => paragraph == null ? '' : paragraph.toString().trim())
+        .filter(Boolean);
+};
+
+const loadStaticEditorialArticles = () => {
+    if (staticArticlesCache) return staticArticlesCache;
+
+    try {
+        const sourcePath = path.join(__dirname, 'src', 'data', 'articles.js');
+        const source = fs.readFileSync(sourcePath, 'utf8');
+        const marker = 'export const EDITORIAL_ARTICLES =';
+        const markerIndex = source.indexOf(marker);
+
+        if (markerIndex === -1) {
+            throw new Error('EDITORIAL_ARTICLES array not found');
+        }
+
+        const startIndex = source.indexOf('[', markerIndex);
+        let endIndex = -1;
+        let depth = 0;
+        let quote = null;
+        let escaped = false;
+
+        for (let index = startIndex; index < source.length; index += 1) {
+            const char = source[index];
+
+            if (quote) {
+                if (escaped) {
+                    escaped = false;
+                } else if (char === '\\') {
+                    escaped = true;
+                } else if (char === quote) {
+                    quote = null;
+                }
+                continue;
+            }
+
+            if (char === '"' || char === "'" || char === '`') {
+                quote = char;
+                continue;
+            }
+
+            if (char === '[') depth += 1;
+            if (char === ']') depth -= 1;
+
+            if (depth === 0) {
+                endIndex = index;
+                break;
+            }
+        }
+
+        if (startIndex === -1 || endIndex === -1) {
+            throw new Error('EDITORIAL_ARTICLES array boundaries not found');
+        }
+
+        const articleArrayLiteral = source.slice(startIndex, endIndex + 1);
+        const script = new vm.Script(`(${articleArrayLiteral})`);
+        const articles = script.runInNewContext({ updatedAt: '2026-06-23' }, { timeout: 1000 });
+
+        staticArticlesCache = Array.isArray(articles)
+            ? articles.map((article) => ({
+                ...article,
+                slug: slugifyArticle(article.title),
+                source: article.source || defaultArticleSource,
+                author: article.author || defaultArticleSource
+            }))
+            : [];
+    } catch (error) {
+        console.warn(`Unable to load static editorial articles: ${error.message}`);
+        staticArticlesCache = [];
+    }
+
+    return staticArticlesCache;
+};
+
+const getFallbackArticles = () => {
+    const articleMap = new Map();
+    [...loadStaticEditorialArticles(), ...apiFallbackArticles].forEach((article) => {
+        const slug = article.slug || slugifyArticle(article.title);
+        articleMap.set(slug, { ...article, slug });
+    });
+    return Array.from(articleMap.values());
+};
 
 const requestJson = (url) => new Promise((resolve, reject) => {
     const client = url.startsWith('https:') ? https : http;
@@ -173,21 +401,28 @@ const requestJson = (url) => new Promise((resolve, reject) => {
 });
 
 const getWordCount = (article) => {
-    const content = article.fullContent || article.full_content || [];
-    const paragraphs = Array.isArray(content) ? content : [content];
+    const paragraphs = parseArticleContent(article);
     return paragraphs.join(' ').trim().split(/\s+/).filter(Boolean).length;
 };
 
-const normalizeArticle = (article) => ({
-    title: article.title || '',
-    description: article.description || '',
-    slug: article.slug || slugifyArticle(article.title),
-    source: article.source || 'CryptoCardiac Research Desk',
-    author: article.author || 'CryptoCardiac Research Desk',
-    created_at: article.created_at || article.updated_at || '2026-06-23',
-    updated_at: article.updated_at || article.created_at || '2026-06-23',
-    wordCount: getWordCount(article)
-});
+const normalizeArticle = (article) => {
+    const rawSource = article.source || '';
+    const fullContent = parseArticleContent(article);
+
+    return {
+        ...article,
+        title: article.title || '',
+        description: article.description || fullContent[0] || '',
+        slug: article.slug || slugifyArticle(article.title),
+        source: normalizeArticleSource(rawSource),
+        author: article.author || defaultArticleSource,
+        references: Array.isArray(article.references) ? article.references : getReferencesFromSource(rawSource),
+        fullContent,
+        created_at: article.created_at || article.updated_at || '2026-06-23',
+        updated_at: article.updated_at || article.created_at || '2026-06-23',
+        wordCount: getWordCount(article)
+    };
+};
 
 const isPublicArticle = (article) => {
     const createdTime = new Date(article.created_at || article.updated_at || 0).getTime();
@@ -220,8 +455,9 @@ const getPublicArticles = async () => {
         const apiArticles = await fetchApiArticles();
         const articleMap = new Map();
 
-        fallbackArticles.forEach((article) => {
-            articleMap.set(article.slug, normalizeArticle({ ...article, fullContent: ['Fallback editorial article. '.repeat(250)] }));
+        getFallbackArticles().forEach((article) => {
+            const normalized = normalizeArticle(article);
+            articleMap.set(normalized.slug, normalized);
         });
 
         apiArticles
@@ -239,7 +475,7 @@ const getPublicArticles = async () => {
         return articles;
     } catch (error) {
         console.warn(`Unable to fetch live articles for sitemap: ${error.message}`);
-        return fallbackArticles.map((article) => normalizeArticle({ ...article, fullContent: ['Fallback editorial article. '.repeat(250)] }));
+        return getFallbackArticles().map(normalizeArticle);
     }
 };
 
@@ -311,6 +547,10 @@ const getMetaForPath = async (urlPath) => {
         };
     }
 
+    if (utilityPageMeta[cleanPath]) {
+        return utilityPageMeta[cleanPath];
+    }
+
     return pageMeta[cleanPath] || pageMeta['/'];
 };
 
@@ -321,6 +561,43 @@ const replaceOrInsertMeta = (html, selectorRegex, tag) => {
     return html.replace('</head>', `  ${tag}\n</head>`);
 };
 
+const renderParagraphs = (paragraphs = []) => paragraphs
+    .map((paragraph) => `      <p>${escapeHtml(paragraph)}</p>`)
+    .join('\n');
+
+const buildCrawlerContent = (meta, canonicalUrl, canonicalPath) => {
+    if (meta.article) {
+        const article = meta.article;
+        const paragraphs = article.fullContent && article.fullContent.length
+            ? article.fullContent
+            : [article.description];
+        const references = Array.isArray(article.references) && article.references.length
+            ? `\n      <h2>References</h2>\n      <ol>\n${article.references.map((reference) => `        <li>${escapeHtml(reference)}</li>`).join('\n')}\n      </ol>`
+            : '';
+
+        return `  <noscript id="route-crawler-content">
+    <article>
+      <h1>${escapeHtml(article.title)}</h1>
+      <p><strong>Source:</strong> ${escapeHtml(article.source || defaultArticleSource)}</p>
+      <p><strong>Canonical URL:</strong> <a href="${escapeHtml(canonicalUrl)}">${escapeHtml(canonicalUrl)}</a></p>
+${renderParagraphs(paragraphs)}
+      <p><strong>Important:</strong> CryptoCardiac publishes educational content only. Community votes, rankings, articles, and market data are not financial, investment, legal, or tax advice.</p>${references}
+    </article>
+  </noscript>`;
+    }
+
+    const pageContent = crawlablePageContent[canonicalPath];
+    if (!pageContent) return '';
+
+    return `  <noscript id="route-crawler-content">
+    <section>
+      <h1>${escapeHtml(pageContent.heading)}</h1>
+      <p><strong>Canonical URL:</strong> <a href="${escapeHtml(canonicalUrl)}">${escapeHtml(canonicalUrl)}</a></p>
+${renderParagraphs(pageContent.paragraphs)}
+    </section>
+  </noscript>`;
+};
+
 const injectMeta = (html, meta, urlPath) => {
     const canonicalPath = meta.canonicalPath || (urlPath.replace(/\/+$/, '') || '/');
     const canonicalUrl = `${siteUrl}${canonicalPath}`;
@@ -329,6 +606,7 @@ const injectMeta = (html, meta, urlPath) => {
     const type = escapeHtml(meta.type || 'website');
     let output = html
         .replace(/<title>[\s\S]*?<\/title>/i, `<title>${title}</title>`)
+        .replace(/<meta\s+name=["']robots["'][^>]*>\s*/gi, '')
         .replace(/<link\s+rel=["']canonical["'][^>]*>\s*/gi, '');
 
     const replacements = [
@@ -347,6 +625,11 @@ const injectMeta = (html, meta, urlPath) => {
         output = replaceOrInsertMeta(output, regex, tag);
     });
 
+    const robotsContent = meta.noIndex || noIndexPaths.has(canonicalPath)
+        ? 'noindex, follow'
+        : 'index, follow, max-snippet:-1, max-image-preview:large';
+
+    output = output.replace('</head>', `  <meta name="robots" content="${robotsContent}" />\n</head>`);
     output = output.replace('</head>', `  <link rel="canonical" href="${escapeHtml(canonicalUrl)}" />\n</head>`);
 
     if (meta.article) {
@@ -366,9 +649,15 @@ const injectMeta = (html, meta, urlPath) => {
             },
             datePublished: meta.article.created_at,
             dateModified: meta.article.updated_at,
+            articleBody: Array.isArray(meta.article.fullContent) ? meta.article.fullContent.join('\n\n') : '',
             mainEntityOfPage: canonicalUrl
         };
         output = output.replace('</head>', `  <script type="application/ld+json">${JSON.stringify(articleJsonLd)}</script>\n</head>`);
+    }
+
+    const crawlerContent = buildCrawlerContent(meta, canonicalUrl, canonicalPath);
+    if (crawlerContent) {
+        output = output.replace('</body>', `${crawlerContent}\n</body>`);
     }
 
     return output;

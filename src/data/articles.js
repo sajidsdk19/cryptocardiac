@@ -222,6 +222,89 @@ export const EDITORIAL_ARTICLES = [
             'CryptoCardiac treats these assets as community signals, not endorsements. A high vote count means people are paying attention; it does not mean the token is official, safe, or suitable for purchase.'
         ],
         sort_order: 10
+    },
+    {
+        id: 'crypto-community-sentiment-without-hype',
+        title: 'How to Read Crypto Community Sentiment Without Chasing Hype',
+        source: 'CryptoCardiac Editorial',
+        author: 'CryptoCardiac Research Desk',
+        category: 'Platform Guide',
+        created_at: '2026-06-27',
+        updated_at: '2026-06-27',
+        description: 'Community sentiment can reveal attention and participation, but it can also be noisy. This guide explains how to read crypto voting signals with patience and context.',
+        fullContent: [
+            'Crypto communities move fast. A coin can become the focus of thousands of posts, votes, memes, and short videos within a few hours. That activity can be useful because it shows where attention is gathering, but it can also create pressure to react before the facts are clear. The first rule of reading sentiment is simple: attention is a signal, not a verdict.',
+            'A community vote tells you that people cared enough to participate. It does not tell you whether the project is financially sound, technically strong, legally safe, or fairly priced. Those are different questions. CryptoCardiac rankings are best understood as a social pulse. They show which communities are active, which coins are being discussed, and where momentum may be forming.',
+            'The healthiest way to use sentiment data is to compare time windows. A coin that receives many votes in one day may be experiencing a campaign, a news event, or a temporary burst of enthusiasm. A coin that keeps receiving votes over several days or weeks may have steadier community participation. Neither pattern guarantees future price movement, but the difference matters.',
+            'Readers should also compare voting activity with outside evidence. Has the project shipped updates? Are the official channels active? Is liquidity deep enough for normal trading? Are token holders concentrated in a few wallets? Has the team explained risks honestly? If community attention is high but basic information is weak, that is a reason to slow down.',
+            'Social media can make every project sound urgent. Phrases like "last chance," "guaranteed," "next 100x," or "everyone is buying" are designed to remove hesitation. Good research does the opposite. It creates useful hesitation by forcing you to ask what can go wrong, who benefits from the promotion, and what evidence would change your mind.',
+            'Sentiment is most useful when it helps you discover topics for deeper research. A leaderboard can point you toward communities you might not have noticed. After that, the job is to separate participation from persuasion. Read documentation, check contract details, compare independent sources, and remember that a loud community can still be wrong.',
+            'CryptoCardiac does not rank coins as investments. It ranks visible community interest. That distinction protects readers. A coin can be popular and risky at the same time. A coin can be quiet and still technically important. The goal is not to chase the loudest signal, but to understand what the signal actually represents.'
+        ],
+        sort_order: 11
+    },
+    {
+        id: 'popularity-liquidity-and-risk',
+        title: 'Popularity, Liquidity, and Risk: Why a Voted Coin Still Needs Research',
+        source: 'CryptoCardiac Editorial',
+        author: 'CryptoCardiac Research Desk',
+        category: 'Risk',
+        created_at: '2026-06-27',
+        updated_at: '2026-06-27',
+        description: 'A popular coin is not automatically a safe coin. Learn why vote counts, liquidity, supply, custody, and security history should be checked separately.',
+        fullContent: [
+            'A coin can be popular for many reasons. It may have a committed community, a strong brand, a viral meme, a useful product, or simply a temporary wave of attention. Popularity matters because crypto networks often depend on people: users, builders, validators, holders, educators, and critics. But popularity alone is not the same as safety.',
+            'Liquidity is one of the first checks readers should understand. Liquidity means how easily an asset can be bought or sold without moving the price too much. A coin may look exciting on a chart, but if there is little liquidity, a small trade can create a large price move. That can make entry and exit much riskier than the headline price suggests.',
+            'Supply distribution is another important question. If a few wallets hold a large share of the token, those holders may have strong influence over the market. Concentrated supply does not automatically mean a project is bad, but it does create risk that should be understood. Readers can look for tokenomics pages, vesting schedules, explorer data, and independent analysis.',
+            'Security history also matters. Has the contract been audited? Are there admin keys? Can the owner pause transfers, change fees, mint more tokens, or blacklist wallets? Are bridges or smart contracts involved? Many serious losses in crypto come from technical or operational failures rather than from normal market movement.',
+            'Exchange availability can be useful context, but it is not a guarantee. A listing on a known platform may improve access, yet platforms can delist assets, pause withdrawals, or face their own compliance and custody problems. Holding funds on an exchange creates a different risk than holding funds in a self-custody wallet.',
+            'Voting platforms are helpful because they show where communities are active. They are not designed to replace research into liquidity, supply, security, governance, legal status, and product quality. A high vote count should be treated as an invitation to investigate, not a reason to skip investigation.',
+            'The safest habit is to separate the questions. Is the community active? Is the market liquid? Is the token design understandable? Are the risks documented? Is the information coming from independent sources or only promoters? Each question adds a piece to the picture.',
+            'CryptoCardiac makes community interest easier to see. Readers still need to decide what that interest means, and they should never treat votes, rankings, or market data as financial advice.'
+        ],
+        sort_order: 12
+    },
+    {
+        id: 'crypto-wallet-safety-basics',
+        title: 'Crypto Wallet Safety Basics for New Users',
+        source: 'CryptoCardiac Editorial',
+        author: 'CryptoCardiac Research Desk',
+        category: 'Wallets',
+        created_at: '2026-06-27',
+        updated_at: '2026-06-27',
+        description: 'A practical beginner guide to wallet safety, seed phrases, approvals, phishing, test transactions, and the difference between exchange custody and self-custody.',
+        fullContent: [
+            'A crypto wallet is not just an app icon. It is a tool for controlling private keys or signing transactions. That makes wallet safety one of the most important topics for new users. If someone gains access to your seed phrase or tricks you into signing a harmful transaction, there may be no bank-style reversal process to recover funds.',
+            'The seed phrase is the master backup for many wallets. It should be written down and stored carefully offline. It should not be placed in email, cloud notes, screenshots, chat messages, or photo galleries. Anyone who gets the seed phrase can usually restore the wallet and move the funds. No legitimate support agent should ask for it.',
+            'Phishing is one of the most common risks. Fake websites can look like real exchanges, wallets, token claim pages, or project dashboards. Search ads, social media replies, direct messages, and copied links can all lead to malicious pages. A good habit is to bookmark important sites yourself and avoid connecting wallets from random links.',
+            'Approvals deserve special attention. On many smart-contract networks, users approve a contract to spend a token. Some approvals are limited, while others may allow broad access. If a malicious or compromised contract has approval, it may be able to drain tokens later. Wallet users should periodically review and revoke old approvals using reputable tools.',
+            'Test transactions can prevent expensive mistakes. Before sending a large amount, send a small amount first and confirm that the address, network, and receiving wallet are correct. Crypto networks may have similar-looking addresses across different chains, and sending to the wrong chain or contract can be difficult or impossible to fix.',
+            'Exchange custody and self-custody solve different problems. An exchange account can be easier for beginners, but the platform controls withdrawals and may require identity checks or pause activity. Self-custody gives more control, but it also places more responsibility on the user. There is no single best choice for everyone.',
+            'Hardware wallets can improve security for long-term holdings because private keys are kept away from normal computer exposure. They still require careful setup, verified purchase sources, safe seed storage, and attention to what transactions are being signed. A hardware wallet is a tool, not a magic shield.',
+            'Wallet safety is mostly about slowing down. Check URLs, confirm networks, read wallet prompts, test first, keep backups offline, and assume that urgent messages are suspicious. These habits do not remove all risk, but they reduce the most common mistakes.'
+        ],
+        sort_order: 13
+    },
+    {
+        id: 'stablecoins-exchanges-and-custody-risk-checks',
+        title: 'Stablecoins, Exchanges, and Custody: Simple Risk Checks Before You Trust a Platform',
+        source: 'CryptoCardiac Editorial',
+        author: 'CryptoCardiac Research Desk',
+        category: 'Exchanges',
+        created_at: '2026-06-27',
+        updated_at: '2026-06-27',
+        description: 'Stablecoins and exchanges can feel simple, but they still involve issuer, reserve, custody, liquidity, and operational risks. Here are plain-English checks to make first.',
+        fullContent: [
+            'Stablecoins are often described as crypto dollars, but that phrase can hide important differences. A stablecoin may aim to stay near one dollar, yet the way it maintains that value depends on reserves, redemption rules, issuer practices, market confidence, and the legal structure behind it. The label "stable" should not end the research.',
+            'The first question is who issued the stablecoin. Different issuers follow different reserve policies, reporting schedules, redemption rules, and regulatory obligations. Readers should look for public attestations, reserve descriptions, audit or assurance reports, and clear explanations of who can redeem directly with the issuer.',
+            'The second question is what backs the token. Cash, short-term government debt, secured loans, crypto collateral, algorithmic mechanisms, and other reserve models carry different risks. A stablecoin backed by transparent, liquid assets has a different profile from one backed by volatile collateral or unclear promises.',
+            'Exchanges add another layer of custody risk. When funds are left on an exchange, the user depends on that platform to secure wallets, process withdrawals, manage liquidity, and operate honestly. A platform can have a clean interface and still face legal, operational, or financial stress behind the scenes.',
+            'Proof of reserves can help, but it is only part of the picture. Users should ask whether liabilities were included, whether an independent reviewer was involved, how recent the report is, and whether the platform has a history of honoring withdrawals during busy markets. A single reserve page should not be treated as a complete safety guarantee.',
+            'Regulatory context also matters. Some platforms serve only certain countries, restrict products by region, or change access when rules shift. Users should understand whether a platform is allowed to serve them, what identity checks may be required, and how disputes or frozen funds would be handled.',
+            'Operational habits are still important. Use strong passwords, enable two-factor authentication, beware of fake support accounts, whitelist withdrawal addresses when possible, and avoid keeping funds on a platform longer than necessary for the activity you are doing.',
+            'Stablecoins and exchanges can be useful tools, but they are not risk-free storage by default. The safer question is not "Is this popular?" but "What has to keep working for my funds to remain accessible?" That question leads to better research and fewer assumptions.'
+        ],
+        sort_order: 14
     }
 ].map((article) => ({
     ...article,
