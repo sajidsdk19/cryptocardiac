@@ -1,4 +1,4 @@
-import articleEnhancements from './articleEnhancements.cjs';
+import articleEnhancementModule from './articleEnhancements.cjs';
 
 export const SITE_URL = 'https://cryptocardiac.com';
 
@@ -10,7 +10,8 @@ export const slugifyArticle = (value = '') =>
         .replace(/[^a-z0-9]+/g, '-')
         .replace(/^-+|-+$/g, '');
 
-const { ARTICLE_ENHANCEMENTS_BY_ORDER } = articleEnhancements;
+const articleEnhancements = articleEnhancementModule.default || articleEnhancementModule || {};
+const { ARTICLE_ENHANCEMENTS_BY_ORDER = {} } = articleEnhancements;
 const updatedAt = '2026-06-23';
 const contentUpdatedAt = '2026-06-28';
 const adminArticleCutoff = new Date(updatedAt).getTime();
