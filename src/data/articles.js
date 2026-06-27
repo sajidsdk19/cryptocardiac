@@ -305,6 +305,306 @@ export const EDITORIAL_ARTICLES = [
             'Stablecoins and exchanges can be useful tools, but they are not risk-free storage by default. The safer question is not "Is this popular?" but "What has to keep working for my funds to remain accessible?" That question leads to better research and fewer assumptions.'
         ],
         sort_order: 14
+    },
+    {
+        id: 'crypto-scam-red-flags',
+        title: 'Crypto Scam Red Flags: How to Slow Down Before You Click',
+        source: 'CryptoCardiac Editorial',
+        author: 'CryptoCardiac Research Desk',
+        category: 'Security',
+        created_at: '2026-06-28',
+        updated_at: '2026-06-28',
+        description: 'A practical guide to common crypto scam signals, including urgency, fake support, seed phrase theft, impersonation, and unrealistic return claims.',
+        fullContent: [
+            'Crypto scams usually try to create speed. The message may say an airdrop is ending, a wallet must be verified, a support agent needs access, or a token will rise immediately. The goal is to make the user act before checking whether the request makes sense.',
+            'One of the clearest red flags is a request for a seed phrase, private key, or recovery words. A real wallet, exchange, or support team does not need that information to help a user. Anyone who gets the seed phrase can usually take control of the wallet.',
+            'Impersonation is also common. Scammers copy project logos, founder photos, exchange names, or community moderators. They may reply under official posts or send direct messages after a user asks for help. The safest habit is to navigate from bookmarked official links rather than from replies or private messages.',
+            'Promises of guaranteed returns should be treated with extreme caution. Crypto markets are volatile and uncertain. A claim that an asset is risk-free, guaranteed, protected from loss, or certain to multiply is not education; it is pressure.',
+            'Token approval scams can be harder to notice. A malicious website may ask the wallet to approve spending permissions that look routine. Users should read wallet prompts carefully, avoid connecting wallets to unknown sites, and revoke old approvals when they are no longer needed.',
+            'A simple pause can prevent many losses. Check the domain, search for independent warnings, compare official links, ask why the request is urgent, and test with small amounts when moving funds. Scammers need the user to hurry; safety usually improves when the user slows down.',
+            'CryptoCardiac treats security education as part of responsible market participation. Community attention can help people discover projects, but basic account and wallet safety must come first.'
+        ],
+        sort_order: 15
+    },
+    {
+        id: 'market-cap-fdv-and-liquidity',
+        title: 'Market Cap, Fully Diluted Value, and Liquidity: Three Numbers New Crypto Readers Should Separate',
+        source: 'CryptoCardiac Editorial',
+        author: 'CryptoCardiac Research Desk',
+        category: 'Education',
+        created_at: '2026-06-28',
+        updated_at: '2026-06-28',
+        description: 'Market cap, fully diluted value, and liquidity are often confused. This guide explains what each number can and cannot tell crypto readers.',
+        fullContent: [
+            'Crypto dashboards often display market cap, fully diluted value, volume, and price beside each other. They can look equally important, but they answer different questions. Confusing them can make a project appear larger, safer, or more liquid than it really is.',
+            'Market capitalization is usually calculated by multiplying the current token price by the circulating supply. It gives a rough view of the value the market is placing on the tokens currently considered circulating. The problem is that circulating supply can be hard to verify for some projects.',
+            'Fully diluted value estimates what the market cap would look like if all possible tokens existed at the current price. This can be useful when many tokens are locked, vesting, or not yet released. A very large gap between market cap and fully diluted value can signal future supply pressure.',
+            'Liquidity is different. It asks how easily buyers and sellers can trade without sharply moving the price. A token may have a large displayed value but still have thin liquidity, wide spreads, or limited exchange support. In that case, the headline number may not reflect a normal user experience.',
+            'Volume can help, but it should be read carefully. High volume may show active trading, but it can also include short-term speculation, market-making activity, or unreliable exchange reporting. Readers should compare volume across reputable venues and over time.',
+            'These numbers are useful when they are separated. Market cap helps compare size, fully diluted value helps think about future supply, and liquidity helps think about exit risk. None of them proves quality by itself.',
+            'CryptoCardiac votes add another layer: community interest. A voted coin can still have weak liquidity or heavy future unlocks. The strongest research habit is to compare social attention with supply, liquidity, and transparent project information.'
+        ],
+        sort_order: 16
+    },
+    {
+        id: 'tokenomics-supply-unlocks',
+        title: 'Tokenomics Basics: Supply, Unlocks, and Why Distribution Matters',
+        source: 'CryptoCardiac Editorial',
+        author: 'CryptoCardiac Research Desk',
+        category: 'Education',
+        created_at: '2026-06-28',
+        updated_at: '2026-06-28',
+        description: 'Tokenomics is more than a supply number. Learn how unlock schedules, allocations, emissions, and holder concentration can affect risk.',
+        fullContent: [
+            'Tokenomics is the design of a token system: how many tokens exist, who receives them, when they unlock, how new supply appears, and what role the token plays. A simple price chart does not show these details, but they can matter deeply.',
+            'Supply has several forms. Maximum supply describes the upper limit if one exists. Total supply describes tokens already created. Circulating supply tries to describe tokens available in the market. Each number can tell a different story, especially when many tokens are locked.',
+            'Unlock schedules are important because tokens held by teams, investors, foundations, or ecosystem funds may become tradable over time. Unlocks do not always cause selling, but they can create pressure or uncertainty if the market is not prepared.',
+            'Distribution matters too. If a small number of wallets hold a large percentage of supply, the market may depend heavily on their behavior. Concentration can create governance risk, liquidity risk, and sudden price movement if large holders sell.',
+            'Emissions and rewards can be useful for bootstrapping networks, but they can also dilute holders if demand does not grow alongside supply. Readers should ask who receives new tokens, why they receive them, and whether the incentives encourage useful activity.',
+            'Token utility should be specific. A token may be used for gas, governance, staking, payments, access, collateral, or rewards. Vague claims that a token powers an ecosystem should be checked against real usage, documentation, and user behavior.',
+            'A community can be excited about a token while the tokenomics still deserve caution. CryptoCardiac rankings show attention; tokenomics research helps readers understand what that attention is attached to.'
+        ],
+        sort_order: 17
+    },
+    {
+        id: 'block-explorer-guide',
+        title: 'How to Use a Blockchain Explorer Without Getting Lost',
+        source: 'CryptoCardiac Editorial',
+        author: 'CryptoCardiac Research Desk',
+        category: 'Education',
+        created_at: '2026-06-28',
+        updated_at: '2026-06-28',
+        description: 'Blockchain explorers can help readers verify transactions, token contracts, holders, and wallet activity. This guide explains the basics in plain English.',
+        fullContent: [
+            'A blockchain explorer is a public search tool for a blockchain. It lets users look up transactions, wallet addresses, token contracts, blocks, fees, and sometimes smart contract code. For many readers, it is the first step from marketing claims to verifiable data.',
+            'The most common use is checking a transaction. A transaction page can show whether the transaction succeeded, when it was included, what address sent it, what address received it, and what fee was paid. If a transfer is pending, failed, or sent on the wrong network, the explorer may reveal clues.',
+            'Explorers also help with token research. A token contract page can show supply, transfers, holders, and sometimes verified source code. Readers should confirm they are looking at the correct contract address, because fake tokens often copy names and symbols.',
+            'Holder pages can show distribution patterns. If a few wallets hold a very large share of supply, that may be worth deeper research. Some large wallets are exchanges or contracts, so the numbers need context rather than panic.',
+            'Smart contract tabs can be useful but technical. Verified code, ownership functions, minting permissions, pause functions, fee controls, and blacklist features may all matter. Non-developers can still look for audit links, contract labels, and warnings from reputable tools.',
+            'Explorers are powerful, but they do not explain intent. A wallet movement may be a sale, an internal transfer, custody operation, market-making action, or security migration. On-chain data should be treated as evidence, not a complete story.',
+            'CryptoCardiac encourages readers to verify claims when possible. If a project says supply is locked, ownership is renounced, or funds are moving transparently, a blockchain explorer is one place to start checking.'
+        ],
+        sort_order: 18
+    },
+    {
+        id: 'smart-contract-risk',
+        title: 'Smart Contract Risk: What Non-Developers Can Still Check',
+        source: 'CryptoCardiac Editorial',
+        author: 'CryptoCardiac Research Desk',
+        category: 'Security',
+        created_at: '2026-06-28',
+        updated_at: '2026-06-28',
+        description: 'Smart contract risk is not only for developers. Users can still check audits, permissions, upgrade controls, and basic warning signs before interacting.',
+        fullContent: [
+            'Smart contracts are programs that run on blockchains. They can manage tokens, swaps, lending, staking, NFTs, bridges, and many other interactions. Their strength is that they can execute rules transparently, but bugs or dangerous permissions can create serious losses.',
+            'Non-developers do not need to read every line of code to ask useful questions. Is the contract verified on a block explorer? Has it been audited? Who performed the audit? Were issues fixed? Is the audit recent enough to match the deployed contract?',
+            'Ownership matters. Some contracts allow an owner or admin to change fees, pause transfers, upgrade logic, mint tokens, blacklist addresses, or move funds. These powers may be legitimate for maintenance, but they also create trust assumptions.',
+            'Upgradeability is another tradeoff. Upgradeable contracts can fix bugs or add features, but users must trust the upgrade process. A project should explain who can upgrade, whether there is a time delay, and how users are notified.',
+            'Bridges and complex DeFi systems add extra risk because they connect multiple contracts, chains, or custodial mechanisms. A user may be exposed not only to one token but also to oracles, liquidity pools, validators, multisigs, and external infrastructure.',
+            'Warning signs include anonymous teams with no documentation, unaudited contracts holding large funds, confusing wallet prompts, copied code with no explanation, and projects that dismiss all security questions as fear.',
+            'Smart contract risk cannot be reduced to one badge. The better habit is to layer checks: contract verification, audits, permissions, history, documentation, and cautious position sizing.'
+        ],
+        sort_order: 19
+    },
+    {
+        id: 'defi-yield-risk',
+        title: 'DeFi Yield Risk: Why High APY Needs Better Questions',
+        source: 'CryptoCardiac Editorial',
+        author: 'CryptoCardiac Research Desk',
+        category: 'DeFi',
+        created_at: '2026-06-28',
+        updated_at: '2026-06-28',
+        description: 'High DeFi yields can come from trading fees, incentives, leverage, inflation, or risk transfer. This guide explains what to ask before trusting APY.',
+        fullContent: [
+            'DeFi yield can look simple on a dashboard: deposit tokens and earn a percentage. The reality is more complicated. A yield number is not a guarantee, and it does not explain where the return comes from or what risk the user is accepting.',
+            'Some yield comes from trading fees. Liquidity providers may earn a share of swap fees, but they can also face impermanent loss if token prices move. Fee income needs to be compared with the risk of holding the paired assets.',
+            'Some yield comes from token incentives. A protocol may distribute its own token to attract liquidity. This can be useful early in a network, but rewards may lose value if emissions are high and demand is weak.',
+            'Some yield comes from lending. Borrowers pay interest, and lenders earn a portion. The risk depends on collateral quality, liquidation mechanics, oracle reliability, market liquidity, and whether bad debt can accumulate.',
+            'Very high APYs should lead to questions, not excitement. Is the rate temporary? Is it paid in a volatile token? How much liquidity can exit? What happens if the reward token price falls? Has the protocol been audited and battle-tested?',
+            'Users should also consider operational risk. Wallet mistakes, phishing, smart contract bugs, bridge failures, front-end compromises, and governance attacks can affect DeFi positions even when the strategy itself sounds sensible.',
+            'CryptoCardiac does not recommend yield strategies. The purpose of this guide is to help readers understand that a yield number is a starting point for risk analysis, not an answer.'
+        ],
+        sort_order: 20
+    },
+    {
+        id: 'airdrops-and-token-claims',
+        title: 'Airdrops and Token Claims: Useful Opportunities or Security Traps?',
+        source: 'CryptoCardiac Editorial',
+        author: 'CryptoCardiac Research Desk',
+        category: 'Security',
+        created_at: '2026-06-28',
+        updated_at: '2026-06-28',
+        description: 'Airdrops can reward users, but fake claim pages are common. Learn how to verify links, wallet prompts, eligibility claims, and approval requests.',
+        fullContent: [
+            'Airdrops are token distributions, often used to reward early users, community members, testers, or holders. They can be legitimate, but the excitement around free tokens also makes them one of the most common phishing themes in crypto.',
+            'The first check is the source of the link. A claim page shared by a random reply, direct message, copied account, or sponsored result should be treated carefully. Users should confirm links through official websites and long-standing verified channels.',
+            'Eligibility claims can be used to create urgency. A scam page may say a wallet has qualified for a large reward, even if the project has no real airdrop. The promise is designed to make the user connect a wallet and sign quickly.',
+            'Wallet prompts matter. A legitimate claim may require a signature or transaction, but users should read what the wallet is asking. Approving token spending, signing unclear messages, or interacting with unknown contracts can create risk.',
+            'It can be safer to use a separate wallet for claims, especially when testing unfamiliar projects. A wallet with no major balances limits the damage if a claim page is malicious or a contract behaves unexpectedly.',
+            'Airdrops can also have tax, legal, or eligibility implications depending on the user location. Receiving a token does not mean it is valuable, safe, or appropriate to hold.',
+            'CryptoCardiac readers should treat airdrops as security events first and rewards second. Free tokens are not free if the claim process exposes a wallet to avoidable risk.'
+        ],
+        sort_order: 21
+    },
+    {
+        id: 'exchange-listings-do-not-equal-safety',
+        title: 'Exchange Listings Do Not Equal Safety: What a Listing Really Means',
+        source: 'CryptoCardiac Editorial',
+        author: 'CryptoCardiac Research Desk',
+        category: 'Exchanges',
+        created_at: '2026-06-28',
+        updated_at: '2026-06-28',
+        description: 'A crypto exchange listing can improve access and liquidity, but it does not guarantee project quality, legal clarity, or investment safety.',
+        fullContent: [
+            'Many readers treat an exchange listing as a sign that a token has been approved. A listing can be meaningful because it may improve access, liquidity, and visibility, but it is not the same as a guarantee of safety.',
+            'Exchanges list assets for different reasons. Some focus on user demand, some on liquidity, some on fees, some on regional strategy, and some on project relationships. Due diligence standards vary across platforms and across jurisdictions.',
+            'A listed token can still have smart contract risk, concentrated supply, weak governance, unclear utility, or legal uncertainty. The exchange may provide a market, but it does not remove the need to understand the asset itself.',
+            'Listings can also change. Assets may be delisted, restricted, moved to watchlists, or limited by region. Users who rely on one exchange for access may face withdrawal, liquidity, or compliance issues if conditions change.',
+            'Exchange custody is separate from token quality. Even if the listed token is legitimate, holding it on an exchange means trusting that platform with account security, withdrawals, internal controls, and legal operations.',
+            'A better way to read a listing is as one data point. It may say that market access improved, but readers should still check liquidity, supply, contract details, documentation, community behavior, and independent research.',
+            'CryptoCardiac rankings and exchange listings both show attention. Neither should be treated as a substitute for careful research or personal risk limits.'
+        ],
+        sort_order: 22
+    },
+    {
+        id: 'layer-2-networks-explained',
+        title: 'Layer 2 Crypto Networks Explained Without the Buzzwords',
+        source: 'CryptoCardiac Editorial',
+        author: 'CryptoCardiac Research Desk',
+        category: 'Networks',
+        created_at: '2026-06-28',
+        updated_at: '2026-06-28',
+        description: 'Layer 2 networks aim to make blockchain activity cheaper and faster, but users should understand bridges, sequencers, fees, and security assumptions.',
+        fullContent: [
+            'Layer 2 networks are systems built around a base blockchain to make transactions cheaper, faster, or more scalable. Ethereum layer 2 networks are the most discussed examples, but the broader idea is simple: move some activity away from the crowded base layer while still depending on it in some way.',
+            'The benefit is user experience. Lower fees can make small trades, games, social apps, NFT activity, and frequent transactions more practical. Developers can design products that would be too expensive if every action happened directly on the base chain.',
+            'The tradeoff is that users need to understand how the layer 2 works. Some networks use rollups, some use sidechains, and some have different security models. The name "layer 2" does not automatically mean identical safety.',
+            'Bridges are a major risk area. Moving assets between chains or layers may involve smart contracts, validators, custodians, or message systems. Bridge failures have caused large losses across crypto history.',
+            'Sequencers and operators can also matter. Some networks rely on centralized or semi-centralized sequencing while they mature. This may affect censorship resistance, uptime, transaction ordering, or upgrade risk.',
+            'Users should ask how withdrawals work, how long exits take, what assets are canonical, which bridges are recommended, and whether the network has a history of incidents.',
+            'Layer 2 networks can be useful infrastructure. They are not magic shortcuts around security research. Cheaper transactions are valuable, but users should still understand what system they are trusting.'
+        ],
+        sort_order: 23
+    },
+    {
+        id: 'dao-governance-voting',
+        title: 'DAO Governance: What Token Voting Can and Cannot Prove',
+        source: 'CryptoCardiac Editorial',
+        author: 'CryptoCardiac Research Desk',
+        category: 'Governance',
+        created_at: '2026-06-28',
+        updated_at: '2026-06-28',
+        description: 'DAO voting can coordinate communities, but token-based governance has limits, including voter concentration, low participation, and delegation risk.',
+        fullContent: [
+            'A DAO, or decentralized autonomous organization, is usually a community or protocol governance system that uses tokens, proposals, forums, and votes to make decisions. The idea is attractive: users and stakeholders can help shape the system they use.',
+            'Token voting can make governance visible, but it does not automatically make governance fair. If a few wallets hold many tokens, they may have more influence than thousands of smaller holders. Distribution shapes political power.',
+            'Participation is another challenge. Many token holders do not vote because proposals are technical, time-consuming, or low priority. Low turnout can allow organized groups to make decisions that most holders barely notice.',
+            'Delegation can help by letting informed participants vote on behalf of others. It can also create new power centers if delegates become too influential or if voters stop paying attention to how delegates behave.',
+            'Governance proposals should be read carefully. A proposal may change fees, emissions, treasury spending, risk parameters, grants, upgrades, or control of important contracts. The title of a proposal rarely tells the whole story.',
+            'Readers should also ask whether votes are binding. Some systems use votes as signaling while a foundation, multisig, or core team still executes the decision. That may be practical, but it should be understood clearly.',
+            'CryptoCardiac community votes are not DAO votes. They measure public interest on this platform. DAO governance is a different kind of voting, with different rules, incentives, and risks.'
+        ],
+        sort_order: 24
+    },
+    {
+        id: 'on-chain-metrics-context',
+        title: 'On-Chain Metrics Need Context: Active Addresses, Fees, and Transactions',
+        source: 'CryptoCardiac Editorial',
+        author: 'CryptoCardiac Research Desk',
+        category: 'Analysis',
+        created_at: '2026-06-28',
+        updated_at: '2026-06-28',
+        description: 'On-chain metrics can reveal network activity, but active addresses, fees, and transaction counts need careful interpretation before drawing conclusions.',
+        fullContent: [
+            'On-chain metrics are attractive because they seem objective. A blockchain can show transactions, addresses, fees, token transfers, contract calls, and liquidity movements. But objective data can still be misunderstood.',
+            'Active addresses are a common example. A rise in active addresses may show more users, but it can also reflect bots, airdrop farming, exchange activity, games, spam, or one user controlling many wallets.',
+            'Transaction counts also need context. A network with cheap fees may have many small transactions, while a network with higher fees may have fewer but more valuable transactions. Comparing raw counts across chains can be misleading.',
+            'Fees can indicate demand for block space, but high fees are not always good for users. They may show strong demand, congestion, speculation, or inefficient design. Low fees can be useful, but they may also make spam easier.',
+            'Total value locked is another metric that can be useful and fragile. It may rise because users trust a protocol, because incentives are high, because token prices increased, or because leverage is looping through the system.',
+            'The strongest analysis combines metrics. Active addresses, fees, developer activity, liquidity, retention, revenue, governance, and user experience all add context. A single chart rarely tells the full story.',
+            'CryptoCardiac adds community voting to that broader picture. Votes can show attention, while on-chain metrics can show activity. Both need interpretation.'
+        ],
+        sort_order: 25
+    },
+    {
+        id: 'crypto-news-events-price-action',
+        title: 'Why Crypto Prices React to News, Rumors, and Events So Quickly',
+        source: 'CryptoCardiac Editorial',
+        author: 'CryptoCardiac Research Desk',
+        category: 'Market Behavior',
+        created_at: '2026-06-28',
+        updated_at: '2026-06-28',
+        description: 'Crypto markets can react quickly to news, rumors, regulation, listings, exploits, and social media. This guide explains why speed can increase risk.',
+        fullContent: [
+            'Crypto markets are global, open most of the time, and heavily connected to online communities. That means news, rumors, listings, hacks, lawsuits, and social media posts can move through the market very quickly.',
+            'Speed can make markets feel efficient, but it can also make them unstable. A headline may be misunderstood, copied without context, translated poorly, or amplified by accounts that benefit from a reaction.',
+            'Listings and partnership rumors are especially sensitive. A real listing can improve access, but a false rumor can create a short-lived price spike followed by a sharp reversal. Readers should look for confirmation from official sources.',
+            'Security incidents can also move prices quickly. Exploits, bridge failures, leaked keys, or paused withdrawals can change trust in minutes. In those moments, liquidity may become thin and normal risk controls may fail.',
+            'Regulatory news can affect entire sectors. Stablecoins, exchanges, privacy tools, staking services, and token issuance can all react differently depending on the jurisdiction and the details of the rule.',
+            'A useful habit is to separate confirmed facts from market reaction. The price may move before the full story is known. Reacting to the first version of a story can be dangerous if later details change the meaning.',
+            'CryptoCardiac readers can use community activity as one signal that a story is spreading. The next step is always verification, not automatic action.'
+        ],
+        sort_order: 26
+    },
+    {
+        id: 'whitepaper-and-docs-checklist',
+        title: 'How to Read a Crypto Whitepaper or Docs Page Without Being Overwhelmed',
+        source: 'CryptoCardiac Editorial',
+        author: 'CryptoCardiac Research Desk',
+        category: 'Research',
+        created_at: '2026-06-28',
+        updated_at: '2026-06-28',
+        description: 'Crypto documentation can be technical and promotional. This checklist helps readers focus on problem, users, token role, risks, and evidence.',
+        fullContent: [
+            'A whitepaper or documentation page can be useful, but it can also be full of technical language, broad promises, and diagrams that look more impressive than they are. The goal is not to understand every word immediately; it is to find the important claims.',
+            'Start with the problem. What real issue is the project trying to solve? Who has this problem? Why does a blockchain or token help? If the problem is vague, the rest of the document may be marketing.',
+            'Then look at the users. A serious project should explain who uses the product, why they would return, and what behavior the system makes easier. A project that only discusses investors may not have a strong product story.',
+            'The token role should be specific. Does the token pay fees, secure the network, vote on governance, access services, reward useful behavior, or represent something else? If the token is not needed, that is worth noticing.',
+            'Risk sections matter. A trustworthy document should discuss limitations, security assumptions, regulatory uncertainty, dependencies, and tradeoffs. Documents that present only upside can be less useful for real research.',
+            'Evidence is stronger than ambition. Look for shipped products, open-source code, audits, usage data, developer activity, credible partners, and clear roadmaps with completed milestones.',
+            'CryptoCardiac articles and rankings can help readers find projects to study. Documentation is where readers can begin testing whether community attention is supported by substance.'
+        ],
+        sort_order: 27
+    },
+    {
+        id: 'crypto-taxes-recordkeeping-basics',
+        title: 'Crypto Taxes and Recordkeeping: Basic Habits Before the Year Gets Messy',
+        source: 'CryptoCardiac Editorial',
+        author: 'CryptoCardiac Research Desk',
+        category: 'Education',
+        created_at: '2026-06-28',
+        updated_at: '2026-06-28',
+        description: 'Crypto tax rules vary by country, but good records help everywhere. Learn what transactions, wallets, exchanges, and notes users should track.',
+        fullContent: [
+            'Crypto tax rules vary by country, and CryptoCardiac does not provide tax advice. Still, one practical habit helps almost everyone: keep records early. Waiting until the end of the year can turn normal wallet activity into a confusing puzzle.',
+            'Users should track exchange accounts, wallet addresses, transaction dates, asset amounts, fiat values when available, fees, transfers, swaps, staking rewards, airdrops, and sales. Even simple notes can help explain what happened later.',
+            'Transfers between a user own wallets may not be the same as trades, but they can look confusing without records. Labeling wallets by purpose can help separate exchange deposits, self-custody storage, DeFi activity, and testing wallets.',
+            'DeFi can make recordkeeping harder because one action may involve swaps, liquidity tokens, rewards, bridge transfers, and contract interactions. Users who experiment often should consider export tools or tax software early.',
+            'Airdrops, staking rewards, mining income, and promotional rewards may be treated differently depending on local rules. The important point is to record the date, source, amount, and approximate value rather than guessing months later.',
+            'Good records also help with security. If a wallet is compromised or a platform pauses withdrawals, a clean history can help users understand exposure and communicate with support or professionals.',
+            'CryptoCardiac encourages readers to treat compliance as part of responsible participation. Local rules differ, so users should consult qualified professionals when decisions matter.'
+        ],
+        sort_order: 28
+    },
+    {
+        id: 'community-voting-methodology',
+        title: 'CryptoCardiac Voting Methodology: What Our Rankings Are Designed to Show',
+        source: 'CryptoCardiac Editorial',
+        author: 'CryptoCardiac Research Desk',
+        category: 'Platform Guide',
+        created_at: '2026-06-28',
+        updated_at: '2026-06-28',
+        description: 'A clear methodology note explaining that CryptoCardiac rankings measure community participation, not investment quality, future price, or official endorsements.',
+        fullContent: [
+            'CryptoCardiac rankings are designed to show community participation. A vote means a user chose to support or surface a coin inside the platform. It does not mean CryptoCardiac has verified the project as safe, profitable, legal, or suitable for investment.',
+            'The platform uses time-based views because attention changes. A 24-hour ranking can show current activity, while longer windows can show steadier participation. Looking at more than one window helps reduce the risk of overreacting to a short campaign.',
+            'Daily limits exist to make voting more deliberate and to reduce casual repetition. No public ranking system can remove all manipulation risk, but limits make the signal easier to interpret and less noisy.',
+            'Share-related activity may appear in some public engagement counts where the product treats sharing as a community signal. Readers should understand that engagement metrics are not the same as verified market demand or financial performance.',
+            'CryptoCardiac does not sell rankings, guarantee placement, or certify investment quality through votes. If sponsored or promotional features are ever added, they should be clearly labeled so users can separate ads from organic participation.',
+            'Readers should combine rankings with other research: liquidity, supply, security history, contract details, documentation, exchange support, legal context, and independent reporting.',
+            'The methodology is intentionally modest. CryptoCardiac shows where community attention is visible. It does not tell readers what to buy, sell, or hold.'
+        ],
+        sort_order: 29
     }
 ].map((article) => ({
     ...article,

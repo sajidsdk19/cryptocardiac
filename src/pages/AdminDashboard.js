@@ -308,16 +308,18 @@ const TrendingManager = ({ adminPassword }) => {
 };
 
 // ─── Stats Panel ───────────────────────────────────────────────────────────────
-const StatsBar = () => {
+const StatsBar = ({ adminPassword }) => {
     const [stats, setStats] = useState(null);
     const [lastUpdated, setLastUpdated] = useState(null);
 
     const fetchStats = useCallback(() => {
-        fetch(`${API_URL}/admin/stats`)
+        fetch(`${API_URL}/admin/stats`, {
+            headers: { 'x-admin-password': adminPassword }
+        })
             .then(r => r.json())
             .then(data => { setStats(data); setLastUpdated(new Date()); })
             .catch(() => { });
-    }, []);
+    }, [adminPassword]);
 
     useEffect(() => {
         fetchStats();
@@ -461,7 +463,7 @@ const AdminDashboard = () => {
                     </>
                 )}
                 {tab === 'trending' && <TrendingManager adminPassword={adminPassword} />}
-                {tab === 'stats' && <StatsBar />}
+                {tab === 'stats' && <StatsBar adminPassword={adminPassword} />}
             </div>
             <Footer />
         </div>
