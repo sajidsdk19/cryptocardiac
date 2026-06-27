@@ -380,7 +380,7 @@ const Leaderboard = () => {
         <>
             <Helmet>
                 <title>Crypto Leaderboard | Vote & Rank Top Cryptocurrencies | CryptoCardiac</title>
-                <meta name="description" content="View the real-time community-driven cryptocurrency leaderboard. Vote for your favorite coins, track daily ranking trends, and explore top No-KYC exchanges." />
+                <meta name="description" content="View the real-time community-driven cryptocurrency leaderboard. Vote for your favorite coins, track daily ranking trends, and read educational guides about crypto privacy and exchange risk." />
                 <meta name="keywords" content="crypto leaderboard, cryptocurrency voting, top cryptocurrency, crypto rankings, community vote crypto, best crypto exchanges, no KYC crypto" />
                 <meta property="og:title" content="Crypto Leaderboard | Vote & Rank Top Cryptocurrencies" />
                 <meta property="og:description" content="Join the heart of crypto. Vote daily for the best cryptocurrency communities and track rankings based on real user engagement, not just price." />
@@ -439,7 +439,7 @@ const Leaderboard = () => {
                         padding: '0 20px',
                         boxSizing: 'border-box'
                     }}>
-                        Discover the top trending cryptocurrencies backed by real user engagement. CryptoCardiac allows you to vote daily for your favorite blockchain projects, track 24-hour and 7-day community sentiment, and explore the best No-KYC crypto exchanges.
+                        Discover the top trending cryptocurrencies backed by real user engagement. CryptoCardiac allows you to vote daily for your favorite blockchain projects, track 24-hour and 7-day community sentiment, and read educational guides about crypto privacy and exchange risk.
                     </div>
                 </div>
                 <div className={styles.searchContainer}>

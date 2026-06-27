@@ -3,6 +3,8 @@ import Navbar from '../component/Navbar';
 import Footer from '../component/Footer';
 import { Helmet } from 'react-helmet-async';
 
+const contactEmail = 'support@cryptocardiac.com';
+
 const Section = ({ title, children }) => (
     <div style={{ marginBottom: '2rem' }}>
         <h2 style={{ color: '#CE34EA', fontSize: '1.2rem', marginBottom: '0.5rem' }}>{title}</h2>
@@ -15,7 +17,7 @@ const PrivacyPolicy = () => {
         <>
             <Helmet>
                 <title>Privacy Policy - CryptoCardiac | Data Protection & User Privacy</title>
-                <meta name="description" content="CryptoCardiac's comprehensive privacy policy. Learn how we collect, use, and protect your data. Understand our cookie policy, Google AdSense usage, and your privacy rights." />
+                <meta name="description" content="CryptoCardiac privacy policy covering account data, voting activity, cookies, analytics, Google AdSense, third-party ad serving, opt-out choices, and contact details." />
                 <meta name="keywords" content="cryptocardiac privacy policy, crypto data protection, user privacy, cryptocurrency privacy, cookie policy, google adsense privacy" />
                 <link rel="canonical" href="https://cryptocardiac.com/privacy-policy" />
             </Helmet>
@@ -30,111 +32,78 @@ const PrivacyPolicy = () => {
             }}>
                 <div style={{ maxWidth: '860px', margin: '0 auto' }}>
                     <h1 style={{ color: '#fff', fontSize: '2rem', marginBottom: '0.5rem' }}>Privacy Policy</h1>
-                    <p style={{ color: '#888', marginBottom: '2rem' }}>Last updated: February 26, 2025</p>
+                    <p style={{ color: '#888', marginBottom: '0.5rem' }}>Effective date: June 28, 2026</p>
+                    <p style={{ color: '#888', marginBottom: '2rem' }}>Last updated: June 28, 2026</p>
 
                     <Section title="1. Introduction">
-                        <p>Welcome to <strong style={{ color: '#fff' }}>CryptoCardiac</strong> ("we", "us", or "our"). This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you visit <strong style={{ color: '#fff' }}>cryptocardiac.com</strong>. Please read this policy carefully.</p>
+                        <p>CryptoCardiac ("we", "us", or "our") operates cryptocardiac.com as a cryptocurrency education and community-voting website. This Privacy Policy explains what information we collect, how we use it, how third-party services may process data, and how users can contact us about privacy questions.</p>
                     </Section>
 
                     <Section title="2. Information We Collect">
-                        <p>We may collect the following types of information:</p>
+                        <p>We may collect the following types of information when you use CryptoCardiac:</p>
                         <ul style={{ paddingLeft: '1.5rem', marginTop: '0.5rem' }}>
-                            <li>Account information (email address, username) when you register.</li>
-                            <li>Voting activity and preferences.</li>
-                            <li>Usage data including pages visited, time spent, and browser type.</li>
-                            <li>Device and technical information (IP address, operating system).</li>
+                            <li>Account information such as email address, username, and authentication details when you register or sign in.</li>
+                            <li>Voting activity, leaderboard interactions, article visits, and preferences needed to operate the platform.</li>
+                            <li>Usage data such as pages visited, approximate session activity, browser type, referring pages, and feature interactions.</li>
+                            <li>Technical data such as IP address, device type, operating system, cookies, web beacons, log files, and similar identifiers used for security, analytics, and advertising.</li>
                         </ul>
                     </Section>
 
-                    <Section title="3. Cookies">
-                        <p>We use cookies and similar tracking technologies to enhance your experience. Cookies are small files stored on your device. We use cookies to:</p>
-                        <ul style={{ paddingLeft: '1.5rem', marginTop: '0.5rem' }}>
-                            <li>Keep you logged in across sessions.</li>
-                            <li>Remember your preferences.</li>
-                            <li>Analyze site traffic and usage patterns.</li>
-                            <li>Serve personalized advertisements through third-party services.</li>
-                        </ul>
-                        <p style={{ marginTop: '0.75rem' }}>You can control or disable cookies via your browser settings. Note that disabling cookies may affect site functionality.</p>
+                    <Section title="3. How We Use Information">
+                        <p>We use information to operate, protect, and improve CryptoCardiac. This includes processing votes, maintaining accounts, preventing abuse, measuring site performance, improving educational content, responding to support requests, complying with legal obligations, and displaying advertising where applicable.</p>
                     </Section>
 
-                    <Section title="4. Google AdSense & Third-Party Advertising">
-                        <p>We use <strong style={{ color: '#fff' }}>Google AdSense</strong> to display advertisements on our site. Google and its partners use cookies (including the <strong style={{ color: '#fff' }}>DoubleClick cookie</strong>) to serve ads based on your prior visits to this website and other websites on the Internet.</p>
-                        <p style={{ marginTop: '0.75rem' }}>Google's use of advertising cookies enables it and its partners to serve ads to our users based on their visit to our site and/or other sites on the Internet.</p>
-                        <p style={{ marginTop: '0.75rem' }}>
-                            You may opt out of personalized advertising by visiting{' '}
-                            <a href="https://www.google.com/settings/ads" target="_blank" rel="noopener noreferrer" style={{ color: '#CE34EA' }}>
-                                Google Ads Settings
-                            </a>
-                            {' '}or{' '}
-                            <a href="https://www.aboutads.info/choices/" target="_blank" rel="noopener noreferrer" style={{ color: '#CE34EA' }}>
-                                www.aboutads.info/choices
+                    <Section title="4. Cookies and Similar Technologies">
+                        <p>CryptoCardiac uses cookies and similar technologies for account sessions, preferences, security, analytics, advertising, and site performance. Cookies are small files stored on your device. Similar technologies may include web beacons, pixels, local storage, IP addresses, and other identifiers.</p>
+                        <p style={{ marginTop: '0.75rem' }}>You can control or disable cookies through your browser settings. Some parts of the site, including login and voting features, may not work correctly if necessary cookies are disabled.</p>
+                    </Section>
+
+                    <Section title="5. Google AdSense and Third-Party Advertising">
+                        <p>CryptoCardiac may display advertisements through Google AdSense and other third-party advertising services. Google and its partners may use cookies, web beacons, IP addresses, device identifiers, and other data to serve ads, measure ad performance, limit repeated ads, detect abuse, and personalize ads where permitted.</p>
+                        <p style={{ marginTop: '0.75rem' }}>Google may use information from visits to CryptoCardiac and other websites or apps to provide advertising services. You can learn more at{' '}
+                            <a href="https://policies.google.com/technologies/partner-sites" target="_blank" rel="noopener noreferrer" style={{ color: '#CE34EA' }}>
+                                How Google uses data when you use our partners' sites or apps
                             </a>.
                         </p>
-                    </Section>
-
-                    <Section title="5. Third-Party Vendors">
-                        <p>In addition to Google AdSense, we may work with the following third-party vendors who may use cookies or similar technologies:</p>
-                        <ul style={{ paddingLeft: '1.5rem', marginTop: '0.5rem' }}>
-                            <li><strong style={{ color: '#fff' }}>Google Analytics</strong> — for usage analytics.</li>
-                            <li><strong style={{ color: '#fff' }}>CoinGecko API</strong> — for cryptocurrency market data.</li>
-                            <li><strong style={{ color: '#fff' }}>Firebase / Auth services</strong> — for user authentication.</li>
-                        </ul>
-                        <p style={{ marginTop: '0.75rem' }}>These third-party vendors have their own privacy policies governing data use. We encourage you to review their policies.</p>
-                    </Section>
-
-                    <Section title="6. How We Use Your Information">
-                        <p>We use the information we collect to:</p>
-                        <ul style={{ paddingLeft: '1.5rem', marginTop: '0.5rem' }}>
-                            <li>Provide, operate, and maintain our website.</li>
-                            <li>Process votes and manage user accounts.</li>
-                            <li>Send transactional emails and important notices.</li>
-                            <li>Analyze usage to improve our services.</li>
-                            <li>Display relevant advertisements via Google AdSense.</li>
-                            <li>Comply with legal obligations.</li>
-                        </ul>
-                    </Section>
-
-                    <Section title="7. Data Sharing & Disclosure">
-                        <p>We do not sell your personal data. We may share data with:</p>
-                        <ul style={{ paddingLeft: '1.5rem', marginTop: '0.5rem' }}>
-                            <li>Service providers who assist us in operating the website.</li>
-                            <li>Law enforcement or regulators when required by law.</li>
-                            <li>Third-party advertisers (Google AdSense) in aggregate, non-personally identifiable form.</li>
-                        </ul>
-                    </Section>
-
-                    <Section title="8. Opting Out">
-                        <p>You have the following opt-out options:</p>
-                        <ul style={{ paddingLeft: '1.5rem', marginTop: '0.5rem' }}>
-                            <li>
-                                <strong style={{ color: '#fff' }}>Google personalized ads:</strong>{' '}
-                                <a href="https://www.google.com/settings/ads" target="_blank" rel="noopener noreferrer" style={{ color: '#CE34EA' }}>
-                                    google.com/settings/ads
-                                </a>
-                            </li>
-                            <li>
-                                <strong style={{ color: '#fff' }}>Network Advertising Initiative opt-out:</strong>{' '}
-                                <a href="https://optout.networkadvertising.org/" target="_blank" rel="noopener noreferrer" style={{ color: '#CE34EA' }}>
-                                    optout.networkadvertising.org
-                                </a>
-                            </li>
-                            <li><strong style={{ color: '#fff' }}>Browser cookies:</strong> Disable via your browser's settings menu.</li>
-                        </ul>
-                    </Section>
-
-                    <Section title="9. Children's Privacy">
-                        <p>Our services are not directed to individuals under the age of 13. We do not knowingly collect personal information from children.</p>
-                    </Section>
-
-                    <Section title="10. Changes to This Policy">
-                        <p>We reserve the right to update this Privacy Policy at any time. Changes will be posted on this page with an updated date. Continued use of the site after changes constitutes acceptance.</p>
-                    </Section>
-
-                    <Section title="11. Contact Us">
-                        <p>If you have questions about this Privacy Policy, please contact us at:</p>
-                        <p style={{ marginTop: '0.5rem' }}>
-                            📧 <a href="mailto:support@cryptocardiac.com" style={{ color: '#CE34EA' }}>support@cryptocardiac.com</a>
+                        <p style={{ marginTop: '0.75rem' }}>Users may opt out of personalized Google advertising through{' '}
+                            <a href="https://www.google.com/settings/ads" target="_blank" rel="noopener noreferrer" style={{ color: '#CE34EA' }}>Google Ads Settings</a>
+                            {' '}and may review additional choices through{' '}
+                            <a href="https://www.aboutads.info/choices/" target="_blank" rel="noopener noreferrer" style={{ color: '#CE34EA' }}>aboutads.info/choices</a>.
                         </p>
+                    </Section>
+
+                    <Section title="6. Third-Party Services">
+                        <p>We use third-party services to operate the website. These services may process data according to their own privacy policies:</p>
+                        <ul style={{ paddingLeft: '1.5rem', marginTop: '0.5rem' }}>
+                            <li><strong style={{ color: '#fff' }}>Google AdSense</strong> for advertising and ad measurement.</li>
+                            <li><strong style={{ color: '#fff' }}>Cloudflare</strong> for security, DNS, traffic routing, and performance.</li>
+                            <li><strong style={{ color: '#fff' }}>CoinGecko API</strong> for cryptocurrency market data.</li>
+                            <li><strong style={{ color: '#fff' }}>Authentication and database services</strong> for account access, votes, and platform records.</li>
+                        </ul>
+                    </Section>
+
+                    <Section title="7. Data Sharing and Disclosure">
+                        <p>We do not sell personal information. We may share limited data with service providers that help operate the website, with advertising and analytics partners as described above, when required by law, to protect users and the platform, or with user consent.</p>
+                    </Section>
+
+                    <Section title="8. Cookie Consent and Regional Choices">
+                        <p>Where required, CryptoCardiac may show a cookie notice or consent prompt. Users in regions with privacy rights may contact us to ask questions about access, correction, deletion, or restriction of personal information, subject to verification and applicable law.</p>
+                    </Section>
+
+                    <Section title="9. Data Security and Retention">
+                        <p>We use reasonable technical and organizational measures to protect information, but no online service can guarantee perfect security. We keep information for as long as needed to operate the platform, comply with legal obligations, resolve disputes, prevent abuse, and maintain accurate voting records.</p>
+                    </Section>
+
+                    <Section title="10. Children's Privacy">
+                        <p>CryptoCardiac is not directed to children under 13, and we do not knowingly collect personal information from children under 13. If you believe a child has provided personal information, contact us so we can review the issue.</p>
+                    </Section>
+
+                    <Section title="11. Changes to This Policy">
+                        <p>We may update this Privacy Policy from time to time. Updates will be posted on this page with a revised last updated date. Continued use of the site after changes means the updated policy applies.</p>
+                    </Section>
+
+                    <Section title="12. Contact Us">
+                        <p>For privacy questions, advertising-policy concerns, data requests, or corrections, contact CryptoCardiac at <a href={`mailto:${contactEmail}`} style={{ color: '#CE34EA' }}>{contactEmail}</a>.</p>
                     </Section>
                 </div>
             </div>

@@ -42,12 +42,12 @@ const expansionPlans = {
         takeaway: 'a trend is a question generator, not a promise about what the market will do next'
     },
     3: {
-        context: 'privacy tools and No-KYC platforms can be useful while still carrying operational, legal, and custody risks',
-        checks: ['withdrawal history', 'liquidity and spreads', 'jurisdictional rules', 'platform security practices'],
+        context: 'privacy-focused tools and exchange models can be useful while still carrying operational, legal, compliance, and custody risks',
+        checks: ['withdrawal history', 'liquidity and spreads', 'jurisdictional rules', 'platform security practices', 'whether the service is allowed to serve the user'],
         mistake: 'confusing fewer identity checks with fewer responsibilities or lower risk',
-        example: 'a user may avoid uploading documents but then face wide spreads, unsupported withdrawals, or unclear dispute resolution if the platform has weak operations',
+        example: 'a user may reduce document exposure but then face wide spreads, unsupported withdrawals, legal uncertainty, or unclear dispute resolution if the platform has weak operations',
         voting: 'community interest around an exchange or privacy topic can show demand, but it cannot confirm that a venue is safe or compliant',
-        takeaway: 'privacy should be balanced with records, local rules, and cautious custody habits'
+        takeaway: 'privacy should be balanced with lawful use, records, local rules, and cautious custody habits'
     },
     4: {
         context: 'XRP conversations often mix network design, company activity, legal history, payments use cases, and market price',

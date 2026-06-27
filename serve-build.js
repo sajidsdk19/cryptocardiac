@@ -14,6 +14,7 @@ const contentUpdatedAt = '2026-06-28';
 const apiBaseUrl = (process.env.SITEMAP_API_URL || process.env.REACT_APP_API_URL || `${siteUrl}/api/api`).replace(/\/+$/, '');
 const sitemapCacheMs = Number(process.env.SITEMAP_CACHE_MS) || 5 * 60 * 1000;
 const defaultArticleSource = 'CryptoCardiac Research Desk';
+const contactEmail = 'support@cryptocardiac.com';
 const referenceSourcePattern = /(^|\|)\s*\d+\.\s+|coinbase\.com|bitcoin\.org|csrc\.nist\.gov|sec\.gov|fca\.org\.uk|public law|esma|federalregister|treasury\.gov|bis\.org|journal|review of financial studies/i;
 
 let sitemapCache = {
@@ -49,17 +50,17 @@ const mimeTypes = {
 };
 
 const staticRoutes = [
-    { path: '/', lastmod: '2026-06-27', changefreq: 'daily', priority: '1.0' },
-    { path: '/featured-articles', lastmod: '2026-06-27', changefreq: 'daily', priority: '0.9' },
-    { path: '/coins', lastmod: '2026-06-27', changefreq: 'daily', priority: '0.8' },
-    { path: '/coins/bitcoin', lastmod: '2026-06-27', changefreq: 'daily', priority: '0.7' },
-    { path: '/coins/ethereum', lastmod: '2026-06-27', changefreq: 'daily', priority: '0.7' },
-    { path: '/coins/solana', lastmod: '2026-06-27', changefreq: 'daily', priority: '0.7' },
-    { path: '/about', lastmod: '2026-06-27', changefreq: 'monthly', priority: '0.7' },
-    { path: '/contact', lastmod: '2026-06-27', changefreq: 'monthly', priority: '0.6' },
-    { path: '/privacy-policy', lastmod: '2026-06-27', changefreq: 'yearly', priority: '0.5' },
-    { path: '/terms', lastmod: '2026-06-27', changefreq: 'yearly', priority: '0.5' },
-    { path: '/disclaimer', lastmod: '2026-06-27', changefreq: 'yearly', priority: '0.5' }
+    { path: '/', lastmod: '2026-06-28', changefreq: 'daily', priority: '1.0' },
+    { path: '/featured-articles', lastmod: '2026-06-28', changefreq: 'daily', priority: '0.9' },
+    { path: '/coins', lastmod: '2026-06-28', changefreq: 'daily', priority: '0.8' },
+    { path: '/coins/bitcoin', lastmod: '2026-06-28', changefreq: 'daily', priority: '0.7' },
+    { path: '/coins/ethereum', lastmod: '2026-06-28', changefreq: 'daily', priority: '0.7' },
+    { path: '/coins/solana', lastmod: '2026-06-28', changefreq: 'daily', priority: '0.7' },
+    { path: '/about', lastmod: '2026-06-28', changefreq: 'monthly', priority: '0.7' },
+    { path: '/contact', lastmod: '2026-06-28', changefreq: 'monthly', priority: '0.6' },
+    { path: '/privacy-policy', lastmod: '2026-06-28', changefreq: 'yearly', priority: '0.5' },
+    { path: '/terms', lastmod: '2026-06-28', changefreq: 'yearly', priority: '0.5' },
+    { path: '/disclaimer', lastmod: '2026-06-28', changefreq: 'yearly', priority: '0.5' }
 ];
 
 const apiFallbackArticles = [
@@ -95,7 +96,7 @@ const apiFallbackArticles = [
 const pageMeta = {
     '/': {
         title: 'Crypto Leaderboard | Vote & Rank Top Cryptocurrencies | CryptoCardiac',
-        description: 'View the real-time community-driven cryptocurrency leaderboard. Vote for your favorite coins, track daily ranking trends, and explore top No-KYC exchanges.',
+        description: 'View the real-time community-driven cryptocurrency leaderboard. Vote for your favorite coins, track daily ranking trends, and read educational guides about crypto privacy and exchange risk.',
         type: 'website'
     },
     '/featured-articles': {
@@ -105,7 +106,7 @@ const pageMeta = {
     },
     '/privacy-policy': {
         title: 'Privacy Policy - CryptoCardiac | Data Protection & User Privacy',
-        description: "CryptoCardiac's comprehensive privacy policy. Learn how we collect, use, and protect your data, including cookies, Google AdSense usage, and privacy rights.",
+        description: "CryptoCardiac's privacy policy explains account data, voting activity, cookies, analytics, Google AdSense, third-party ad serving, opt-out choices, and contact details.",
         type: 'website'
     },
     '/terms': {
@@ -115,7 +116,7 @@ const pageMeta = {
     },
     '/contact': {
         title: 'Contact CryptoCardiac | Get in Touch with Our Team',
-        description: "Contact the CryptoCardiac team for support, feedback, or partnerships. Reach us via email or the contact form.",
+        description: "Contact CryptoCardiac for support, corrections, privacy questions, editorial feedback, or platform inquiries at support@cryptocardiac.com.",
         type: 'website'
     },
     '/disclaimer': {
@@ -124,8 +125,8 @@ const pageMeta = {
         type: 'website'
     },
     '/about': {
-        title: 'About CryptoCardiac | Community Crypto Rankings',
-        description: 'Learn about CryptoCardiac, a community-powered cryptocurrency voting and education platform focused on transparent crypto attention signals.',
+        title: 'About CryptoCardiac | Community Crypto Rankings and Editorial Methodology',
+        description: "Learn about CryptoCardiac's community voting methodology, editorial standards, publisher contact details, and educational approach to cryptocurrency rankings.",
         type: 'website'
     },
     '/coins': {
@@ -182,27 +183,30 @@ const crawlablePageContent = {
     '/about': {
         heading: 'About CryptoCardiac',
         paragraphs: [
-            'CryptoCardiac is a community-powered cryptocurrency voting and education platform. The site helps readers see which crypto communities are active while keeping a clear separation between popularity and investment quality.',
-            'The leaderboard shows public attention signals, including daily and longer-term voting activity. These signals can be useful for discovery, but they do not prove that any coin is safe, undervalued, or suitable for purchase.',
-            'CryptoCardiac combines community rankings with educational articles, risk explanations, and clear disclaimers so readers can slow down, compare evidence, and do their own research.'
+            'CryptoCardiac is a community-powered cryptocurrency voting and education platform. The site helps readers observe community attention while keeping a clear separation between popularity and investment quality.',
+            'The leaderboard shows public attention signals, including daily and longer-term voting activity. These signals can be useful for discovery, but they do not prove that any coin is safe, undervalued, compliant, liquid, or suitable for purchase.',
+            'CryptoCardiac articles are written for general education. They explain crypto concepts, exchange risk, wallet safety, regulation, community sentiment, and methodology without providing personal financial, legal, tax, or investment advice.',
+            `Publisher and support contact: ${contactEmail}. Corrections, privacy requests, copyright concerns, and editorial feedback can be sent to this address.`
         ]
     },
     '/contact': {
         heading: 'Contact CryptoCardiac',
         paragraphs: [
-            'Readers, project communities, and partners can contact CryptoCardiac for support, feedback, corrections, and general platform questions.',
+            `Readers, project communities, and partners can contact CryptoCardiac at ${contactEmail} for support, feedback, corrections, privacy requests, copyright concerns, and general platform questions.`,
+            'CryptoCardiac is the publisher and operator of cryptocardiac.com, a public cryptocurrency education and community-voting website.',
             'CryptoCardiac does not provide personal financial advice, portfolio recommendations, trading instructions, or guaranteed-return claims.',
-            'For privacy, policy, or content concerns, users can contact the team through the public contact page and include the relevant URL or account details needed to investigate the issue.'
+            'For privacy, policy, or content concerns, users should include the relevant URL, account email, article title, or other details needed to investigate the issue.'
         ]
     },
     '/privacy-policy': {
         heading: 'CryptoCardiac Privacy Policy',
         paragraphs: [
-            'CryptoCardiac collects information needed to operate the platform, including account information when users register, voting activity, device information, and basic technical logs.',
-            'The site uses cookies and similar technologies for account sessions, security, analytics, user experience, and advertising. Users can control cookies through browser settings, though disabling cookies may affect site functionality.',
-            'CryptoCardiac may display advertisements through Google AdSense. Google and its partners may use cookies, including advertising cookies, to serve ads based on visits to this site and other sites on the internet.',
-            'Users may opt out of personalized Google advertising through Google Ads Settings and may also review third-party advertising choices through industry opt-out tools.',
-            'CryptoCardiac does not sell personal financial advice. Information is used to operate the voting platform, improve security, measure usage, provide support, and display relevant content or advertisements.'
+            'Effective date: June 28, 2026. Last updated: June 28, 2026.',
+            'CryptoCardiac collects information needed to operate the platform, including account information when users register, voting activity, device information, IP addresses, cookies, web beacons, log files, and similar identifiers.',
+            'The site uses cookies and similar technologies for account sessions, security, analytics, user experience, advertising, and site performance. Users can control cookies through browser settings, though disabling cookies may affect site functionality.',
+            'CryptoCardiac may display advertisements through Google AdSense. Google and its partners may use cookies, web beacons, IP addresses, device identifiers, and other data to serve ads, measure ad performance, limit repeated ads, detect abuse, and personalize ads where permitted.',
+            'Google may use information from visits to CryptoCardiac and other websites or apps to provide advertising services. Users can review Google partner-site data use at https://policies.google.com/technologies/partner-sites.',
+            `Users may contact CryptoCardiac at ${contactEmail} for privacy questions, advertising-policy concerns, corrections, or data requests.`
         ]
     },
     '/terms': {
@@ -580,6 +584,13 @@ const getMetaForPath = async (urlPath) => {
         };
     }
 
+    if (cleanPath === '/featured-articles') {
+        return {
+            ...pageMeta[cleanPath],
+            articleList: await getPublicArticles()
+        };
+    }
+
     if (utilityPageMeta[cleanPath]) {
         return utilityPageMeta[cleanPath];
     }
@@ -616,6 +627,25 @@ const buildCrawlerContent = (meta, canonicalUrl, canonicalPath) => {
 ${renderParagraphs(paragraphs)}
       <p><strong>Important:</strong> CryptoCardiac publishes educational content only. Community votes, rankings, articles, and market data are not financial, investment, legal, or tax advice.</p>${references}
     </article>
+  </noscript>`;
+    }
+
+    if (Array.isArray(meta.articleList) && meta.articleList.length) {
+        const links = meta.articleList
+            .map((article) => `        <li><a href="${escapeHtml(`${siteUrl}/featured-articles/${article.slug}`)}">${escapeHtml(article.title)}</a></li>`)
+            .join('\n');
+
+        const pageContent = crawlablePageContent[canonicalPath] || {};
+        return `  <noscript id="route-crawler-content">
+    <section>
+      <h1>${escapeHtml(pageContent.heading || meta.title)}</h1>
+      <p><strong>Canonical URL:</strong> <a href="${escapeHtml(canonicalUrl)}">${escapeHtml(canonicalUrl)}</a></p>
+${renderParagraphs(pageContent.paragraphs || [])}
+      <h2>Educational article library</h2>
+      <ul>
+${links}
+      </ul>
+    </section>
   </noscript>`;
     }
 

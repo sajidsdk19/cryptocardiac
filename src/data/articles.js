@@ -100,13 +100,14 @@ export const EDITORIAL_ARTICLES = [
         category: 'Exchanges',
         created_at: updatedAt,
         updated_at: updatedAt,
-        description: 'A neutral guide to No-KYC crypto exchanges, including why people use them, what risks to watch for, and how to think about privacy responsibly.',
+        description: 'A neutral guide to No-KYC crypto exchanges, including privacy tradeoffs, legal responsibilities, platform risks, and safer research habits.',
         fullContent: [
             'No-KYC crypto exchanges attract users who care about privacy, fast onboarding, and fewer identity documents stored by third parties. For some people, that privacy preference is about personal security. For others, it is about reducing data exposure after years of exchange breaches and phishing campaigns.',
+            'This topic should be approached carefully. Privacy is not the same as avoiding law. CryptoCardiac does not encourage users to bypass identity rules, sanctions controls, anti-money-laundering requirements, tax reporting, or any other legal obligation. The right question is not how to avoid rules, but how to understand platform tradeoffs while staying within applicable laws.',
             'The privacy benefit does not remove the practical risks. Some No-KYC platforms have limited customer support, unclear operating history, low liquidity, or changing withdrawal limits. A platform that is easy to enter can still be hard to exit if spreads are wide, wallets are paused, or support does not respond.',
-            'Users should also think about legal and tax responsibilities in their own country. No-KYC does not mean no rules. Regulations differ by jurisdiction, and users remain responsible for understanding reporting obligations, sanctions restrictions, and local requirements.',
+            'Users should also think about legal and tax responsibilities in their own country. No-KYC does not mean no rules. Regulations differ by jurisdiction, and users remain responsible for understanding reporting obligations, sanctions restrictions, local licensing requirements, and whether a platform is allowed to serve them.',
             'Security habits matter more on privacy-focused platforms. Consider using strong account passwords, hardware wallets for long-term storage, withdrawal address checks, and small test transactions before moving larger amounts. Never assume that an exchange wallet is as safe as self-custody.',
-            'It is also wise to separate privacy from secrecy. Privacy is a legitimate concern, but hiding activity to avoid lawful obligations can create serious risk. A responsible approach focuses on minimizing unnecessary data exposure while still following applicable rules.',
+            'It is also wise to separate privacy from secrecy. Privacy is a legitimate concern, but hiding activity to avoid lawful obligations can create serious financial, legal, and account-access risk. A responsible approach focuses on minimizing unnecessary data exposure while keeping records, respecting local requirements, and avoiding prohibited activity.',
             'CryptoCardiac does not recommend a specific exchange or tell readers where to trade. The purpose of this guide is to help readers evaluate tradeoffs so they can ask better questions before trusting any platform with funds.'
         ],
         sort_order: 3

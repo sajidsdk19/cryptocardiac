@@ -4,29 +4,37 @@ import Navbar from '../component/Navbar';
 import Footer from '../component/Footer';
 import { Helmet } from 'react-helmet-async';
 
+const contactEmail = 'support@cryptocardiac.com';
+
 const StatCard = ({ value, label }) => (
     <div style={{
         background: 'rgba(255,255,255,0.04)',
         border: '1px solid rgba(255,255,255,0.08)',
-        borderRadius: '12px',
-        padding: '24px',
+        borderRadius: '8px',
+        padding: '22px',
         textAlign: 'center',
     }}>
-        <div style={{ fontSize: '2rem', fontWeight: 800, background: 'linear-gradient(135deg, #5700F9, #CE34EA)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>{value}</div>
+        <div style={{ fontSize: '1.8rem', fontWeight: 800, color: '#CE34EA' }}>{value}</div>
         <div style={{ color: '#888', fontSize: '0.85rem', marginTop: '4px' }}>{label}</div>
     </div>
 );
 
-const FeatureCard = ({ icon, title, desc }) => (
+const Section = ({ title, children }) => (
+    <section style={{ marginBottom: '3rem' }}>
+        <h2 style={{ color: '#fff', fontSize: '1.65rem', marginBottom: '1rem' }}>{title}</h2>
+        <div style={{ color: '#aaa', fontSize: '1rem', lineHeight: 1.8 }}>{children}</div>
+    </section>
+);
+
+const DetailCard = ({ title, children }) => (
     <div style={{
         background: 'rgba(255,255,255,0.04)',
         border: '1px solid rgba(255,255,255,0.08)',
-        borderRadius: '12px',
-        padding: '24px',
+        borderRadius: '8px',
+        padding: '22px',
     }}>
-        <div style={{ fontSize: '2rem', marginBottom: '12px' }}>{icon}</div>
-        <h3 style={{ color: '#fff', marginBottom: '8px', fontSize: '1rem' }}>{title}</h3>
-        <p style={{ color: '#888', fontSize: '0.9rem', lineHeight: 1.6 }}>{desc}</p>
+        <h3 style={{ color: '#CE34EA', marginBottom: '0.65rem', fontSize: '1rem' }}>{title}</h3>
+        <div style={{ color: '#aaa', fontSize: '0.94rem', lineHeight: 1.7 }}>{children}</div>
     </div>
 );
 
@@ -34,33 +42,33 @@ const AboutUs = () => {
     return (
         <>
             <Helmet>
-                <title>About CryptoCardiac | Community-Powered Crypto Voting Platform</title>
-                <meta name="description" content="Learn about CryptoCardiac's mission to provide transparent community-driven cryptocurrency rankings. Discover our voting system, real-time analytics, and commitment to crypto democracy." />
-                <meta name="keywords" content="about cryptocardiac, crypto voting platform, community crypto rankings, cryptocurrency analytics, crypto democracy, blockchain voting software, transparent crypto rankings" />
-                <meta property="og:title" content="About CryptoCardiac | Community-Powered Crypto Voting Platform" />
-                <meta property="og:description" content="The social pulse of cryptocurrency communities — where the crowd decides which coins are beating hardest. Built to give the crypto community a voice." />
+                <title>About CryptoCardiac | Community Crypto Rankings and Editorial Methodology</title>
+                <meta name="description" content="Learn about CryptoCardiac's community voting methodology, editorial standards, publisher contact details, and educational approach to cryptocurrency rankings." />
+                <meta name="keywords" content="about cryptocardiac, crypto voting methodology, community crypto rankings, cryptocurrency education, editorial policy" />
+                <meta property="og:title" content="About CryptoCardiac | Community Crypto Rankings and Editorial Methodology" />
+                <meta property="og:description" content="CryptoCardiac explains community attention signals through transparent rankings and educational crypto research." />
                 <meta property="og:type" content="website" />
                 <meta property="og:url" content="https://cryptocardiac.com/about" />
                 <meta name="twitter:card" content="summary" />
                 <meta name="twitter:title" content="About CryptoCardiac" />
-                <meta name="twitter:description" content="Learn about CryptoCardiac's mission to provide transparent, community-driven cryptocurrency rankings." />
+                <meta name="twitter:description" content="Learn about CryptoCardiac's mission, ranking methodology, and editorial standards." />
                 <link rel="canonical" href="https://cryptocardiac.com/about" />
                 <script type="application/ld+json">
                     {JSON.stringify({
-                        "@context": "https://schema.org",
-                        "@type": "AboutPage",
-                        "name": "About CryptoCardiac",
-                        "url": "https://cryptocardiac.com/about",
-                        "description": "Learn about the mission and features of the CryptoCardiac community crypto voting platform.",
-                        "mainEntity": {
-                            "@type": "Organization",
-                            "name": "CryptoCardiac",
-                            "url": "https://cryptocardiac.com",
-                            "description": "A community-powered cryptocurrency voting platform built to capture genuine sentiment across 19,000+ crypto projects.",
-                            "founder": {
-                                "@type": "Person",
-                                "name": "Sajid Khan",
-                                "url": "https://sajidkhan.me"
+                        '@context': 'https://schema.org',
+                        '@type': 'AboutPage',
+                        name: 'About CryptoCardiac',
+                        url: 'https://cryptocardiac.com/about',
+                        description: 'CryptoCardiac is a cryptocurrency community voting and education platform focused on transparent community-interest signals.',
+                        mainEntity: {
+                            '@type': 'Organization',
+                            name: 'CryptoCardiac',
+                            url: 'https://cryptocardiac.com',
+                            email: contactEmail,
+                            contactPoint: {
+                                '@type': 'ContactPoint',
+                                email: contactEmail,
+                                contactType: 'customer support'
                             }
                         }
                     })}
@@ -74,54 +82,83 @@ const AboutUs = () => {
                 fontFamily: 'Inter, sans-serif',
                 lineHeight: '1.8',
             }}>
-                {/* Hero */}
                 <div style={{
                     background: 'linear-gradient(135deg, #5700F9 0%, #CE34EA 100%)',
-                    padding: '80px 20px',
+                    padding: '76px 20px',
                     textAlign: 'center',
                 }}>
                     <h1 style={{ color: '#fff', fontSize: '2.8rem', fontWeight: 800, marginBottom: '1rem' }}>
                         About CryptoCardiac
                     </h1>
-                    <p style={{ color: 'rgba(255,255,255,0.85)', fontSize: '1.15rem', maxWidth: '600px', margin: '0 auto' }}>
-                        The social pulse of cryptocurrency communities — where the crowd decides which coins are beating hardest.
+                    <p style={{ color: 'rgba(255,255,255,0.88)', fontSize: '1.12rem', maxWidth: '720px', margin: '0 auto' }}>
+                        CryptoCardiac tracks public community attention around cryptocurrency projects and pairs those rankings with educational articles about risk, research, and responsible interpretation.
                     </p>
                 </div>
 
-                <div style={{ maxWidth: '960px', margin: '0 auto', padding: '60px 20px' }}>
-
-                    {/* Mission */}
-                    <div style={{ textAlign: 'center', marginBottom: '3.5rem' }}>
-                        <h2 style={{ color: '#fff', fontSize: '1.8rem', marginBottom: '1rem' }}>Our Mission</h2>
-                        <p style={{ color: '#aaa', maxWidth: '680px', margin: '0 auto', fontSize: '1.05rem' }}>
-                            CryptoCardiac was built to give the crypto community a voice. We believe that community sentiment is a powerful signal — and we've built a transparent, real-time platform to capture it. No bots. No bias. Just votes.
+                <div style={{ maxWidth: '980px', margin: '0 auto', padding: '56px 20px' }}>
+                    <Section title="Mission">
+                        <p>
+                            CryptoCardiac exists to make community interest easier to observe without turning popularity into investment advice. A vote count can show that a community is active, but it cannot prove safety, legal clarity, liquidity, token value, or future performance. The site is designed to help readers discover signals, then slow down and research them.
                         </p>
+                    </Section>
+
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: '16px', marginBottom: '3rem' }}>
+                        <StatCard value="19,000+" label="Coins Searchable" />
+                        <StatCard value="24h / 7d" label="Voting Windows" />
+                        <StatCard value="1/day" label="Vote Limit Per Coin" />
+                        <StatCard value="Education" label="Core Purpose" />
                     </div>
 
-                    {/* Stats */}
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: '16px', marginBottom: '3.5rem' }}>
-                        <StatCard value="19,000+" label="Coins Tracked" />
-                        <StatCard value="24/7" label="Real-Time Data" />
-                        <StatCard value="1/day" label="Vote Per Coin" />
-                        <StatCard value="Free" label="Always Free" />
-                    </div>
+                    <Section title="How Rankings Work">
+                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '16px' }}>
+                            <DetailCard title="Community voting">
+                                Users can vote for listed crypto projects. Vote windows help compare short-term attention with steadier participation.
+                            </DetailCard>
+                            <DetailCard title="Anti-spam limits">
+                                Daily limits make repeat voting less useful and help each vote behave more like a deliberate community signal.
+                            </DetailCard>
+                            <DetailCard title="Market context">
+                                Rankings can be compared with price, liquidity, supply, documentation, security history, and independent research.
+                            </DetailCard>
+                            <DetailCard title="No guarantee">
+                                A high ranking is not a recommendation to buy, sell, or hold. It only reflects activity on the platform.
+                            </DetailCard>
+                        </div>
+                    </Section>
 
-                    {/* Features */}
-                    <h2 style={{ color: '#fff', fontSize: '1.6rem', marginBottom: '1.5rem', textAlign: 'center' }}>What We Offer</h2>
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '16px', marginBottom: '3.5rem' }}>
-                        <FeatureCard icon="🗳️" title="Community Voting" desc="Vote for your favorite cryptocurrencies once per day. Votes are tracked across 24h, 7d, and 3-month windows." />
-                        <FeatureCard icon="📊" title="Live Rankings" desc="See which coins the community is buzzing about in real time, sorted by recent vote momentum." />
-                        <FeatureCard icon="🔍" title="Deep Coin Search" desc="Search across 19,000+ cryptocurrencies with live market data powered by CoinGecko." />
-                        <FeatureCard icon="🏆" title="Share Points" desc="Earn share points every time you vote. Climb the leaderboard and show your crypto conviction." />
-                    </div>
+                    <Section title="Editorial Methodology">
+                        <p style={{ marginBottom: '1rem' }}>
+                            CryptoCardiac articles are written for general education. They explain crypto concepts, community signals, wallet safety, exchange risk, regulation, and market behavior in plain language. Articles avoid guaranteed-return claims, personal portfolio advice, and instructions to evade legal or tax responsibilities.
+                        </p>
+                        <p style={{ marginBottom: '1rem' }}>
+                            When an article discusses a project, platform, or market signal, the goal is to separate facts from interpretation. Readers are encouraged to compare official documentation, block explorers, risk disclosures, regulatory context, and independent sources before making decisions.
+                        </p>
+                        <p>
+                            Corrections, source concerns, and editorial feedback can be sent to <a href={`mailto:${contactEmail}`} style={{ color: '#CE34EA' }}>{contactEmail}</a>. CryptoCardiac may update pages when facts change, clearer wording is needed, or additional risk context improves the article.
+                        </p>
+                    </Section>
 
-                    {/* CTA */}
-                    <div style={{ textAlign: 'center' }}>
-                        <h2 style={{ color: '#fff', marginBottom: '1rem' }}>Ready to vote?</h2>
-                        <p style={{ color: '#888', marginBottom: '1.5rem' }}>Join thousands of crypto enthusiasts and make your voice heard.</p>
-                        <Link to="/" style={{
+                    <Section title="Publisher Details">
+                        <p>
+                            CryptoCardiac is the publisher and operator of cryptocardiac.com. The website provides public cryptocurrency education, voting methodology explanations, and community-interest rankings. For support, privacy, copyright, corrections, or advertising-policy questions, contact <a href={`mailto:${contactEmail}`} style={{ color: '#CE34EA' }}>{contactEmail}</a>.
+                        </p>
+                    </Section>
+
+                    <Section title="What CryptoCardiac Does Not Do">
+                        <ul style={{ paddingLeft: '1.25rem' }}>
+                            <li>CryptoCardiac does not provide personal financial, investment, legal, or tax advice.</li>
+                            <li>CryptoCardiac does not guarantee the accuracy or completeness of third-party market data.</li>
+                            <li>CryptoCardiac does not certify that a voted coin is safe, compliant, liquid, or suitable for purchase.</li>
+                            <li>CryptoCardiac does not sell rankings or treat paid promotion as a substitute for disclosure and research.</li>
+                        </ul>
+                    </Section>
+
+                    <div style={{ textAlign: 'center', marginTop: '3rem' }}>
+                        <h2 style={{ color: '#fff', marginBottom: '1rem' }}>Explore the platform</h2>
+                        <p style={{ color: '#888', marginBottom: '1.5rem' }}>Use rankings as a discovery tool, then read the educational guides before drawing conclusions.</p>
+                        <Link to="/featured-articles" style={{
                             display: 'inline-block',
-                            padding: '14px 36px',
+                            padding: '14px 30px',
                             borderRadius: '8px',
                             background: 'linear-gradient(135deg, #5700F9 0%, #CE34EA 100%)',
                             color: '#fff',
@@ -129,115 +166,8 @@ const AboutUs = () => {
                             textDecoration: 'none',
                             fontSize: '1rem',
                         }}>
-                            Start Voting →
+                            Read Articles
                         </Link>
-                    </div>
-
-                    {/* Additional Content Sections */}
-                    <div style={{ marginTop: '4rem' }}>
-                        <h2 style={{ color: '#fff', fontSize: '1.6rem', marginBottom: '1.5rem', textAlign: 'center' }}>🎯 How Crypto Voting Works</h2>
-                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '20px', marginBottom: '3rem' }}>
-                            <div style={{
-                                background: 'rgba(255,255,255,0.04)',
-                                border: '1px solid rgba(255,255,255,0.08)',
-                                borderRadius: '12px',
-                                padding: '24px',
-                            }}>
-                                <h4 style={{ color: '#CE34EA', marginBottom: '12px' }}>One Vote Per Day</h4>
-                                <p style={{ color: '#aaa', fontSize: '0.9rem', lineHeight: '1.6' }}>
-                                    Each user can vote for any cryptocurrency once every 24 hours. This prevents spam and ensures each vote represents genuine daily sentiment.
-                                </p>
-                            </div>
-                            <div style={{
-                                background: 'rgba(255,255,255,0.04)',
-                                border: '1px solid rgba(255,255,255,0.08)',
-                                borderRadius: '12px',
-                                padding: '24px',
-                            }}>
-                                <h4 style={{ color: '#CE34EA', marginBottom: '12px' }}>Time-Based Tracking</h4>
-                                <p style={{ color: '#aaa', fontSize: '0.9rem', lineHeight: '1.6' }}>
-                                    Votes are tracked across multiple time windows to identify both short-term trends and long-term community support patterns.
-                                </p>
-                            </div>
-                            <div style={{
-                                background: 'rgba(255,255,255,0.04)',
-                                border: '1px solid rgba(255,255,255,0.08)',
-                                borderRadius: '12px',
-                                padding: '24px',
-                            }}>
-                                <h4 style={{ color: '#CE34EA', marginBottom: '12px' }}>Share Points System</h4>
-                                <p style={{ color: '#aaa', fontSize: '0.9rem', lineHeight: '1.6' }}>
-                                    Earn points for each vote to climb the community leaderboard. Your voting history and consistency are rewarded with higher rankings.
-                                </p>
-                            </div>
-                            <div style={{
-                                background: 'rgba(255,255,255,0.04)',
-                                border: '1px solid rgba(255,255,255,0.08)',
-                                borderRadius: '12px',
-                                padding: '24px',
-                            }}>
-                                <h4 style={{ color: '#CE34EA', marginBottom: '12px' }}>Real Data, Real Impact</h4>
-                                <p style={{ color: '#aaa', fontSize: '0.9rem', lineHeight: '1.6' }}>
-                                    Unlike speculative price movements, community votes reflect actual user engagement and belief in cryptocurrency projects.
-                                </p>
-                            </div>
-                        </div>
-
-                        <h2 style={{ color: '#fff', fontSize: '1.6rem', marginBottom: '1.5rem', textAlign: 'center' }}>🌟 Platform Features & Benefits</h2>
-                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '20px' }}>
-                            <div style={{
-                                background: 'rgba(255,255,255,0.04)',
-                                border: '1px solid rgba(255,255,255,0.08)',
-                                borderRadius: '12px',
-                                padding: '24px',
-                            }}>
-                                <h4 style={{ color: '#CE34EA', marginBottom: '12px' }}>🗳️ Community-Powered Rankings</h4>
-                                <p style={{ color: '#aaa', fontSize: '0.9rem', lineHeight: '1.6' }}>
-                                    Real-time voting data from thousands of crypto enthusiasts worldwide. Each vote represents genuine community sentiment, not automated bots or fake engagement.
-                                </p>
-                            </div>
-                            <div style={{
-                                background: 'rgba(255,255,255,0.04)',
-                                border: '1px solid rgba(255,255,255,0.08)',
-                                borderRadius: '12px',
-                                padding: '24px',
-                            }}>
-                                <h4 style={{ color: '#CE34EA', marginBottom: '12px' }}>📊 Smart Analytics</h4>
-                                <p style={{ color: '#aaa', fontSize: '0.9rem', lineHeight: '1.6' }}>
-                                    Track voting trends across 24-hour, 7-day, and 3-month windows. Identify emerging cryptocurrencies before they explode in popularity.
-                                </p>
-                            </div>
-                            <div style={{
-                                background: 'rgba(255,255,255,0.04)',
-                                border: '1px solid rgba(255,255,255,0.08)',
-                                borderRadius: '12px',
-                                padding: '24px',
-                            }}>
-                                <h4 style={{ color: '#CE34EA', marginBottom: '12px' }}>🔍 Comprehensive Coverage</h4>
-                                <p style={{ color: '#aaa', fontSize: '0.9rem', lineHeight: '1.6' }}>
-                                    Search and vote for over 19,000 cryptocurrencies with live market data, price tracking, and community-driven insights.
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* Built by */}
-                    <div style={{
-                        marginTop: '4rem',
-                        background: 'rgba(87, 0, 249, 0.12)',
-                        border: '1px solid rgba(87, 0, 249, 0.3)',
-                        borderRadius: '16px',
-                        padding: '32px',
-                        textAlign: 'center',
-                    }}>
-                        <h2 style={{ color: '#fff', marginBottom: '0.75rem', fontSize: '1.3rem' }}>Built By</h2>
-                        <p style={{ color: '#aaa' }}>
-                            CryptoCardiac was designed and developed by{' '}
-                            <a href="https://sajidkhan.me" target="_blank" rel="noopener noreferrer" style={{ color: '#CE34EA', fontWeight: 700, textDecoration: 'none' }}>
-                                Raul & Sajid Khan
-                            </a>
-                            {' '}— a full-stack developer passionate about building community-driven web applications.
-                        </p>
                     </div>
                 </div>
             </div>
