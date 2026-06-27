@@ -23,6 +23,13 @@ const formatDate = (dateValue) => {
     return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
 };
 
+const getWordCount = (article) => article.fullContent
+    .join(' ')
+    .trim()
+    .split(/\s+/)
+    .filter(Boolean)
+    .length;
+
 const pageShell = {
     background: 'rgb(21,21,32)',
     color: '#fff',
@@ -134,6 +141,9 @@ const ArticleDetail = ({ article, isMobile }) => {
                             name: 'CryptoCardiac',
                             url: SITE_URL
                         },
+                        articleSection: article.category,
+                        wordCount: getWordCount(article),
+                        articleBody: article.fullContent.join('\n\n'),
                         datePublished: publishDate,
                         dateModified: modifiedDate,
                         mainEntityOfPage: articleUrl

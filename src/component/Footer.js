@@ -103,17 +103,7 @@ const Footer = () => {
                 borderTop: '1px solid rgba(255,255,255,0.05)',
                 background: '#0a0a14',
             }}>
-                © {new Date().getFullYear()} CryptoCardiac. All rights reserved.{' '}
-                <span style={{ margin: '0 8px' }}>|</span>{' '}
-                Designed by Raul & Developed by{' '}
-                <a
-                    href="https://sajidkhan.me"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    style={{ color: '#CE34EA', textDecoration: 'none', fontWeight: 600 }}
-                >
-                    Sajid Khan
-                </a>
+                &copy; {new Date().getFullYear()} CryptoCardiac. All rights reserved.
             </div>
         </footer>
     );

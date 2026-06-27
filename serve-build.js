@@ -3,12 +3,14 @@ const http = require('http');
 const https = require('https');
 const path = require('path');
 const vm = require('vm');
+const { ARTICLE_ENHANCEMENTS_BY_ORDER } = require('./src/data/articleEnhancements.cjs');
 
 const root = path.join(__dirname, 'build');
 const port = Number(process.env.PORT) || 3000;
 const host = process.env.HOST || '0.0.0.0';
 const siteUrl = 'https://cryptocardiac.com';
 const articleCutoff = new Date('2026-06-23').getTime();
+const contentUpdatedAt = '2026-06-28';
 const apiBaseUrl = (process.env.SITEMAP_API_URL || process.env.REACT_APP_API_URL || `${siteUrl}/api/api`).replace(/\/+$/, '');
 const sitemapCacheMs = Number(process.env.SITEMAP_CACHE_MS) || 5 * 60 * 1000;
 const defaultArticleSource = 'CryptoCardiac Research Desk';
@@ -345,15 +347,27 @@ const loadStaticEditorialArticles = () => {
 
         const articleArrayLiteral = source.slice(startIndex, endIndex + 1);
         const script = new vm.Script(`(${articleArrayLiteral})`);
-        const articles = script.runInNewContext({ updatedAt: '2026-06-23' }, { timeout: 1000 });
+        const articles = script.runInNewContext({
+            updatedAt: '2026-06-23',
+            contentUpdatedAt
+        }, { timeout: 1000 });
 
         staticArticlesCache = Array.isArray(articles)
-            ? articles.map((article) => ({
-                ...article,
-                slug: slugifyArticle(article.title),
-                source: article.source || defaultArticleSource,
-                author: article.author || defaultArticleSource
-            }))
+            ? articles.map((article) => {
+                const fullContent = [
+                    ...parseArticleContent(article),
+                    ...(ARTICLE_ENHANCEMENTS_BY_ORDER[article.sort_order] || [])
+                ];
+
+                return {
+                    ...article,
+                    fullContent,
+                    slug: slugifyArticle(article.title),
+                    source: article.source || defaultArticleSource,
+                    author: article.author || defaultArticleSource,
+                    updated_at: article.updated_at === '2026-06-23' ? contentUpdatedAt : article.updated_at
+                };
+            })
             : [];
     } catch (error) {
         console.warn(`Unable to load static editorial articles: ${error.message}`);
@@ -365,7 +379,7 @@ const loadStaticEditorialArticles = () => {
 
 const getFallbackArticles = () => {
     const articleMap = new Map();
-    [...loadStaticEditorialArticles(), ...apiFallbackArticles].forEach((article) => {
+    [...apiFallbackArticles, ...loadStaticEditorialArticles()].forEach((article) => {
         const slug = article.slug || slugifyArticle(article.title);
         articleMap.set(slug, { ...article, slug });
     });
@@ -463,7 +477,11 @@ const getPublicArticles = async () => {
         apiArticles
             .map(normalizeArticle)
             .filter(isPublicArticle)
-            .forEach((article) => articleMap.set(article.slug, article));
+            .forEach((article) => {
+                if (!articleMap.has(article.slug)) {
+                    articleMap.set(article.slug, article);
+                }
+            });
 
         const articles = Array.from(articleMap.values())
             .sort((a, b) => new Date(b.updated_at || b.created_at || 0) - new Date(a.updated_at || a.created_at || 0));
@@ -649,6 +667,8 @@ const injectMeta = (html, meta, urlPath) => {
             },
             datePublished: meta.article.created_at,
             dateModified: meta.article.updated_at,
+            articleSection: meta.article.category || 'Cryptocurrency Education',
+            wordCount: getWordCount(meta.article),
             articleBody: Array.isArray(meta.article.fullContent) ? meta.article.fullContent.join('\n\n') : '',
             mainEntityOfPage: canonicalUrl
         };

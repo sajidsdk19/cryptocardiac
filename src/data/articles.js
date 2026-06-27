@@ -1,3 +1,5 @@
+import articleEnhancements from './articleEnhancements.cjs';
+
 export const SITE_URL = 'https://cryptocardiac.com';
 
 export const slugifyArticle = (value = '') =>
@@ -8,7 +10,9 @@ export const slugifyArticle = (value = '') =>
         .replace(/[^a-z0-9]+/g, '-')
         .replace(/^-+|-+$/g, '');
 
+const { ARTICLE_ENHANCEMENTS_BY_ORDER } = articleEnhancements;
 const updatedAt = '2026-06-23';
+const contentUpdatedAt = '2026-06-28';
 const adminArticleCutoff = new Date(updatedAt).getTime();
 const defaultArticleSource = 'CryptoCardiac Research Desk';
 
@@ -32,6 +36,8 @@ const getReferencesFromSource = (source = '') => {
         .map((reference) => reference.trim())
         .filter(Boolean);
 };
+
+const getArticleEnhancements = (article) => ARTICLE_ENHANCEMENTS_BY_ORDER[article.sort_order] || [];
 
 export const EDITORIAL_ARTICLES = [
     {
@@ -605,12 +611,75 @@ export const EDITORIAL_ARTICLES = [
             'The methodology is intentionally modest. CryptoCardiac shows where community attention is visible. It does not tell readers what to buy, sell, or hold.'
         ],
         sort_order: 29
+    },
+    {
+        id: 'crypto-market-design-finance',
+        title: 'From Speculation to Market Design: The New Finance of Crypto Markets',
+        source: 'CryptoCardiac Research Desk',
+        author: 'CryptoCardiac Research Desk',
+        category: 'Research',
+        created_at: '2026-06-27',
+        updated_at: contentUpdatedAt,
+        description: 'A plain-English guide to how crypto finance is moving beyond price speculation into market design, liquidity, stablecoins, MEV, custody, and user protection.',
+        fullContent: [
+            'Crypto markets are often described through price charts, but the deeper story is market design. Market design asks how trading venues work, how liquidity appears, how orders are routed, how stablecoins move, and how incentives shape behavior. Those questions matter because a market can look active while still being fragile.',
+            'One important topic is liquidity provision. A token may trade on many screens, yet the real question is whether buyers and sellers can enter or exit without moving the price sharply. Automated market makers, centralized exchange books, and over-the-counter desks all handle liquidity differently.',
+            'Another topic is transaction ordering. On public blockchains, the order of transactions can affect who earns profit and who receives worse execution. This is why researchers study MEV, auction design, validators, sequencers, and routing. These details can sound technical, but they affect ordinary users through fees, slippage, and execution quality.',
+            'Stablecoins also changed crypto finance. They connect trading, payments, collateral, exchange liquidity, and cross-border settlement. But stablecoins depend on reserves, redemption confidence, issuer practices, and regulation. A stable price is not the same as a risk-free instrument.',
+            'CryptoCardiac treats these issues as educational context. Community votes show attention, but market design helps explain whether that attention flows through systems that are transparent, resilient, and fair to users.'
+        ],
+        sort_order: 30
+    },
+    {
+        id: 'cryptocurrency-and-blockchain-basics',
+        title: 'What Cryptocurrency Is and What Blockchain Is',
+        source: 'CryptoCardiac Research Desk',
+        author: 'CryptoCardiac Research Desk',
+        category: 'Education',
+        created_at: '2026-06-26',
+        updated_at: contentUpdatedAt,
+        description: 'A beginner-friendly explanation of cryptocurrency, blockchain records, wallets, tokens, smart contracts, and why these ideas should be studied separately.',
+        fullContent: [
+            'Cryptocurrency is a digital asset that can be transferred or used inside a network without relying on the same kind of central database used by a bank or payment app. The exact purpose depends on the asset. Some coins are designed for payments, some tokens are used for governance, some represent access to applications, and some mainly carry community attention.',
+            'A blockchain is a shared record of transactions. Instead of one private company silently changing the database, network participants follow rules for adding new records. Different blockchains use different methods for reaching agreement, and those methods affect speed, cost, security, and decentralization.',
+            'Wallets are tools for controlling keys and signing transactions. A wallet does not usually store coins inside the device like a file. It controls the ability to move assets recorded on a network. That is why seed phrases and private keys are so sensitive.',
+            'Tokens are assets issued on top of a blockchain. A token can represent voting rights, payment ability, access, rewards, collectibles, or something else. The word token does not prove usefulness by itself. The role of the token must be explained by the project and checked by readers.',
+            'Smart contracts are programs that run on a blockchain. They can manage swaps, lending, minting, games, governance, and more. They are powerful, but they can have bugs, risky permissions, or upgrade controls that users should understand.'
+        ],
+        sort_order: 31
+    },
+    {
+        id: 'crypto-regulation-more-important-than-memes',
+        title: 'Crypto World: Regulation Is Now More Important Than Memes',
+        source: 'CryptoCardiac Research Desk',
+        author: 'CryptoCardiac Research Desk',
+        category: 'Regulation',
+        created_at: '2026-06-24',
+        updated_at: contentUpdatedAt,
+        description: 'Crypto regulation is increasingly shaping exchanges, stablecoins, custody, advertising, staking, privacy tools, and which products can serve users in each region.',
+        fullContent: [
+            'Crypto communities often grow through memes, jokes, and shared identity, but regulation now shapes many of the practical questions that decide whether a product can operate. Exchanges, stablecoins, staking services, token launches, privacy tools, and custody platforms all face different rules depending on jurisdiction.',
+            'Regulation can affect access. A platform may serve users in one country while restricting another. A token may be listed in one market and unavailable elsewhere. A service may change its features after guidance from regulators, banking partners, or payment providers.',
+            'Consumer protection is one reason regulators pay attention. Crypto users can face hacks, misleading promotions, failed platforms, unclear disclosures, and high volatility. Rules may require clearer risk warnings, stronger custody controls, anti-money-laundering checks, or limits on how products are advertised.',
+            'The hard part is that rules are not the same everywhere. A project can be legal in one region, uncertain in another, and restricted somewhere else. Readers should avoid simple global statements unless they are backed by official sources and current local context.',
+            'CryptoCardiac does not provide legal advice. The purpose of this article is to remind readers that community excitement does not remove regulatory reality. A responsible research process includes checking the location, license, product type, and public claims involved.'
+        ],
+        sort_order: 32
     }
-].map((article) => ({
-    ...article,
-    slug: slugifyArticle(article.title),
-    readMinutes: Math.max(4, Math.ceil(article.fullContent.join(' ').split(/\s+/).length / 210))
-}));
+].map((article) => {
+    const fullContent = [
+        ...article.fullContent,
+        ...getArticleEnhancements(article)
+    ];
+
+    return {
+        ...article,
+        fullContent,
+        updated_at: article.updated_at === updatedAt ? contentUpdatedAt : article.updated_at,
+        slug: slugifyArticle(article.title),
+        readMinutes: Math.max(4, Math.ceil(fullContent.join(' ').split(/\s+/).length / 210))
+    };
+});
 
 export const TRENDING_TOPICS = [
     { id: 'risk-management', title: 'Risk management', trend: '+12.4%' },
