@@ -7,6 +7,10 @@ import { Link } from 'react-router-dom';
  * automatically inject ads near this footer. No slot IDs required.
  */
 const Footer = () => {
+    const scrollToTop = () => {
+        window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+    };
+
     const links = [
         { label: 'About Us', to: '/about' },
         { label: 'Contact', to: '/contact' },
@@ -63,6 +67,7 @@ const Footer = () => {
                                 <Link
                                     key={link.to}
                                     to={link.to}
+                                    onClick={scrollToTop}
                                     style={{ color: '#aaa', textDecoration: 'none', fontSize: '0.95rem', transition: 'color 0.2s' }}
                                     onMouseEnter={e => e.target.style.color = '#CE34EA'}
                                     onMouseLeave={e => e.target.style.color = '#aaa'}
@@ -81,6 +86,7 @@ const Footer = () => {
                                 <Link
                                     key={link.to}
                                     to={link.to}
+                                    onClick={scrollToTop}
                                     style={{ color: '#aaa', textDecoration: 'none', fontSize: '0.95rem', transition: 'color 0.2s' }}
                                     onMouseEnter={e => e.target.style.color = '#CE34EA'}
                                     onMouseLeave={e => e.target.style.color = '#aaa'}

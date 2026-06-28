@@ -722,7 +722,7 @@ const injectMeta = (html, meta, urlPath) => {
 
     const crawlerContent = buildCrawlerContent(meta, canonicalUrl, canonicalPath);
     if (crawlerContent) {
-        output = output.replace('</body>', `${crawlerContent}\n</body>`);
+        output = output.replace(/<body([^>]*)>/i, `<body$1>\n${crawlerContent}`);
     }
 
     return output;

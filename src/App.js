@@ -1,6 +1,6 @@
 import { Box, Grid } from "@mui/material";
 import React, { useState, createContext, useEffect } from "react";
-import { Routes, Route, useParams, useNavigate, Navigate } from "react-router-dom";
+import { Routes, Route, useParams, useNavigate, Navigate, useLocation } from "react-router-dom";
 import { HelmetProvider } from 'react-helmet-async';
 import CurrencyData from "section/CurrencyData";
 import Capitalization from "section/Capitalization";
@@ -79,11 +79,22 @@ function ArticleAlias() {
   return <Navigate to={slug ? `/featured-articles/${slug}` : "/featured-articles"} replace />;
 }
 
+function ScrollToTop() {
+  const { pathname } = useLocation();
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+  }, [pathname]);
+
+  return null;
+}
+
 function App() {
   return (
     <HelmetProvider>
       <AuthProvider>
         <CookieConsent />
+        <ScrollToTop />
         <Routes>
           <Route path="/" element={<Leaderboard />} />
           <Route path="/login" element={<Login />} />
